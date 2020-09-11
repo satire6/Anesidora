@@ -1,0 +1,110 @@
+// See Also: "direct/src/doc/sample.dc"
+
+// The most fundamental class
+dclass DistributedObject {
+};
+
+dclass DistributedNode : DistributedObject {
+  setParent(string) broadcast ram;
+
+  setX(int16 / 10) broadcast ram;
+  setY(int16 / 10) broadcast ram;
+  setZ(int16 / 10) broadcast ram;
+  setH(int16 / 10) broadcast ram;
+  setP(int16 / 10) broadcast ram;
+  setR(int16 / 10) broadcast ram;
+  
+  setPos : setX, setY, setZ;
+  setHpr : setH, setP, setR;
+  setPosHpr : setX, setY, setZ, setH, setP, setR;
+  setXY : setX, setY;
+  setXYH : setX, setY, setH;
+  setXYZH : setX, setY, setZ, setH;
+
+  setDRX : setX;
+  setDRY : setY;
+  setDRZ : setZ;
+  setDRH : setH;
+  setDRP : setP;
+  setDRR : setR;
+
+  setDRPos : setX, setY, setZ;
+  setDRHpr : setH, setP, setR;
+  setDRPosHpr : setX, setY, setZ, setH, setP, setR;
+  setDRXY : setX, setY;
+  setDRXYH : setX, setY, setH;
+  setDRXYZH : setX, setY, setZ, setH;
+};
+
+dclass DistributedToon : DistributedNode {
+  setDNAString(string) required broadcast ram db;
+  setName(string) required broadcast ram db;
+
+  setHp(int16) required p2p db;
+  setMaxHp(int16) required p2p db;
+  setInventory(string) required p2p db;
+  setExperience(string) required p2p db;
+  setFriendsList(string) required p2p db;
+  setDefaultShard(uint32) required p2p db;
+  setDefaultZone(uint16) required p2p db;
+  setShtickerBook(string) required p2p db;
+  setZonesVisited(string) required p2p db;
+  setInterface(string) required p2p db;
+
+  setAnimState(string, int16 / 1000) broadcast ram;
+  setChat(string) broadcast;
+  setWhisper(string) p2p;
+};
+
+dclass DistributedSuit : DistributedObject {
+
+  requestBattle(uint32) p2p;
+
+  // set the dna of this suit before it is generated
+  //
+  setDNAString(string) required broadcast ram;
+
+  // the initial task given to all suits when created
+  // first 2 params are a start and end index into the
+  // path information indicating where the suit should move
+  // from and to, the next 2 params are the start and current
+  // time for this task
+  //
+  setMoveTask( uint16, uint16, uint32, uint32 ) required broadcast ram;
+
+  setChat(string) broadcast;
+
+  // indicate the state which the suit should enter when created
+  // this can be any state in order to support creating suits only
+  // when necessary
+  setState(string) required broadcast ram;
+};
+
+dclass DistributedBattle : DistributedObject {
+  setPos(int16 / 10, int16 / 10, int16 / 10) required broadcast ram;
+  setInitialCombatants(uint32, uint32) required broadcast ram;
+
+  addSuit(uint32) broadcast ram;
+  removeSuit(uint32) broadcast ram;
+  addToon(uint32) broadcast ram;
+  removeToon(uint32) broadcast ram;
+
+  requestBattle(uint32, uint32) p2p;
+};
+
+dclass DistributedBoat : DistributedObject {
+  setState(string, uint32, uint32) required broadcast ram;
+};
+
+dclass DistributedTest {
+  setA(int16) broadcast ram required;
+  setB(string) broadcast ram required;
+  setC(int16) p2p;
+};
+
+
+
+
+
+
+

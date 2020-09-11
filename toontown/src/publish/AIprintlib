@@ -1,0 +1,5 @@
+#! /bin/sh
+
+grep -l "from $2 import" $1/*.py
+
+

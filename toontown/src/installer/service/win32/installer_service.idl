@@ -1,0 +1,42 @@
+import "wtypes.idl";    // for BSTR support
+//import "oaidl.idl";
+//import "ocidl.idl";
+[
+    uuid(09b20799-b224-4b63-9a30-dd71b964f3f7),
+    version(1.0),
+    pointer_default(unique),
+]
+interface IWDIG_InstallerService
+{
+#pragma optimize ("g", off)
+
+#ifdef _UNICODE
+	typedef wchar_t *STR;
+#else
+	typedef char *STR;
+#endif
+
+// program control
+//    int __stdcall ISPROC_Init();
+
+    int __stdcall ISPROC_ready();
+	int __stdcall ISPROC_shutdown();
+
+// program control
+//    int __stdcall ISPROC_rforkexec([in] BSTR app_path, [in] BSTR args, [out] DWORD *pProcID);
+
+	
+// file access
+//    int __stdcall ISFILE_mkdir([in, string, unique] STR path, [in] int mode);
+    int __stdcall ISFILE_MakeGameDir([in] int game, [in] BSTR deployment);
+
+// registry access
+/*
+    int __stdcall ISREG_init([in] BSTR key);
+    void __stdcall ISREG_getstring([in] BSTR key, [out, retval] BSTR *pVal);
+    void __stdcall ISREG_getbin32([in] BSTR key, [out, retval] int *pVal);
+
+    //void __stdcall ISREG_setValue([in] BSTR key, [in] BSTR val);
+*/
+    int __stdcall ISREG_DoMediumIntegrity([in] int game, [in] BSTR src_path, [in] BSTR dest_path);
+}

@@ -1,0 +1,8 @@
+[
+    strict_context_handle,
+    explicit_handle
+    //implicit_handle(handle_t IWDIG_InstallerService_v1_0_s_ifspec)
+]
+interface IWDIG_InstallerService
+{
+}

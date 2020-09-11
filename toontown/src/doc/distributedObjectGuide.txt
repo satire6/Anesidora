@@ -1,0 +1,149 @@
+
+Toontown Servers
+----------------
+
+TODO: where will the server drops be located? Are there instructions on how
+to set them up?
+
+$TOONTOWN/src/doc/howToRunYourOwnServers has some old instructions on
+setting up servers. All of the information in the document, except for Step
+1, should still be applicable. Ask someone where to get the server drops.
+
+The AI Server
+-------------
+
+Toontown comprises several different types of servers.  The AI server
+controls all of the suits (cogs), minigames, battles, trolleys, etc. The AI
+server acts as a mediator in any situation where the game must enforce rules
+or must verify avatar data. Anything that can be interacted with, with the
+exception of other players, is controlled by the AI server.
+
+To run your own AI server, open up Emacs, start up a Python shell, and run:
+
+>>> from AIStart import *
+
+AI Objects
+----------
+
+An AI object's behavior is defined by two source code files. One file runs
+on the AI server, and the other file runs on the client computers. For a
+particular distributed object, there is one manifestation of the object on
+the AI server, and many client-side manifestations of the object, one on
+each client.
+
+In general, the AI code controls the behavior of the object. The code that
+runs on the client usually is only responsible for listening to events from
+the AI code, and using that information to create some visible/audible
+representation of the object.
+
+For example, the Mickey character in Toontown Central is a distributed
+object that is controlled by the AI. Mickey's code is located in two files:
+
+$TOONTOWN/src/classicchars/DistributedMickey.py
+  and
+$TOONTOWN/src/classicchars/DistributedMickeyAI.py
+
+The code in DistributedMickey.py runs on each client, and the code in
+DistributedMickeyAI.py runs on the AI server. The AI code makes
+high-level decisions, such as where Mickey should walk to next, how
+long he should wait before walking, and whether he should say
+something. The client-side code listens for decisions from the AI
+(such as "Mickey will walk from point X to point Y at time T") and
+translates them into actions that are visible to the client (i.e. "at
+time T, animate the Mickey model so that he's walking, and move him
+from point A to point B")
+
+Sometimes the client-side half of a distributed object can collect
+information that is useful to the code on the AI server. For instance,
+Mickey only talks when there is a player close to him. The Mickey code on
+the AI could check the position of every player to see if any of them is
+close, but that would be inefficient. It is much more efficient for the
+Mickey object on each client to detect its proximity to the local
+player. When the Mickey object on Joe's computer detects that Joe is
+standing near him, it sends a message to the AI server, saying "Joe is
+standing close to me". Using that information, the AI can decide to make
+Mickey start talking -- and every client will see him talk.
+
+Zones
+---------------
+
+The Toontown world is divided up into areas of space, called 'zones'. Zones
+allow Toontown to efficiently determine what objects a particular client
+needs to know about. For instance, the Toontown Central playground is a
+zone. When a client is in the playground, he receives messages about the
+other players and objects in that zone. If he leaves the playground, and
+goes out onto the street, he is no longer in the playground zone, so he
+stops receiving messages about things that are happening in the playground
+zone. Each street is broken down into about 25-50 small zones.
+
+The toon.dc file
+----------------
+
+Communications between the client and AI portions of a distributed object
+are carried out according to the interfaces defined in the toon.dc
+file. The file is located at:
+
+$TOONTOWN/src/configfiles/toon.dc
+
+There is also a copy of this file in the directory that your servers run
+out of. When changes are made to toon.dc, you need to copy the new version
+into that directory and restart your servers, including your AI server.
+
+Every distributed class must have its interface defined in toon.dc. By
+examining the file, you can see that it looks very much like typical C++ or
+Python class definitions. The syntax is as follows:
+
+// COMMENT
+dclass CLASSNAME : PARENTCLASS {
+  FUNCNAME(ARGUMENTS) MODIFIERS;
+  FUNCNAME(ARGUMENTS) MODIFIERS;
+  ...
+};
+
+PARENTCLASS must be the name of another dclass defined in the file, and it
+is optional.
+
+Each ARGUMENT can be one of the following types:
+int8, int16, int32                   : signed integers
+uint8, uint16, uint32                : unsigned integers
+int8array, int16array, int32array    : array of signed integers
+uint8array, uint16array, uint32array : array of unsigned integers
+string                               : string of printable characters
+blob                                 : string of bytes
+
+Each argument can be given an optional name, which is primarily useful
+for documentation purposes.
+
+An argument can be given a default value with the syntax "argument =
+value", similar to C++; these default values are meaningful only for
+fields tagged with "ram" or "db" (see below).
+
+You can indicate that an argument may store non-integer values by
+specifying a divisor, e.g.:
+
+myFunction(int16 myNumber / 100)
+
+This indicates that myNumber will use fixed-point arithmetic to store
+a number in the range -327.68 .. 327.67.  This is implemented by
+taking the floating-point number you supply to myFunction and
+multiplying it by 100 for transmitting over the net as a 16-bit
+integer, then dividing by 100 again on the other end, to return a
+floating-point number again.
+
+MODIFIERS can include the following:
+broadcast : the message is sent to everyone in the zone
+ram       : the last-sent value should be kept by the server
+            and given to anyone who enters the zone when they arrive
+clsend    : clients can use this method to make calls to the server
+            this flag is used for security to only allow clients to send 
+            specific messages
+db        : the last-sent value should be stored in the server's persistent
+            database
+p2p       : peer-to-peer; the opposite of broadcast; "don't broadcast this
+            message to everyone in the zone"
+required  : method must be called when distributed object is created;
+            an object may not be created unless a value is defined for
+            all required methods.  When the object-create message is sent
+            to a client, all required fields are sent at the same time.
+ownsend   :
+

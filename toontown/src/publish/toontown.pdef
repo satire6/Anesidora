@@ -1,0 +1,310 @@
+# This file defines the downloadable packages that make up the
+# published version of Toontown Online.
+
+from pandac.PandaModules import Filename, PandaSystem
+from direct.showutil import FreezeTool
+FreezeTool.sourceTrees = ['toontown', 'otp', 'direct']
+from toontown.publish import PRCEncryptionKey
+
+packager.prcEncryptionKey = PRCEncryptionKey.key
+packager.prcSignCommand = 'otp-sign1'
+
+# We don't need to process bam files, since we've already built them
+# with the correct relative texture paths.
+packager.unprocessedExtensions = ['bam']
+
+# DNA files in the ttmodels tree should be included.
+packager.textExtensions.append('dna')
+
+# Since we have adjusted the packager configuration, call setup() again.
+packager.setup()
+
+##################################################
+# Specify the download host and mirror(s) for game content.
+##################################################
+
+# The "host" is the official URL that will host these contents.  This
+# duplicates the PANDA_PACKAGE_HOST_URL string defined in
+# quick-client-build-Config.pp, and its presence here mainly serves as as a
+# sanity check that we're using the right Panda build.
+
+packager.setHost('http://download.toontown.com/english/inbrowser',
+                 descriptiveName = 'Toontown Live Download Server',
+                 hostDir = 'ToontownOnline',
+                 mirrors = ['http://a.download.toontown.com/english/inbrowser'])
+
+# on QA, we always test the functionality of failing over from the mirror to the main host
+packager.addAltHost('qa', 'http://download.qa2.toontown.com/english/inbrowser',
+                    descriptiveName = 'Toontown QA Download Server',
+                    hostDir = 'ToontownOnline_QA',
+                    mirrors = [ 'http://ttown4.online.disney.com:1420/bogus'])
+
+packager.addAltHost('qa2', 'http://pirate143b.starwave.com:1920/english/inbrowser',
+                    hostDir = 'PiratesOnline_qa2',
+                    descriptiveName = 'Pirates QA2 Download Server')
+
+packager.addAltHost('test', 'http://download.test.toontown.com/english/inbrowser',
+                    hostDir = 'ToontownOnline_TEST',
+                    descriptiveName = 'Toontown TEST Download Server')
+
+packager.addAltHost('dev', 'http://ttown4.online.disney.com:1220/english/inbrowser',
+                    hostDir = 'ToontownOnline_DEV',
+                    descriptiveName = 'Toontown Dev Download Server')
+
+
+##################################################
+# PHASE 1 : Panda, python
+##################################################
+class panda3d(package):
+    # We always need to start with a "panda3d" package.  We could use
+    # a standard version of Panda3D provided elsewhere, but specifying
+    # our own here allows us the luxury of building a custom version
+    # of Panda for Toontown alone, just as we traditionally have.
+
+    # First, add the minimum startup files for a Panda3D package.
+    # These are files that the Panda3D runtime will explicitly look
+    # for by name in order to get itself bootstrapped.
+    setupPanda3D()
+
+    # Also add in the Python code for the game.  We could defer some
+    # of this till a later phase, but the code is relatively small,
+    # and it's easiest to load it all up front.
+
+    # Exclude these modules that aren't part of the game.
+    excludeModule('direct.tkpanels')
+    excludeModule('direct.tkwidgets', 'direct.tkwidgets.AppShell')
+    excludeModule('direct.cluster', 'direct.cluster.ClusterServer', 'direct.cluster.ClusterClient')
+    excludeModule('direct.directdevices')
+    excludeModule('otp.switchboard.badwordpy')
+
+    excludeModule('tkCommonDialog',
+                  'tkMessageBox',
+                  'tkSimpleDialog',
+                  'tkFileDialog',
+                  'Tkconstants',
+                  'Tkinter',
+                  'Pmw')
+    if not __debug__:
+        excludeModule('pdb')
+
+    excludeModule('wx',
+                  'direct.showbase.WxGlobal')
+
+    excludeModule('Tkinter',
+                  'TkGlobal',
+                  'direct.showbase.TkGlobal',
+                  'direct.tkpanels',
+                  'direct.tkwidgets')
+
+    # This was used for the old pirates-ads.
+    excludeModule('embedded')
+
+    # This may cause problems between different versions of Windows
+    # and we don't need it for MAC address fingerprinting
+    exclude('iphlpapi.dll')
+
+    # The first-moving module.
+    module('toontown.launcher.StartToontownWebLauncher')
+
+    # The language-specific localizer files are dynamically imported.
+    module('otp.otpbase.OTPLocalizerEnglish')
+    module('toontown.toonbase.TTLocalizerEnglish')
+
+    # we need some kind of dbm so we can import anydbm, even if we
+    # never use it.
+    module('dumbdbm')
+
+    # we need _strptime for Parties
+    module('_strptime')
+  
+    # Explicitly add the US/Pacific timezone, because we use that for
+    # parties.
+    module('pytz.zoneinfo.US.Pacific')
+
+    # Get all of the generated mint files.
+    module('toontown.coghq.*')
+
+    # Get the animated props.
+    module('toontown.hood.*')
+
+    # Pick up the dc files, and the Python modules they reference.
+    file(Filename.expandFrom('$OTP/src/configfiles/otp.dc'),
+         Filename.expandFrom('$TOONTOWN/src/configfiles/toon.dc'))
+
+    # We need the gameserver's certificate to pre-approve him.
+    file(Filename.expandFrom('$OTP/src/configfiles/gameserver.txt'))
+
+    # Most of the core Panda3D DLL's will be included implicitly due to
+    # being referenced by the above Python code.  Here we name a few more
+    # that are also needed, but aren't referenced by any code.  Again,
+    # note that the .dll extension is automatically replaced with the
+    # platform-specific extension for an executable.
+    file('libpandagl.dll', 'libtinydisplay.dll')
+    if platform.startswith('win'):
+        file('libpandadx8.dll', 'libpandadx9.dll')
+
+    # Audio.  Miles, on Windows and Mac.
+    if platform.startswith('win'):
+        file('libmiles_audio.dll')
+        file(Filename.expandFrom('$WINTOOLS/sdk/rad/MilesWin/redist/mssmp3.asi'),
+             Filename.expandFrom('$WINTOOLS/built/bin/avcodec.dll'),
+             Filename.expandFrom('$WINTOOLS/built/bin/avutil.dll'),
+             Filename.expandFrom('$WINTOOLS/built/bin/avformat.dll'),
+             Filename.expandFrom('$WINTOOLS/built/lib/ode_single.dll'),
+             executable = True)
+
+    elif platform.startswith('osx'):
+        file('libmiles_audio.dll')
+        file('libMilesMachO.dylib',
+             'libMilesMachOx86.dylib',
+             'mssmp3.asi', 'mssmixer.mix', 'Miles_MP3_Decoder.asi',
+             executable = True)
+
+    else:
+        # Fmod, on Linux.
+        file('libfmod_audio.so')
+
+    file('libpandafx.dll', 'libpandaphysics.dll')
+
+    # Config files.
+    file(Filename.expandFrom('$TOONTOWN/src/launcher/client_config.prc'),
+         newName = 'Config.prc', extract = True)
+
+    # The window icon.
+    if platform.startswith('win'):
+        file(Filename.expandFrom('$TTMODELS/built/phase_3/models/gui/toonmono.cur'),
+             Filename.expandFrom('$TTMODELS/built/phase_3/models/gui/toontown.ico'),
+             extract = True)
+    else:
+        file(Filename.expandFrom('$TTMODELS/built/phase_3/models/gui/toontown_mac_icon.rgb'),
+             extract = True)
+        
+
+##################################################
+# PHASE 3
+##################################################
+class tt_3(package):
+    # Get more language-specific files.
+    file(Filename.expandFrom('$TOONTOWN/src/configfiles/NameMasterEnglish.txt'),
+         Filename.expandFrom('$TOONTOWN/src/configfiles/PetNameMasterEnglish.txt'),
+         Filename.expandFrom('$TOONTOWN/src/quest/QuestScripts.txt'),
+         Filename.expandFrom('$TOONTOWN/src/chat/twhitelist.dat'),
+         newDir = 'phase_3/etc')
+
+
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_3'), newDir = 'phase_3')
+
+
+##################################################
+# PHASE 3.5
+##################################################
+class tt_3_5(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_3.5'), newDir = 'phase_3.5')
+
+    # News file.
+    file(Filename.expandFrom('$TTMODELS/built/phase_3.5/models/news_index.txt'),
+         newDir = 'phase_3.5/models')
+
+    # Particle Effects.  These used to be sorted into different
+    # directories by phase.  Now we don't bother.
+    file(Filename.expandFrom('$TOONTOWN/src/battle/*.ptf'),
+         Filename.expandFrom('$TOONTOWN/src/safezone/*.ptf'),
+         Filename.expandFrom('$TOONTOWN/src/effects/*.ptf'),
+         newDir = 'phase_3.5/etc')
+
+##################################################
+# PHASE 4
+##################################################
+class tt_4(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_4'), newDir = 'phase_4')
+
+##################################################
+# PHASE 5
+##################################################
+class tt_5(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_5'), newDir = 'phase_5')
+
+##################################################
+# PHASE 5.5
+##################################################
+class tt_5_5(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_5.5'), newDir = 'phase_5.5')
+
+##################################################
+# PHASE 6
+##################################################
+class tt_6(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_6'), newDir = 'phase_6')
+
+##################################################
+# PHASE 7
+##################################################
+class tt_7(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_7'), newDir = 'phase_7')
+
+##################################################
+# PHASE 8
+##################################################
+class tt_8(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_8'), newDir = 'phase_8')
+
+##################################################
+# PHASE 9
+##################################################
+class tt_9(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_9'), newDir = 'phase_9')
+
+##################################################
+# PHASE 10
+##################################################
+class tt_10(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_10'), newDir = 'phase_10')
+
+##################################################
+# PHASE 11
+##################################################
+class tt_11(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_11'), newDir = 'phase_11')
+
+##################################################
+# PHASE 12
+##################################################
+class tt_12(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_12'), newDir = 'phase_12')
+
+##################################################
+# PHASE 13
+##################################################
+class tt_13(package):
+    # Models, textures, audio
+    dir(Filename.expandFrom('$TTMODELS/built/phase_13'), newDir = 'phase_13')
+
+
+##################################################
+# Entry points.  This is the p3d application that can be used to
+# launch Toontown.
+##################################################
+    
+class toontown(p3d):
+    # Downloads only minimal phases before launching the game.  The
+    # game itself will download the remaining phases once it begins.
+    
+    require('panda3d', 
+            version = PandaSystem.getPackageVersionString())
+    require('tt_3')
+    config(log_basename='toontown', prc_name='toontown', start_dir='toontown')
+
+    mainModule('toontown.launcher.StartToontownWebLauncher')
+    

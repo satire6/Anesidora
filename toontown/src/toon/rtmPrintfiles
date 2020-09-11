@@ -1,0 +1,198 @@
+#! /bin/sh
+
+# Configrc for running the show
+# This uses the executable system now, not the configrc
+echo $TOONTOWN/src/toon/Configrc.prc
+echo $TOONTOWN/src/toon/runRTM.bat
+
+# Python files
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/python.exe
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/python24.dll
+# built into 2.4 now
+#echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_sre.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_tkinter.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_socket.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/zlib.pyd
+
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/lib-tk
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/site-packages/Pmw
+echo $WINTOOLS/sdk/python/tcltk/lib
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/linecache.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/traceback.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/__future__.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/whrandom.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/copy_reg.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/copy.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/fnmatch.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/re.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_parse.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_constants.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_compile.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/types.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/string.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/os.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/site.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/stat.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/UserDict.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/ntpath.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/random.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/getopt.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/fpformat.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/bisect.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/warnings.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/inspect.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/dis.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/tokenize.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/token.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/ihooks.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/weakref.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/opcode.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/new.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/optparse.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/textwrap.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/gettext.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/locale.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/codecs.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/encodings
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/profile.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/pstats.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/StringIO.py
+
+# Libraries
+#echo $WINTOOLS/lib
+echo $WINTOOLS/built/lib
+echo $WINTOOLS/built/bin/avcodec.dll
+echo $WINTOOLS/built/bin/avutil.dll
+echo $WINTOOLS/built/bin/avformat.dll
+#echo $WINTOOLS/sdk/rad/Miles6/redist/win32/Mss32.dll
+#echo $WINTOOLS/sdk/rad/Miles6/redist/win32/Mp3dec.asi
+echo $DTOOL/built/lib/libdtool.dll
+echo $DTOOL/built/lib/libdtoolconfig.dll
+echo $PANDA/built/lib/libpandaexpress.dll
+echo $PANDA/built/lib/libpanda.dll
+echo $PANDA/built/lib/libpandaphysics.dll
+echo $PANDA/built/lib/libwindisplay.dll
+echo $PANDA/built/lib/libmesadisplay.dll
+echo $PANDA/built/lib/libpandadx9.dll
+echo $PANDA/built/lib/libpandadx8.dll
+echo $PANDA/built/lib/libpandagl.dll
+echo $PANDA/built/lib/libpandafx.dll
+echo $PANDA/built/lib/libpandaegg.dll
+echo $PANDA/built/lib/libpandaode.dll
+echo $PANDA/built/lib/libmiles_audio.dll
+echo $DIRECT/built/lib/libdirect.dll
+echo $DIRECT/built/lib/libheapq.dll
+echo $OTP/built/lib/libotp.dll
+echo $TOONTOWN/built/lib/libtoontown.dll
+
+# Generated code for libpanda
+printlib $DIRECT/built/lib/pandac libpanda
+printlib $DIRECT/built/lib/pandac libpandaphysics
+echo $DIRECT/built/lib/pandac/*.py
+#echo $DIRECT/built/lib/pandac/PandaModules.pyz
+
+# Generated code for libdirect
+printlib $DIRECT/built/lib/pandac libdirect
+
+# Generated code for libotp
+printlib $DIRECT/built/lib/pandac libotp
+
+# Generated code for libtoontown
+printlib $DIRECT/built/lib/pandac libtoontown
+
+# DIRECT stuff
+printdir $DIRECT/src/actor .py
+printdir $DIRECT/src/cluster .py
+printdir $DIRECT/src/controls .py
+printdir $DIRECT/src/directbase .py
+printdir $DIRECT/src/directdevices .py
+printdir $DIRECT/src/directnotify .py
+printdir $DIRECT/src/directscripts .py
+printdir $DIRECT/src/directtools .py
+printdir $DIRECT/src/directutil .py
+printdir $DIRECT/src/distributed .py
+printdir $DIRECT/src/ffi/ .py
+printdir $DIRECT/src/fsm .py
+printdir $DIRECT/src/gui .py
+printdir $DIRECT/src/interval .py
+printdir $DIRECT/src/particles .py
+printdir $DIRECT/src/showbase .py
+printdir $DIRECT/src/task .py
+printdir $DIRECT/src/showbase .py
+printdir $DIRECT/src/tkpanels .py
+printdir $DIRECT/src/tkwidgets .py
+printdir $DIRECT/src/extensions_native .py
+printdir $DIRECT/src/stdpy .py
+
+# OTP stuff
+echo $OTP/src/avatar/Avatar.py
+echo $OTP/src/avatar/AvatarDNA.py
+echo $OTP/src/avatar/Emote.py
+echo $OTP/src/otpbase/OTPLocalizer.py
+echo $OTP/src/otpbase/OTPLocalizerEnglish.py
+echo $OTP/src/otpbase/OTPGlobals.py
+echo $OTP/src/otpbase/OTPRender.py
+echo $OTP/src/otpgui/OTPDialog.py
+echo $OTP/src/avatar/ShadowCaster.py
+
+# Toontown stuff
+echo $TOONTOWN/src/battle/BattleBase.py
+echo $TOONTOWN/src/battle/BattleProps.py
+echo $TOONTOWN/src/battle/BattleParticles.py
+echo $TOONTOWN/src/battle/SuitBattleGlobals.py
+echo $TOONTOWN/src/configfiles/NameMasterEnglish.txt
+echo $TOONTOWN/src/effects/Wake.py
+echo $TOONTOWN/src/effects/DustCloud.py
+echo $TOONTOWN/src/effects/Fireworks.py
+echo $TOONTOWN/src/effects/FireworkShows.py
+echo $TOONTOWN/src/effects/FireworkGlobals.py
+echo $TOONTOWN/src/hood/SkyUtil.py
+echo $TOONTOWN/src/hood/ZoneUtil.py
+printdir $TOONTOWN/src/leveleditor .py
+echo $TOONTOWN/src/makeatoon/NameGenerator.py
+echo $TOONTOWN/src/makeatoon/
+echo $TOONTOWN/src/toon/TTEmote.py
+echo $TOONTOWN/src/toon/Motion.py
+echo $TOONTOWN/src/toon/NPCToons.py
+echo $TOONTOWN/src/toon/RobotToon.py
+echo $TOONTOWN/src/toon/RobotToonManager.py
+echo $TOONTOWN/src/toon/Toon.py
+echo $TOONTOWN/src/toon/ToonDNA.py
+echo $TOONTOWN/src/toon/ToonHead.py
+echo $TOONTOWN/src/toonbase/TTLocalizer.py
+echo $TOONTOWN/src/toonbase/TTLocalizerEnglish.py
+echo $TOONTOWN/src/toonbase/ToontownBattleGlobals.py
+echo $TOONTOWN/src/toonbase/ToontownGlobals.py
+echo $TOONTOWN/src/suit/Suit.py
+echo $TOONTOWN/src/suit/SuitDNA.py
+echo $TOONTOWN/src/toontowngui/TTDialog.py
+echo $TOONTOWN/src/pets/Pet.py
+echo $TOONTOWN/src/pets/PetDNA.py
+echo $TOONTOWN/src/racing/RaceGlobals.py
+echo $TOONTOWN/src/golf/GolfGlobals.py
+echo $TOONTOWN/src/distributed/DelayDelete.py
+echo $TOONTOWN/src/parties/PartyGlobals.py
+
+echo $TOONTOWN/src/safezone/snowdisk.ptf
+
+# DMODELS stuff
+echo $DMODELS/built/audio
+echo $DMODELS/built/icons
+echo $DMODELS/built/maps
+echo $DMODELS/built/models
+
+# TTMODELS stuff
+echo $TTMODELS/built/phase_3
+echo $TTMODELS/built/phase_3.5
+echo $TTMODELS/built/phase_4
+echo $TTMODELS/built/phase_5
+echo $TTMODELS/built/phase_5.5
+echo $TTMODELS/built/phase_6
+echo $TTMODELS/built/phase_7
+echo $TTMODELS/built/phase_8
+echo $TTMODELS/built/phase_9
+echo $TTMODELS/built/phase_13
+echo $TTMODELS/built/nondownload
+echo $TTMODELS/built/models
+echo $TTMODELS/src/dna/stylefiles

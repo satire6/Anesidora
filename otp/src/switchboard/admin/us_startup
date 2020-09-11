@@ -1,0 +1,160 @@
+#!/bin/bash
+
+
+if [ `whoami` != "sbpub" ]; then
+  echo; echo "This must be executed as 'sbpub'"; echo
+  exit
+fi
+
+ulimit -n
+ulimit -c
+
+SBHOME='/switchboard'
+SBPYHOME='/switchboard/sbfiles/otp/switchboard'
+PATH=${SBHOME}/bin:${SBHOME}/sbfiles:${PATH}
+
+export SHORTHOST=`hostname | sed 's/\..*//'`
+
+echo host:$SHORTHOST
+
+################################################
+###  default settings
+################################################
+
+#LOGPATH=$SBHOME/log
+export LOGPATH=$SBHOME/log
+
+NSHOST=localhost
+NSPORT=6053
+
+CLHOST=lv-vrsh-12.starwave.com
+CLPORT=6060
+
+XD_NODE_PORT=6052
+PIR_NODE_PORT=2052
+TT_NODE_PORT=1452
+
+XD_WEDGE_PORT=6054
+
+XDSERVER_HOST=doldxdapp10.starwave.com
+#XDSERVER_HOST=qnhspapp02.online.disney.com
+XDSERVER_PORT=9001
+
+DISL_MD_HOST=doldxdapp10.starwave.com
+DISL_MD_PORT=9001
+
+BW_DICT_PATH=$SBHOME/bwdict/
+
+deployment_TEST() {
+    XDSERVER_HOST=qnhspapp02.online.disney.com
+    DISL_MD_HOST=qnhspapp02.online.disney.com
+    CLHOST=vrops73.starwave.com
+}
+
+deployment_QA() {
+    XDSERVER_HOST=qnhspapp02.online.disney.com
+    DISL_MD_HOST=qnhspapp02.online.disney.com
+    CLHOST=vrops73.starwave.com
+}
+
+AUTORESTART=autorestart
+PYTHON=python2.4
+
+##
+# quit if servers already running
+##
+startup_gate() {
+	AR_COUNT=`ps ax | grep -w $AUTORESTART | sed -e '/grep/d' | wc -l`
+	if [ $AR_COUNT -gt 0 ]; then
+		echo "Switchboard servers ($AUTORESTART) ALREADY RUNNING!!"
+		exit
+	fi
+
+	if [[ `/usr/bin/whoami` != 'sbpub' ]]; then
+		echo you NEED to be sbpub user
+		exit
+	fi
+}
+
+
+# Name Server startup
+start_ns() {
+pushd . 2>&1 > /dev/null
+    $AUTORESTART -l "$LOGPATH/restart_nameserver.log" ns -p $NSPORT -b $NSPORT -d Pyro_NS_database -v
+    sleep 5
+popd
+}
+
+
+# Node startup
+start_nodes() {
+pushd . 2>&1 > /dev/null
+    cd $SBPYHOME
+    sleep 5
+    $AUTORESTART -l "$LOGPATH/restart_node_xd.log" $PYTHON startNode.py --name XD --nodeport $XD_NODE_PORT --nshost $NSHOST --nsport $NSPORT --dshost $DISL_MD_HOST --dsport $DISL_MD_PORT --clhost $CLHOST --clport $CLPORT
+    sleep 5
+    #$AUTORESTART -l "$LOGPATH/restart_node_pirates.log" $PYTHON startNode.py --name pirates --nodeport $PIR_NODE_PORT --nshost $NSHOST --nsport $NSPORT --dshost $DISL_MD_HOST --dsport $DISL_MD_PORT --clhost $CLHOST --clport $CLPORT
+    #sleep 5
+    $AUTORESTART -l "$LOGPATH/restart_node_toontown.log" $PYTHON startNode.py --name toontown --nodeport $TT_NODE_PORT --nshost $NSHOST --nsport $NSPORT --dshost $DISL_MD_HOST --dsport $DISL_MD_PORT --clhost $CLHOST --clport $CLPORT
+    sleep 5
+popd
+}
+
+# Wedge startup
+start_wedges() {
+pushd . 2>&1 > /dev/null
+    cd $SBPYHOME/xd
+    $AUTORESTART -l "$LOGPATH/restart_wedge_xd.log" $PYTHON startXDWedge.py --name XD --wedgeport $XD_WEDGE_PORT --nshost $NSHOST --nsport $NSPORT --xdhost $XDSERVER_HOST --xdport $XDSERVER_PORT --clhost $CLHOST --clport $CLPORT --bwdictpath=$BW_DICT_PATH
+popd
+}
+
+
+# Kick it off
+
+case "$SHORTHOST" in
+###  vrops72
+################################################
+vrops72)
+    deployment_QA
+    start_ns
+    start_nodes
+    start_wedges
+;;
+
+###  vrops75
+################################################
+vrops75)
+    deployment_QA
+    start_ns
+    start_nodes
+    start_wedges
+;;
+
+###	vrops76
+################################################
+vrops76)
+    deployment_QA
+    start_ns
+    start_nodes
+    # start_wedges     # disabled until we have an XD instance to link to
+;;
+
+###	lv-vrsh-10
+################################################
+lv-vrsh-10)
+    start_ns
+    start_nodes
+    start_wedges
+;;
+
+###	lv-vrsh-11
+################################################
+lv-vrsh-11)
+    start_ns
+    start_nodes
+    start_wedges
+;;
+
+esac
+################################################
+

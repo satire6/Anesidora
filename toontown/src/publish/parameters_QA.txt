@@ -1,0 +1,1 @@
+PATCHER_BASE_URL=http://download.qa.toontown.com/english/currentVersionWIN/qa/content/

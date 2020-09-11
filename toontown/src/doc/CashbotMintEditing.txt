@@ -1,0 +1,73 @@
+Cashbot Mint Editing
+====================
+
+Each floor of the Cashbot Mint comprises a linear string of rooms, chosen
+at random from a central pool. There are three mints, and each mint has 20
+floors.
+
+You may specify a particular mint and/or a particular floor thus:
+
+-before starting the game, config
+mint-id #
+mint-floor #
+
+-after starting the game, use
+~mintId #
+~mintFloor #
+
+Valid mintId values currently are 0, 1, or 2 (EASY,MEDIUM,HARD)
+
+::THE IN-GAME EDITOR
+====================
+
+Once inside the mint, you may start up the in-game editor at any time. Just
+stand in the room you wish to edit, and run '~edit'.
+
+For more details on the in-game editor, see $OTP/src/doc/InGameEditor.txt
+
+::ROOM SPECS
+============
+
+The level specs (output of the editor) for the mint rooms are Python files
+stored in $TOONTOWN/src/coghq. They are named using the following
+convention:
+
+CashbotMint<ROOMNAME>_<ROOMTYPE><INDEX>.py
+
+for instance,
+
+CashbotMintBoilerRoom_Action00.py
+CashbotMintBoilerRoom_Battle00.py
+
+ROOMNAME identifies the room model, ROOMTYPE describes what has been added
+to the room (if there are cogs, it's a Battle room, otherwise it's Action),
+and INDEX allows for multiple Action or Battle rooms that share the same
+ROOMNAME.
+
+To add a new room to the room pool, you can either create a new spec from
+scratch (see 'SPECS' in InGameEditor.txt) or you can make a copy of an
+existing spec. Then add the spec name to one of the lists in
+$TOONTOWN/src/coghq/MintRoomSpecs.py (choose a list depending whether the
+room is an entrance, middle room, or final room)
+
+::COGS
+======
+
+We currently don't have an entity type for cogs or battle cells, which
+means that they cannot be placed and edited with the in-game editor. Ask
+Darren if you need details on how to add Cogs.
+
+Standard practice is to place NodePaths in the level with the editor, and
+place the Cogs under that node. That way, even though you cannot
+add/remove/edit the Cogs in the editor, you _can_ move them and rotate
+them.
+
+All of the above goes for battle cells as well.
+
+::MISCELLANEOUS
+===============
+
+Press F2 to see a display of the toon's position and heading relative to
+the room he is standing in, as well as the name of the room.
+
+#

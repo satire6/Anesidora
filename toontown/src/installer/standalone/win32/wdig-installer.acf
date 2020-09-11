@@ -1,0 +1,9 @@
+/*[implicit_handle(handle_t wdiginstaller_IfHandle)]*/
+[
+    strict_context_handle,
+    explicit_handle
+    //implicit_handle(handle_t wdiginstaller_IfHandle)
+]
+interface IWDIG_InstallerRPC
+{
+}

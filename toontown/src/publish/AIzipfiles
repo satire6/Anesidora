@@ -1,0 +1,46 @@
+#! /bin/sh
+#
+# Use this script to generate the file aifiles.zip, a zip file that
+# includes all the files you need to run the AI on a publish machine.
+# This is especially intended for a Windows server.  It contains
+# exactly the same files included in aifiles.tgz, just in a different
+# archive format.
+#
+
+if [ "$1" = "-d" ]
+then
+    #destdir=$2
+    destdir="aifiles"
+    zipfile="aifiles.zip"
+    debug_state="-d"
+else
+    #destdir=$1
+    destdir="aifiles"
+    zipfile="aifiles.zip"
+    debug_state=""
+fi
+
+if [ "${destdir}" = "" ]
+then
+    echo "Usage: AIzipfiles [-d]"
+    exit 1
+fi
+
+if [ -d ${destdir} ]
+then
+    echo "Removing ${destdir}"
+    rm -rf ${destdir}
+fi
+
+if mkdir ${destdir}
+then
+    if AIcopyfiles ${debug_state} ${destdir}
+    then
+	rm -f ${zipfile}
+	zip -r ${zipfile} ${destdir}
+	rm -rf ${destdir}
+	echo "Done creating ${zipfile}"
+    fi
+else
+    echo "ERROR: Could not mkdir ${destdir}"
+fi

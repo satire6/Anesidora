@@ -1,0 +1,44 @@
+How to Upgrade the Dev Servers for toon.dc (and other) changes
+--------------------------------------------------------------
+
+Hopefully, if you find you need to make changes to toon.dc, or to
+avatar DNA, etc. you will have tested it on your own personal copies
+of the servers, and not messed with the "dev" servers, which are meant
+to be kept in sync with what has been committed to CVS.
+
+Having done this, when you are ready to commit your code, you should do
+the following, so as not to trip up people who use the dev servers.
+
+1) Test the code you have changed with your private servers.
+
+2) If the list of dna files has changed, update the list in
+   toontown.par
+
+3) Check the client code into CVS
+
+4) a) ftp to 206.18.93.17 (the "dev" server box)
+   b) login as user: toon, password: town
+   c) copy your toon.dc file to /usr/home/toon/
+
+5) a) Shout to everyone that the "dev" server is going down
+   b) telnet to 206.18.93.17
+   c) edit clientagent.par to increment the CLIENT_VERSION_CHECK
+   d) Do the following to kill the servers:
+      killall toon_aiserver
+      killall toon_dbserver
+      killall toon_stateserver
+      killall toon_messagedire
+      killall toon_clientagent
+   e) If you feel you need to wipe out the database (Toon DNA has changed,
+      or a new Toon field has been added), then do:
+      rm toontown.dat
+   f) restart the killed processes (no need for "&"... they auto-background)
+      ./toon_aiserver
+      ./toon_dbserver
+      ./toon_stateserver
+      ./toon_messagedirector
+      ./toon_clientagent
+
+6) Test your checked in code against the "dev" server.
+
+7) Shout to everyone that the dev server is back up.

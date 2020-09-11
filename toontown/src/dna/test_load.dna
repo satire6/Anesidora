@@ -1,0 +1,282 @@
+
+
+model "scenes/art/modules/1x1walls.egg" [
+	store_node [ "wall_collide" "wall_collide" 2100 ]
+
+	store_node [ "wall" "wall_lg_brick_ur" 2101 ]
+	store_node [ "wall" "wall_lg_brick_ul" 2102 ]
+	store_node [ "wall" "wall_lg_brick_dr" 2103 ]
+	store_node [ "wall" "wall_lg_brick_dl" 2104 ]
+
+	store_node [ "wall" "wall_lg_rock_ur" 2105 ]
+	store_node [ "wall" "wall_lg_rock_ul" 2106 ]
+	store_node [ "wall" "wall_lg_rock_dr" 2107 ]
+	store_node [ "wall" "wall_lg_rock_dl" 2108 ]
+
+	store_node [ "wall" "wall_md_blue_ur" 2109 ]
+	store_node [ "wall" "wall_md_blue_ul" 2110 ]
+	store_node [ "wall" "wall_md_blue_dr" 2111 ]
+	store_node [ "wall" "wall_md_blue_dl" 2112 ]
+
+	store_node [ "wall" "wall_md_board_ur" 2113 ]
+	store_node [ "wall" "wall_md_board_ul" 2114 ]
+	store_node [ "wall" "wall_md_board_dr" 2115 ]
+	store_node [ "wall" "wall_md_board_dl" 2116 ]
+
+	store_node [ "wall" "wall_md_bricks_ur" 2117 ]
+	store_node [ "wall" "wall_md_bricks_ul" 2118 ]
+	store_node [ "wall" "wall_md_bricks_dr" 2119 ]
+	store_node [ "wall" "wall_md_bricks_dl" 2120 ]
+
+	store_node [ "wall" "wall_md_dental_ur" 2121 ]
+	store_node [ "wall" "wall_md_dental_ul" 2122 ]
+	store_node [ "wall" "wall_md_dental_dr" 2123 ]
+	store_node [ "wall" "wall_md_dental_dl" 2124 ]
+
+	store_node [ "wall" "wall_md_pillars_ur" 2125 ]
+	store_node [ "wall" "wall_md_pillars_ul" 2126 ]
+	store_node [ "wall" "wall_md_pillars_dr" 2127 ]
+	store_node [ "wall" "wall_md_pillars_dl" 2128 ]
+
+	store_node [ "wall" "wall_md_red_ur" 2129 ]
+	store_node [ "wall" "wall_md_red_ul" 2130 ]
+	store_node [ "wall" "wall_md_red_dr" 2131 ]
+	store_node [ "wall" "wall_md_red_dl" 2132 ]
+
+	store_node [ "wall" "wall_md_yellow_ur" 2133 ]
+	store_node [ "wall" "wall_md_yellow_ul" 2134 ]
+	store_node [ "wall" "wall_md_yellow_dr" 2135 ]
+	store_node [ "wall" "wall_md_yellow_dl" 2136 ]
+
+	store_node [ "wall" "wall_sm_brick_ur" 2137 ]
+	store_node [ "wall" "wall_sm_brick_ul" 2138 ]
+	store_node [ "wall" "wall_sm_brick_dr" 2139 ]
+	store_node [ "wall" "wall_sm_brick_dl" 2140 ]
+
+	store_node [ "wall" "wall_sm_cement_ur" 2141 ]
+	store_node [ "wall" "wall_sm_cement_ul" 2142 ]
+	store_node [ "wall" "wall_sm_cement_dr" 2143 ]
+	store_node [ "wall" "wall_sm_cement_dl" 2144 ]
+
+	store_node [ "wall" "wall_sm_wood_ur" 2145 ]
+	store_node [ "wall" "wall_sm_wood_ul" 2146 ]
+	store_node [ "wall" "wall_sm_wood_dr" 2147 ]
+	store_node [ "wall" "wall_sm_wood_dl" 2148 ]
+
+	store_node [ "wall" "wall_bricks_red_ur" 2149 ]
+	store_node [ "wall" "wall_bricks_red_ul" 2150 ]
+	store_node [ "wall" "wall_bricks_red_dr" 2151 ]
+	store_node [ "wall" "wall_bricks_red_dl" 2152 ]
+
+	store_node [ "wall" "wall_bricks_ur" 2153 ]
+	store_node [ "wall" "wall_bricks_ul" 2154 ]
+	store_node [ "wall" "wall_bricks_dr" 2155 ]
+	store_node [ "wall" "wall_bricks_dl" 2156 ]
+
+	store_node [ "wall" "wall_fence_wood_ur" 2157 ]
+	store_node [ "wall" "wall_fence_wood_ul" 2158 ]
+	store_node [ "wall" "wall_fence_wood_dr" 2159 ]
+	store_node [ "wall" "wall_fence_wood_dl" 2160 ]
+
+	]
+
+model "scenes/art/modules/doors.egg" [
+	store_node [ "door" "door_double_pillars_ur"  3101 ]
+	store_node [ "door" "door_double_pillars_ul"  3102 ]
+
+	store_node [ "door" "door_double_curved_ur"  3103 ]
+	store_node [ "door" "door_double_curved_ul"  3104 ]
+
+	store_node [ "door" "door_double_square_ur"  3105 ]
+	store_node [ "door" "door_double_square_ul"  3106 ]
+
+	store_node [ "door" "door_garage_ur"  3107 ]
+	store_node [ "door" "door_garage_ul"  3108 ]
+
+	store_node [ "door" "door_single_round_ur"  3109 ]
+	store_node [ "door" "door_single_round_ul"  3110 ]
+
+	store_node [ "door" "door_single_shuttered_ur"  3111 ]
+	store_node [ "door" "door_single_shuttered_ul"  3112 ]
+
+	store_node [ "door" "door_single_square_ur"  3113 ]
+	store_node [ "door" "door_single_square_ul"  3114 ]
+
+	store_node [ "door" "door_wood_ur"  3115 ]
+	store_node [ "door" "door_wood_ul"  3116 ]
+	]
+	
+
+
+model "scenes/art/modules/landmark_modules.egg" [
+	store_node [ "toon_landmark" "toon_landmark_building_01" "building1_landmark1c"  4101 ]
+	store_node [ "toon_landmark" "toon_landmark_building_02" "building1_landmark2c"  4102 ]
+	store_node [ "toon_landmark" "toon_landmark_building_03" "building1_landmark3c"  4103 ]
+	store_node [ "toon_landmark" "toon_landmark_building_04" "building1_landmark4c"  4104 ]
+	store_node [ "toon_landmark" "toon_landmark_building_05" "building1_landmark5c"  4105 ]
+	store_node [ "toon_landmark" "toon_landmark_building_20" "building2_landmark20c" 4120 ]
+	store_node [ "toon_landmark" "toon_landmark_building_21" "building2_landmark21c" 4121 ]
+	store_node [ "toon_landmark" "toon_landmark_building_22" "building2_landmark22c" 4122 ]
+	store_node [ "toon_landmark" "toon_landmark_building_30" "building3_landmark30c" 4130 ]
+	store_node [ "toon_landmark" "toon_landmark_building_31" "building3_landmark31c" 4131 ]
+	]
+
+
+model "scenes/art/modules/street_modules.egg" [
+	store_node [ "street" "street_5x20"  5101 ]
+	store_node [ "street" "street_10x20" 5102 ]
+	store_node [ "street" "street_20x20" 5103 ]
+	store_node [ "street" "street_30x20" 5104 ]
+	store_node [ "street" "street_40x20" 5105 ]
+	store_node [ "street" "street_80x20" 5106 ]
+
+	store_node [ "street" "street_5x40"  5111 ]
+	store_node [ "street" "street_10x40" 5112 ]
+	store_node [ "street" "street_20x40" 5113 ]
+	store_node [ "street" "street_30x40" 5114 ]
+	store_node [ "street" "street_40x40" 5115 ]
+	store_node [ "street" "street_80x40" 5116 ]
+
+	store_node [ "street" "street_angle_30" 5121 ]
+	store_node [ "street" "street_angle_45" 5122 ]
+	store_node [ "street" "street_angle_60" 5123 ]
+
+	store_node [ "street" "street_inner_corner" 5131 ]
+	store_node [ "street" "street_outer_corner" 5132 ]
+	store_node [ "street" "street_full_corner"  5133 ]
+
+	store_node [ "street" "street_t_intersection" 5141 ]
+	store_node [ "street" "street_y_intersection" 5142 ]
+
+	store_node [ "street" "street_street_20x20"   5151 ]
+	store_node [ "street" "street_street_40x40"   5152 ]
+	store_node [ "street" "street_sidewalk_20x20" 5153 ]
+	store_node [ "street" "street_sidewalk_40x40" 5154 ]
+	]
+
+model "scenes/art/modules/windows.egg" [
+	store_node [ "window" "window_md_curtains_ur" 6101 ]
+	store_node [ "window" "window_md_curtains_ul" 6102 ]
+
+	store_node [ "window" "window_md_curved_ur" 6103 ]
+	store_node [ "window" "window_md_curved_ul" 6104 ]
+
+	store_node [ "window" "window_porthole_ur" 6105 ]
+	store_node [ "window" "window_porthole_ul" 6106 ]
+
+	store_node [ "window" "window_sm_square_ur" 6107 ]
+	store_node [ "window" "window_sm_square_ul" 6108 ]
+
+	store_node [ "window" "window_sm_shuttered_ur" 6109 ]
+	store_node [ "window" "window_sm_shuttered_ul" 6110 ]
+
+	store_node [ "window" "window_sm_pointed_ur" 6111 ]
+	store_node [ "window" "window_sm_pointed_ul" 6112 ]
+
+	store_node [ "window" "window_sm_curved_ur" 6113 ]
+	store_node [ "window" "window_sm_curved_ul" 6114 ]
+
+	store_node [ "window" "window_sm_round_ur" 6115 ]
+	store_node [ "window" "window_sm_round_ul" 6116 ]
+	]
+
+model "scenes/art/modules/cornices.egg" [
+	store_node [ "cornice" "cornice_stone_ur" 7101 ]
+	store_node [ "cornice" "cornice_stone_ul" 7102 ]
+
+	store_node [ "cornice" "cornice_brick_ur" 7103 ]
+	store_node [ "cornice" "cornice_brick_ul" 7104 ]
+
+	store_node [ "cornice" "cornice_dental_ur" 7105 ]
+	store_node [ "cornice" "cornice_dental_ul" 7106 ]
+
+	store_node [ "cornice" "cornice_shingles_ur" 7107 ]
+	store_node [ "cornice" "cornice_shingles_ul" 7108 ]
+
+	store_node [ "cornice" "cornice_marble_ur" 7109 ]
+	store_node [ "cornice" "cornice_marble_ul" 7110 ]
+
+	store_node [ "cornice" "cornice_horizontal_ur" 7111 ]
+	store_node [ "cornice" "cornice_horizontal_ul" 7112 ]
+	]
+
+model "scenes/art/modules/trees.egg" [
+	store_node [ "prop" "prop_tree_large" 8100 ]
+	store_node [ "prop" "prop_tree_small" 8101 ]
+	]
+
+model "scenes/art/modules/bush1.egg" [
+	store_node [ "prop" "prop_bush_1" "bush1" 8102 ]
+	]
+model "scenes/art/modules/bush2.egg" [
+	store_node [ "prop" "prop_bush_2" "bush2" 8103 ]
+	]
+
+model "scenes/art/modules/streetlight.egg" [
+	store_node [ "prop" "prop_post_sign" 8110 ]
+	store_node [ "prop" "prop_post_one_light" 8111 ]
+	store_node [ "prop" "prop_post_three_light" 8112 ]
+	]
+
+model "scenes/art/modules/awnings.egg" [
+	store_node [ "prop" "prop_keyboard_small" 8120 ]
+	store_node [ "prop" "prop_keyboard_large" 8121 ]
+	store_node [ "prop" "prop_awning_small" 8122 ]
+	store_node [ "prop" "prop_awning_large" 8123 ]
+	]
+
+model "scenes/art/modules/crate.egg" [
+	store_node [ "prop" "prop_crate" "crate" 8130 ]
+	]
+
+model "scenes/art/modules/dockpilings.egg" [
+	store_node [ "prop" "prop_2ftdockpiling" 8140 ]
+	store_node [ "prop" "prop_3ftdockpiling" 8141 ]
+	store_node [ "prop" "prop_4ftdockpiling" 8142 ]
+	]
+
+model "scenes/art/modules/hydrant.egg" [
+	store_node [ "prop" "prop_hydrant" 8150 ]
+	]
+
+model "scenes/art/modules/mailbox.egg" [
+	store_node [ "prop" "prop_mailbox" 8160 ]
+	]
+
+model "scenes/art/modules/stairs.egg" [
+	store_node [ "prop" "prop_stairs" 8170 ]
+	]
+
+model "scenes/art/modules/trashcan.egg" [
+	store_node [ "prop" "prop_trashcan_wood" 8180 ]
+	store_node [ "prop" "prop_trashcan_metal" 8181 ]
+	]
+
+model "scenes/art/assembly/donaldsdock.egg" [
+	store_node [ "prop" "prop_donalds_dock" "donaldsdock" 8190 ]
+	]
+
+model "scenes/tunnel/tunnel3.egg" [
+	store_node [ "prop" "prop_tunnel" "Default" 8200 ]
+	]
+
+model "scenes/trolleystation/trolleystationF.egg" [
+	store_node [ "prop" "prop_trolley_station" "g1" 8210 ]
+	]
+
+model "scenes/art/modules/clocktower.egg" [
+	store_node [ "prop" "prop_clocktower" 8220 ]
+	]
+
+model "scenes/art/modules/toonhall.egg" [
+	store_node [ "prop" "prop_toonhall" "cityhall" 8230 ]
+	]
+
+
+store_texture [ "texture" "street_street_tex"		"maps/toonrockroad.rgb"		5201 ]
+store_texture [ "texture" "street_sidewalk_tex"		"maps/sidewalk.rgb"		5202 ]
+store_texture [ "texture" "street_street_dock_tex"	"maps/boardwalk2.rgb"  		5203 ]
+store_texture [ "texture" "street_sidewalk_dock_tex"	"maps/boardwalklite.rgb"	5204 ]
+store_texture [ "texture" "street_street_grass_tex"	"maps/grass.rgb"		5205 ]
+store_texture [ "texture" "street_sidewalk_sand_tex"	"maps/sand_street.rgb"		5206 ]
+

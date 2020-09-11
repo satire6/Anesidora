@@ -1,0 +1,1889 @@
+// Filename: parser.y
+// Created by:  drose (16Jan99)
+//
+////////////////////////////////////////////////////////////////////
+
+%{
+
+#include "toontownbase.h"
+#include "parserDefs.h"
+#include "lexerDefs.h"
+#include "dnaLoader.h"
+#include "dnaGroup.h"
+#include "dnaVisGroup.h"
+#include "dnaData.h"
+#include "dnaNode.h"
+#include "dnaProp.h"
+#include "dnaAnimProp.h"
+#include "dnaInteractiveProp.h"
+#include "dnaAnimBuilding.h"
+#include "dnaBuildings.h"
+#include "dnaCornice.h"
+#include "dnaStreet.h"
+#include "dnaWindow.h"
+#include "dnaDoor.h"
+#include "dnaSign.h"
+#include "dnaSignBaseline.h"
+#include "dnaSignGraphic.h"
+#include "dnaSignText.h"
+#include "dnaSuitPoint.h"
+#include "dnaSuitEdge.h"
+#include "dnaBattleCell.h"
+
+#include "pandaNode.h"
+#include "texture.h"
+#include "fontPool.h"
+#include "texturePool.h"
+#include "loader.h"
+#include "compose_matrix.h"
+#include "config_linmath.h"
+#include "dcast.h"
+
+#include "string_utils.h"
+#include "pvector.h"
+
+////////////////////////////////////////////////////////////////////
+// Defining the interface to the parser.
+////////////////////////////////////////////////////////////////////
+
+
+
+// We need a stack of DnaGroup pointers.  Each time we encounter a
+// nested DnaGroup of some kind, we'll allocate a new one of these
+// and push it onto the stack.  At any given time, the top of the
+// stack is the DnaGroup we are currently scanning.
+
+typedef pvector<PT(DNAGroup)> DNAStack;
+static DNAStack dna_stack;
+
+// There's one "top-level" dna node
+static DNAData* dna_top_node;
+
+// Keep track of the current vis group/zone name:
+static string g_current_zone_name;
+
+static NodePath current_model;
+static int current_model_hood;
+static int current_model_place;
+
+// Create a loader so we can load models
+static Loader loader;
+
+void
+dna_init_parser(istream &in,
+                ostream &err,
+                const string &filename,
+                DNAData* top_node) {
+  dna_init_lexer(in, err, filename);
+
+  dna_stack.clear();
+  dna_stack.push_back(top_node);
+  dna_top_node = top_node;
+}
+
+void
+dna_cleanup_parser() {
+  // Clean these out after we're done, so we don't keep big memory
+  // structures around needlessly.
+  dna_stack.clear();
+  current_model = NodePath();
+  dna_top_node = NULL;
+}
+
+
+#define yyvsp dnayyvsp
+
+%}
+
+%token <_number> NUMBER
+%token <_string> STRING
+// %token <_bool> BOOL
+
+%token <_suit_point_type> FRONT_DOOR_POINT_
+%token <_suit_point_type> SIDE_DOOR_POINT_
+%token <_suit_point_type> STREET_POINT_
+%token <_suit_point_type> COGHQ_IN_POINT_
+%token <_suit_point_type> COGHQ_OUT_POINT_
+
+%token ANIM ANIM_BUILDING ANIM_PROP ARTICLE BATTLE_CELL CELL_ID CODE COLOR COUNT CORNICE DOOR FLAT_BUILDING FLAT_DOOR DNAGROUP INTERACTIVE_PROP
+%token HEIGHT HOOD_MODEL BUILDING_TYPE PLACE_MODEL HPR NHPR LANDMARK_BUILDING MODEL NODE POS PROP SCALE
+%token SIGN BASELINE INDENT KERN WIGGLE STUMBLE FLAGS STOMP
+%token TEXT_ LETTERS GRAPHIC
+%token STORE_FONT STORE_NODE STORE_TEXTURE STREET
+%token SUIT_EDGE STORE_SUIT_POINT
+%token TEXTURE TITLE VIS VISGROUP WALL
+%token WIDTH WINDOWS
+
+%type <_dna_group> internal_node
+%type <_dna_group> wall_node
+%type <_dna_group> group
+%type <_dna_group> visgroup
+%type <_dna_group> node
+%type <_dna_group> flat_building
+%type <_dna_group> landmark_building
+%type <_dna_group> anim_building
+%type <_dna_group> street
+%type <_dna_group> prop
+%type <_dna_group> anim_prop
+%type <_dna_group> interactive_prop
+%type <_dna_group> door
+%type <_dna_group> flat_door
+%type <_dna_group> sign
+%type <_dna_group> baseline
+%type <_dna_group> cornice
+%type <_dna_group> wall
+%type <_dna_group> windows
+
+%type <_string> required_name
+%type <_string> required_string
+%type <_string> string
+// %type <_bool> bool
+
+%type <_string> code
+%type <_string> anim
+%type <_number> cell_id
+%type <_number> count
+%type <_string> article
+%type <_string> title
+%type <_string> texture
+%type <_string> letters
+%type <_v3> pos
+%type <_v3> hpr
+%type <_v3> scale
+%type <_color> color
+%type <_number> width
+%type <_number> height
+%type <_number> real
+%type <_number> integer
+%type <_string> building_type
+%type <_string_vector> vis
+%type <_suit_point_type> suit_point_type
+
+%%
+
+top:
+        load_list internal_node_list
+        ;
+
+load_list:
+        empty
+        | load_list load
+        ;
+
+load:
+        model
+        | hood_model
+        | place_model
+        | store_texture
+        | store_font
+        | store_suit_point
+        ;
+
+internal_node_list:
+        empty
+        | internal_node_list internal_node
+{
+  dna_stack.back()->add($2);
+}
+        ;
+
+internal_node:
+        group
+        | visgroup
+        | node
+        | flat_building
+        | landmark_building
+        | anim_building
+        | street
+        | anim_prop
+        | interactive_prop
+        | prop
+        | cornice
+        | door
+        | flat_door
+        | wall
+        | windows
+        ;
+
+
+group:
+        DNAGROUP required_name '['
+{
+  dna_stack.push_back(new DNAGroup($2));
+}
+        group_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+group_body:
+        internal_node_list
+{
+}
+        ;
+
+
+
+visgroup:
+        VISGROUP required_name '['
+{
+  DNAVisGroup *vis_group = new DNAVisGroup($2);
+
+  // Get the name of the current vis group and make it globaly available:
+  g_current_zone_name = vis_group->get_name();
+
+  dna_cat.debug() << "current_zone " << g_current_zone_name <<"\n";
+
+  dna_stack.push_back(vis_group);
+  // This dna vis group needs to be stored now before we traverse
+  // because the AI does not ever traverse but needs the vis groups
+  dna_top_node->get_dna_storage()->store_DNAVisGroupAI(vis_group);
+}
+        visgroup_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+visgroup_body:
+        vis suit_edge_list battle_cell_list internal_node_list
+{
+}
+        ;
+
+
+vis:
+        VIS '[' vis_list ']'
+{
+}
+        ;
+
+// The vis list must always at least contain the name of the current group
+vis_list:
+        string
+{
+  DNAVisGroup *visgroup = DCAST(DNAVisGroup, dna_stack.back());
+  visgroup->add_visible($1);
+}
+        | vis_list string
+{
+  DNAVisGroup *visgroup = DCAST(DNAVisGroup, dna_stack.back());
+  visgroup->add_visible($2);
+}
+        ;
+
+suit_edge_list:
+        empty
+        | suit_edge_list suit_edge
+{
+}
+        ;
+
+// Store a suit edge in this zone from start point index to end point index
+suit_edge:
+        // start_point_index end_point_index
+        SUIT_EDGE '[' integer integer ']'
+{
+  // The top node on the stack should be the dnaVisGroup
+  DNAVisGroup *vis_group = DCAST(DNAVisGroup, dna_stack.back());
+
+  // Get the name of the current vis group so we can store that in the edge
+  string current_zone = vis_group->get_name();
+
+  // Store the edge in the dna storage
+  PT(DNASuitEdge) edge = dna_top_node->get_dna_storage()->store_suit_edge((int)$3, (int)$4, current_zone);
+
+  // Record this edge with the current vis group in case he needs to write it back out
+  vis_group->add_suit_edge(edge);
+}
+        ;
+
+
+
+
+battle_cell_list:
+        empty
+        | battle_cell_list battle_cell
+{
+}
+        ;
+
+battle_cell:
+        // parameters are: width height x y z
+        BATTLE_CELL '[' real real real real real ']'
+{
+  // Make a new battle cell
+  PT(DNABattleCell) cell = new DNABattleCell($3, $4, LPoint3f($5, $6, $7));
+
+  // Store the battle cell in the dna storage
+  dna_top_node->get_dna_storage()->store_battle_cell(cell);
+
+  // Record this battle cell with the current vis group in case he needs to write it back out
+  // The top node on the stack should be the dnaVisGroup
+  DNAVisGroup *vis_group = DCAST(DNAVisGroup, dna_stack.back());
+  vis_group->add_battle_cell(cell);
+}
+        ;
+
+
+
+node:
+        NODE required_name '['
+{
+  dna_stack.push_back(new DNANode($2));
+}
+        node_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+node_body:
+        pos hpr scale internal_node_list
+{
+  DNANode *node = DCAST(DNANode, dna_stack.back());
+  node->set_pos($1);
+  node->set_hpr($2);
+  node->set_scale($3);
+}
+        | internal_node_list
+{
+}
+        ;
+
+
+flat_building:
+        FLAT_BUILDING required_name '['
+{
+  dna_stack.push_back(new DNAFlatBuilding($2));
+}
+        flat_building_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+flat_building_body:
+        pos hpr width wall_list prop_list
+{
+  DNAFlatBuilding *building = DCAST(DNAFlatBuilding, dna_stack.back());
+  building->set_pos($1);
+  building->set_hpr($2);
+  building->set_width($3);
+}
+        ;
+
+wall_list:
+        empty
+        | wall_list wall
+        ;
+
+wall:
+        WALL '['
+{
+  DNAWall *wall = new DNAWall();
+  dna_stack.back()->add(wall);
+  dna_stack.push_back(wall);
+}
+        wall_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+wall_node_list:
+         empty
+         | wall_node_list wall_node
+         ;
+
+wall_node:
+         windows
+         | cornice
+         | flat_door
+         ;
+
+wall_body:
+         height code color wall_node_list prop_list
+{
+  DNAWall *wall = DCAST(DNAWall, dna_stack.back());
+  wall->set_height($1);
+  wall->set_code($2);
+  wall->set_color($3);
+}
+         ;
+
+width:
+        WIDTH '[' real ']'
+{
+  $$ = $3;
+}
+        ;
+
+height:
+        HEIGHT '[' real ']'
+{
+  $$ = $3;
+}
+        ;
+
+
+landmark_building:
+        LANDMARK_BUILDING required_name '['
+{
+  // Store info on which blocks are in each zone:
+  dna_top_node->get_dna_storage()->store_block_number($2, g_current_zone_name);
+  dna_stack.push_back(new DNALandmarkBuilding($2));
+}
+        landmark_building_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+
+landmark_building_body:
+        code article title pos hpr color door prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_pos($4);
+  building->set_hpr($5);
+  building->set_wall_color($6);
+}
+        | code article title pos hpr color door prop_list sign prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_pos($4);
+  building->set_hpr($5);
+  building->set_wall_color($6);
+}
+        | code article title pos hpr door prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_pos($4);
+  building->set_hpr($5);
+}
+        | code building_type article title pos hpr door prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this building type at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+        | code article title pos hpr door prop_list sign prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_pos($4);
+  building->set_hpr($5);
+}
+        | code building_type article title pos hpr door prop_list sign prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+
+        | code building_type article title pos hpr color prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+  building->set_wall_color($7);
+}
+        | code building_type article title pos hpr color prop_list sign prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+  building->set_wall_color($7);
+}
+        | code building_type article title pos hpr prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+        | code building_type article title pos hpr prop_list sign prop_list
+{
+  DNALandmarkBuilding *building = DCAST(DNALandmarkBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+        ;
+
+anim_building:
+        ANIM_BUILDING required_name '['
+{
+  // Store info on which blocks are in each zone:
+  dna_top_node->get_dna_storage()->store_block_number($2, g_current_zone_name);
+  dna_stack.push_back(new DNAAnimBuilding($2));
+}
+        anim_building_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+
+anim_building_body:
+        code article title anim pos hpr color door prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_anim($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+  building->set_wall_color($7);
+}
+        | code article title anim pos hpr color door prop_list sign prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_anim($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+  building->set_wall_color($7);
+}
+        | code article title anim pos hpr door prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_anim($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+        | code building_type article title anim pos hpr door prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this building type at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+}
+        | code article title anim pos hpr door prop_list sign prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  building->set_article($2);
+  building->set_title($3);
+  building->set_anim($4);
+  building->set_pos($5);
+  building->set_hpr($6);
+}
+        | code building_type article title anim pos hpr door prop_list sign prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+}
+
+        | code building_type article title anim pos hpr color prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+  building->set_wall_color($8);
+}
+        | code building_type article title anim pos hpr color prop_list sign prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+  building->set_wall_color($8);
+}
+        | code building_type article title anim pos hpr prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+}
+        | code building_type article title anim pos hpr prop_list sign prop_list
+{
+  DNAAnimBuilding *building = DCAST(DNAAnimBuilding, dna_stack.back());
+  building->set_code($1);
+  if (!($2).empty()) {
+    building->set_building_type($2);
+    // Record this headquarter at this block in the storage
+    dna_top_node->get_dna_storage()->store_block_building_type(building->get_name(), $2);
+  }
+  building->set_article($3);
+  building->set_title($4);
+  building->set_anim($5);
+  building->set_pos($6);
+  building->set_hpr($7);
+}
+        ;
+
+windows:
+        WINDOWS '['
+{
+  DNAWindows *windows = new DNAWindows();
+  dna_stack.back()->add(windows);
+  dna_stack.push_back(windows);
+}
+        windows_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+windows_body:
+        code color count
+{
+  DNAWindows *windows = DCAST(DNAWindows, dna_stack.back());
+  windows->set_code($1);
+  windows->set_color($2);
+  windows->set_window_count((int)$3);
+}
+        ;
+
+door:
+        DOOR '['
+{
+  DNADoor *door = new DNADoor();
+  dna_stack.back()->add(door);
+  dna_stack.push_back(door);
+}
+        door_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+door_body:
+        code color
+{
+  DNADoor *door = DCAST(DNADoor, dna_stack.back());
+  door->set_code($1);
+  door->set_color($2);
+}
+        ;
+
+
+
+flat_door:
+        FLAT_DOOR '['
+{
+  DNAFlatDoor *door = new DNAFlatDoor();
+  dna_stack.back()->add(door);
+  dna_stack.push_back(door);
+}
+        flat_door_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+flat_door_body:
+        code color
+{
+  DNAFlatDoor *door = DCAST(DNAFlatDoor, dna_stack.back());
+  door->set_code($1);
+  door->set_color($2);
+}
+        ;
+
+
+
+sign:
+        SIGN '['
+{
+  DNASign *sign = new DNASign();
+  dna_stack.back()->add(sign);
+  dna_stack.push_back(sign);
+}
+        sign_list baseline_list ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+sign_list:
+        empty
+        | sign_list sign_node
+        ;
+
+sign_node:
+    code
+{
+  DNASign *sign = DCAST(DNASign, dna_stack.back());
+  sign->set_code($1);
+}
+    | color
+{
+  DNASign *sign = DCAST(DNASign, dna_stack.back());
+  sign->set_color($1);
+}
+    | pos
+{
+  DNASign *sign = DCAST(DNASign, dna_stack.back());
+  sign->set_pos($1);
+}
+    | hpr
+{
+  DNASign *sign = DCAST(DNASign, dna_stack.back());
+  sign->set_hpr($1);
+}
+    | scale
+{
+  DNASign *sign = DCAST(DNASign, dna_stack.back());
+  sign->set_scale($1);
+}
+    ;
+
+baseline_list:
+        empty
+        | baseline_list baseline
+        ;
+
+baseline:
+        BASELINE '['
+{
+  DNASignBaseline *baseline = new DNASignBaseline();
+  dna_stack.back()->add(baseline);
+  dna_stack.push_back(baseline);
+}
+        baseline_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+baseline_body:
+         baseline_body_node_list text_list
+     ;
+
+baseline_body_node_list:
+        empty
+        | baseline_body_node_list baseline_body_node
+        ;
+
+baseline_body_node:
+    code
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_code($1);
+}
+    | color
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_color($1);
+}
+    | pos
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_pos($1);
+}
+    | hpr
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_hpr($1);
+}
+    | scale
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_scale($1);
+}
+    | baseline_indent
+    | baseline_kern
+    | baseline_wiggle
+    | baseline_stumble
+    | baseline_stomp
+    | width
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_width($1);
+}
+    | height
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_height($1);
+}
+    | FLAGS '[' required_string ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_flags($3);
+}
+    ;
+
+text_list:
+        sign_text
+        | sign_graphic
+        | text_list sign_text
+        | text_list sign_graphic
+        ;
+
+sign_graphic:
+        GRAPHIC '['
+{
+  DNASignGraphic *graphic = new DNASignGraphic();
+  dna_stack.back()->add(graphic);
+  dna_stack.push_back(graphic);
+}
+        graphic_node_list ']'
+{
+  dna_stack.pop_back();
+}
+        ;
+
+graphic_node_list:
+        sign_graphic_node
+        | graphic_node_list sign_graphic_node
+        ;
+
+sign_graphic_node:
+    scale
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_scale($1);
+}
+    | pos
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_pos($1);
+}
+    | hpr
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_hpr($1);
+}
+    | code
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_code($1);
+}
+    | color
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_color($1);
+}
+    | width
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_width($1);
+}
+    | height
+{
+  DNASignGraphic *graphic = DCAST(DNASignGraphic, dna_stack.back());
+  graphic->set_height($1);
+}
+    ;
+
+sign_text:
+        TEXT_ '['
+{
+  DNASignText *text = new DNASignText();
+  dna_stack.back()->add(text);
+  dna_stack.push_back(text);
+}
+        text_node_list ']'
+{
+  dna_stack.pop_back();
+}
+        ;
+
+text_node_list:
+        text_node
+        | text_node_list text_node
+        ;
+
+text_node:
+    scale
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_scale($1);
+}
+    | pos
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_pos($1);
+}
+    | hpr
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_hpr($1);
+}
+    | code
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_code($1);
+}
+    | color
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_color($1);
+}
+    | letters
+{
+  DNASignText *text = DCAST(DNASignText, dna_stack.back());
+  text->set_letters($1);
+}
+    ;
+
+letters:
+        LETTERS '[' required_string ']'
+{
+  $$ = $3;
+}
+    ;
+
+baseline_indent:
+        INDENT '[' real ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_indent($3);
+}
+    ;
+
+baseline_kern:
+        KERN '[' real ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_kern($3);
+}
+    ;
+
+baseline_wiggle:
+        WIGGLE '[' real ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_wiggle($3);
+}
+    ;
+
+baseline_stumble:
+        STUMBLE '[' real ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_stumble($3);
+}
+    ;
+
+baseline_stomp:
+        STOMP '[' real ']'
+{
+  DNASignBaseline *baseline = DCAST(DNASignBaseline, dna_stack.back());
+  baseline->set_stomp($3);
+}
+    ;
+
+cornice:
+        CORNICE '['
+{
+  DNACornice *cornice = new DNACornice();
+  dna_stack.back()->add(cornice);
+  dna_stack.push_back(cornice);
+}
+        cornice_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+cornice_body:
+        code color
+{
+  DNACornice *cornice = DCAST(DNACornice, dna_stack.back());
+  cornice->set_code($1);
+  cornice->set_color($2);
+}
+        ;
+
+street:
+        STREET required_name '['
+{
+  dna_stack.push_back(new DNAStreet($2));
+}
+        street_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+street_body:
+        code pos hpr texture texture prop_list
+{
+  DNAStreet *street = DCAST(DNAStreet, dna_stack.back());
+  street->set_code($1);
+  street->set_pos($2);
+  street->set_hpr($3);
+  street->set_street_texture($4);
+  street->set_sidewalk_texture($5);
+  // No curb texture specified, just use the sidewalk texture
+  street->set_curb_texture($5);
+}
+        | code pos hpr texture texture texture prop_list
+{
+  DNAStreet *street = DCAST(DNAStreet, dna_stack.back());
+  street->set_code($1);
+  street->set_pos($2);
+  street->set_hpr($3);
+  street->set_street_texture($4);
+  street->set_sidewalk_texture($5);
+  street->set_curb_texture($6);
+}
+        | code pos hpr color color texture texture prop_list
+{
+  DNAStreet *street = DCAST(DNAStreet, dna_stack.back());
+  street->set_code($1);
+  street->set_pos($2);
+  street->set_hpr($3);
+  street->set_street_color($4);
+  street->set_sidewalk_color($5);
+  // No curb color specified, just use sidewalk color
+  street->set_curb_color($5);
+  street->set_street_texture($6);
+  street->set_sidewalk_texture($7);
+  // No curb texture specified, just use sidewalk texture
+  street->set_curb_texture($7);
+}
+        | code pos hpr color color color texture texture texture prop_list
+{
+  DNAStreet *street = DCAST(DNAStreet, dna_stack.back());
+  street->set_code($1);
+  street->set_pos($2);
+  street->set_hpr($3);
+  street->set_street_color($4);
+  street->set_sidewalk_color($5);
+  street->set_curb_color($6);
+  street->set_street_texture($7);
+  street->set_sidewalk_texture($8);
+  street->set_curb_texture($9);
+}
+         ;
+
+prop_list:
+        empty
+        | prop_list prop
+{
+  // Parent this prop to whatever the top of the stack is
+  dna_stack.back()->add($2);
+}
+        | prop_list anim_prop
+{
+  // Parent this prop to whatever the top of the stack is
+  dna_stack.back()->add($2);
+}
+        ;
+
+prop:
+        PROP required_name '['
+{
+  dna_stack.push_back(new DNAProp($2));
+}
+        prop_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+prop_body:
+        code pos hpr
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+}
+        | code pos hpr scale
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_scale($4);
+}
+        | code pos hpr color
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_color($4);
+}
+        | code pos hpr scale color
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_scale($4);
+  prop->set_color($5);
+}
+        | code pos hpr sign
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+}
+        | code pos hpr scale sign
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_scale($4);
+}
+        | code pos hpr color sign
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_color($4);
+}
+        | code pos hpr scale color sign
+{
+  DNAProp *prop = DCAST(DNAProp, dna_stack.back());
+  prop->set_code($1);
+  prop->set_pos($2);
+  prop->set_hpr($3);
+  prop->set_scale($4);
+  prop->set_color($5);
+}
+        ;
+
+anim_prop:
+        ANIM_PROP required_name '['
+{
+  dna_stack.push_back(new DNAAnimProp($2));
+  dna_cat.debug() << "anim prop " << $2 <<"\n";
+}
+        anim_prop_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+anim_prop_body:
+        code anim pos hpr
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+}
+        | code anim pos hpr scale
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_scale($5);
+}
+        | code anim pos hpr color
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_color($5);
+}
+        | code anim pos hpr scale color
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_scale($5);
+  anim_prop->set_color($6);
+}
+        | code anim pos hpr sign
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+}
+        | code anim pos hpr scale sign
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_scale($5);
+}
+        | code anim pos hpr color sign
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_color($5);
+}
+        | code anim pos hpr scale color sign
+{
+  DNAAnimProp *anim_prop = DCAST(DNAAnimProp, dna_stack.back());
+  anim_prop->set_code($1);
+  anim_prop->set_anim($2);
+  anim_prop->set_pos($3);
+  anim_prop->set_hpr($4);
+  anim_prop->set_scale($5);
+  anim_prop->set_color($6);
+}
+        ;
+
+interactive_prop:
+        INTERACTIVE_PROP required_name '['
+{
+  dna_stack.push_back(new DNAInteractiveProp($2));
+  dna_cat.debug() << "interactive prop " << $2 <<"\n";
+}
+        interactive_prop_body ']'
+{
+  $$ = dna_stack.back();
+  dna_stack.pop_back();
+}
+        ;
+
+interactive_prop_body:
+        code anim cell_id pos hpr
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+}
+        | code anim cell_id pos hpr scale
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_scale($6);
+}
+        | code anim cell_id pos hpr color
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_color($6);
+}
+        | code anim cell_id pos hpr scale color
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_scale($6);
+  interactive_prop->set_color($7);
+}
+        | code anim cell_id pos hpr sign
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+}
+        | code anim cell_id pos hpr scale sign
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_scale($6);
+}
+        | code anim cell_id pos hpr color sign
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_color($6);
+}
+        | code anim cell_id pos hpr scale color sign
+{
+  DNAInteractiveProp *interactive_prop = DCAST(DNAInteractiveProp, dna_stack.back());
+  interactive_prop->set_code($1);
+  interactive_prop->set_anim($2);
+  interactive_prop->set_cell_id($3);
+  interactive_prop->set_pos($4);
+  interactive_prop->set_hpr($5);
+  interactive_prop->set_scale($6);
+  interactive_prop->set_color($7);
+}
+        ;
+
+anim:
+        ANIM '[' required_string ']'
+{
+  $$ = $3;
+}
+        ;
+
+cell_id:
+        CELL_ID '[' integer ']'
+{
+  $$ = $3;
+}
+        ;
+
+code:
+        CODE '[' required_string ']'
+{
+  $$ = $3;
+}
+        ;
+
+count:
+        COUNT '[' integer ']'
+{
+  $$ = $3;
+}
+        ;
+
+title:
+        TITLE '[' required_string ']'
+{
+  $$ = $3;
+}
+        ;
+
+article:
+        ARTICLE '[' required_string ']'
+{
+  $$ = $3;
+}
+        | empty
+{
+  $$ = "";
+}
+        ;
+
+building_type:
+        BUILDING_TYPE '[' string ']'
+{
+  $$ = $3;
+}
+        ;
+
+pos:
+        POS '[' real real real ']'
+{
+  // An apparent compiler bug with MSVC prevents this line from compiling properly:
+  //  $$ = LVecBase3f($3, $4, $5);
+
+  // Fortunately, this is functionally equivalent:
+  $$.set($3, $4, $5);
+}
+        ;
+hpr:
+        NHPR '[' real real real ']'
+{
+  // New (correct) HPR representation
+  if (temp_hpr_fix) {
+    $$.set($3, $4, $5);
+  } else {
+    $$ = new_to_old_hpr(LVecBase3f($3, $4, $5));
+  }
+}
+        | HPR '[' real real real ']'
+{
+  // Old (broken) HPR representation
+  if (temp_hpr_fix) {
+    $$ = old_to_new_hpr(LVecBase3f($3, $4, $5));
+  } else {
+    $$.set($3, $4, $5);
+  }
+}
+        ;
+scale:
+       SCALE '[' real real real ']'
+{
+  $$.set($3, $4, $5);
+}
+        ;
+
+color:
+       COLOR '[' real real real real ']'
+{
+  $$.set($3, $4, $5, $6);
+}
+        ;
+
+texture:
+       TEXTURE '[' required_string ']'
+{
+  $$ = $3;
+}
+       ;
+
+/*
+ * Model and storage functionality
+ */
+
+// Load a model and use it to find nodes and textures to put in storage
+model:
+       MODEL required_string '['
+{
+  // Flag this model as not being for a specific neighborhood
+  current_model_hood = 0;
+  current_model_place = 0;
+  Filename model = $2;
+  model.set_extension("bam");
+  current_model = NodePath(loader.load_sync(model));
+}
+       store_node_list ']'
+       ;
+
+
+
+// Load a model, but not with the ModelPool. This is a model for a
+// specific neighborhood that we want deleted, not stored in the pool
+hood_model:
+       HOOD_MODEL required_string '['
+{
+  // Flag this model as being for a specific neighborhood
+  current_model_hood = 1;
+  current_model_place = 0;
+  LoaderOptions options;
+  options.set_flags(options.get_flags() | LoaderOptions::LF_no_ram_cache);
+  Filename model = $2;
+  model.set_extension("bam");
+  current_model = NodePath(loader.load_sync(model, options));
+}
+       store_node_list ']'
+       ;
+
+
+
+// Load a model, but not with the ModelPool. This is a model for a
+// specific town or safe zone that we want deleted, not stored in the pool
+place_model:
+       PLACE_MODEL required_string '['
+{
+  // Flag this model as being for a specific neighborhood
+  current_model_hood = 0;
+  current_model_place = 1;
+  LoaderOptions options;
+  options.set_flags(options.get_flags() | LoaderOptions::LF_no_ram_cache);
+  Filename model = $2;
+  model.set_extension("bam");
+  current_model = NodePath(loader.load_sync(model, options));
+}
+       store_node_list ']'
+       ;
+
+
+
+store_node_list:
+       empty
+       | store_node_list store_node
+       ;
+
+// Store a node: parameters are category, code_string, node, code
+store_node:
+       STORE_NODE '[' string string string ']'
+{
+  // If the string is empty string that means use the top node of the model
+  if ($5 == "") {
+    // If this model is neighborhood specific, store it in the hood map
+    if (current_model_hood) {
+      dna_top_node->get_dna_storage()->store_hood_node($4, current_model, $3);
+    } else if (current_model_place) {
+      dna_top_node->get_dna_storage()->store_place_node($4, current_model, $3);
+    } else {
+      dna_top_node->get_dna_storage()->store_node($4, current_model, $3);
+    };
+  } else {
+    // Find the node with the name stored in $5
+    NodePath node = current_model.find($5.insert(0, "**/"));
+    // Error if we could not find it
+    if (node.is_empty()) {
+      dnayyerror("Empty NodePath");
+    };
+    // If this model is neighborhood specific, store it in the hood map
+    if (current_model_hood) {
+      dna_top_node->get_dna_storage()->store_hood_node($4, node, $3);
+    } else if (current_model_place) {
+      dna_top_node->get_dna_storage()->store_place_node($4, node, $3);
+    } else {
+      dna_top_node->get_dna_storage()->store_node($4, node, $3);
+    };
+  }
+
+  // Put this item name in the catalog
+  dna_top_node->get_dna_storage()->store_catalog_string($3, $4);
+
+}
+
+// Shortcut if the dna string is the same name as the node
+       | STORE_NODE '[' string string ']'
+{
+  string find_string = $4;
+  NodePath node = current_model.find(find_string.insert(0, "**/"));
+  if (node.is_empty()) {
+        dnayyerror("Empty NodePath");
+        };
+  // If this model is neighborhood specific, store it in the hood map
+  if (current_model_hood) {
+    dna_top_node->get_dna_storage()->store_hood_node($4, node, $3);
+  } else if (current_model_place) {
+    dna_top_node->get_dna_storage()->store_place_node($4, node, $3);
+  } else {
+    dna_top_node->get_dna_storage()->store_node($4, node, $3);
+  };
+  dna_top_node->get_dna_storage()->store_catalog_string($3, $4);
+
+}
+       ;
+
+
+
+// Store a texture: parameters are category, code_string, filename
+store_texture:
+       STORE_TEXTURE '[' string string string ']'
+{
+  PT(Texture) texture = TexturePool::load_texture($5);
+  if (texture == (Texture *)NULL) {
+    dna_cat.error()
+      << "Unable to load texture file " << $5 << "\n";
+  } else {
+    dna_top_node->get_dna_storage()->store_texture($4, texture);
+    dna_top_node->get_dna_storage()->store_catalog_string($3, $4);
+  }
+}
+       ;
+
+
+// Store a font: parameters are category, code_string, filename
+store_font:
+       STORE_FONT '[' string string string ']'
+{
+  Filename model = $5;
+  if (model.get_extension() == "") {
+    model.set_extension("bam");
+  }
+  PT(TextFont) font = FontPool::load_font(model);
+
+  if (font != (TextFont *)NULL && font->is_valid()) {
+    dna_top_node->get_dna_storage()->store_font($4, font);
+    dna_top_node->get_dna_storage()->store_catalog_string($3, $4);
+  } else {
+    dna_cat.warning()
+      << "Unable to load font file " << $5 << "\n";
+  }
+}
+       ;
+
+
+
+// Store a suit point: parameters are index, type, x, y, z
+store_suit_point:
+        STORE_SUIT_POINT '[' integer integer real real real ']'
+{
+  // Old syntax, for backward compatibility, without lb_index.
+  PT(DNASuitPoint) point = new DNASuitPoint((int)$3,
+                                            (DNASuitPoint::DNASuitPointType)(int
+)$4,
+                                            LPoint3f($5, $6, $7));
+  dna_top_node->get_dna_storage()->store_suit_point(point);
+}
+        | STORE_SUIT_POINT '[' integer integer real real real integer ']'
+{
+  // Old syntax, for backward compatibility, with lb_index.
+  PT(DNASuitPoint) point = new DNASuitPoint((int)$3,
+                                            (DNASuitPoint::DNASuitPointType)(int
+)$4,
+                                            LPoint3f($5, $6, $7),
+                                            (int)$8);
+  dna_top_node->get_dna_storage()->store_suit_point(point);
+}
+        | STORE_SUIT_POINT '[' integer ',' suit_point_type ',' real real real ']'
+{
+  // Current syntax, without lb_index.
+  PT(DNASuitPoint) point = new DNASuitPoint((int)$3, $5,
+                                            LPoint3f($7, $8, $9));
+  dna_top_node->get_dna_storage()->store_suit_point(point);
+}
+        | STORE_SUIT_POINT '[' integer ',' suit_point_type ',' real real real ',' integer ']'
+{
+  // Current syntax, with lb_index.
+  PT(DNASuitPoint) point = new DNASuitPoint((int)$3, $5,
+                                            LPoint3f($7, $8, $9),
+                                            (int)$11);
+  dna_top_node->get_dna_storage()->store_suit_point(point);
+}
+       ;
+
+
+suit_point_type:
+        FRONT_DOOR_POINT_
+{
+  $$ = DNASuitPoint::FRONT_DOOR_POINT;
+}
+        | SIDE_DOOR_POINT_
+{
+  $$ = DNASuitPoint::SIDE_DOOR_POINT;
+}
+        | STREET_POINT_
+{
+  $$ = DNASuitPoint::STREET_POINT;
+}
+        | COGHQ_IN_POINT_
+{
+  $$ = DNASuitPoint::COGHQ_IN_POINT;
+}
+        | COGHQ_OUT_POINT_
+{
+  $$ = DNASuitPoint::COGHQ_OUT_POINT;
+}
+        ;
+
+
+/*
+ * required_name
+ *
+ * enter:
+ * exit: Returns a nonempty string as the name of an DnaObject.
+ *
+ */
+required_name:
+        empty
+{
+  dnayyerror("Name required.");
+  $$ = "";
+}
+        | string
+        ;
+
+
+
+/*
+ * required_string
+ *
+ * enter:
+ * exit: Returns a nonempty string.
+ *
+ */
+required_string:
+        empty
+{
+  dnayyerror("String required.");
+  $$ = "";
+}
+        | string
+        ;
+
+/*
+ * string
+ *
+ * enter:
+ * exit: Returns a nonempty string.  This is different from required_string
+ *       in that the grammar requires it to be nonempty, so that: (a)
+ *       error messages are more obtuse, and (b) the grammar is less
+ *       ambiguous.  Use it whenever required_string does not work.
+ *
+ */
+string:
+        NUMBER
+{
+  $$ = $<_string>1;
+}
+        | STRING
+        ;
+
+
+/*
+ * real
+ *
+ * enter:
+ * exit: Returns an integer or floating-pointer number.
+ *
+ */
+real:
+        NUMBER
+        ;
+
+/*
+ * integer
+ *
+ * enter:
+ * exit: Returns an integer number (stored in a double value).
+ *
+ */
+integer:
+        NUMBER
+{
+  int i = (int)$1;
+  if ((double)i != $1) {
+    dnayywarning("Integer expected.");
+    $$ = (double)i;
+  }
+}
+        ;
+
+
+
+/*
+ * bool
+ *
+ * enter:
+ * exit: Returns a bool
+ *
+ */
+
+/* comment out until we need this type again to avoid warning
+bool:
+        NUMBER
+{
+  if ($1 == 0) {
+    $$ = false;
+  } else if ($1 == 1) {
+    $$ = true;
+  } else {
+    dnayywarning("0 or 1 expected.");
+    $$ = true;
+  }
+}
+        ;
+*/
+
+empty:
+        ;
+

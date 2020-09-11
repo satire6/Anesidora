@@ -1,0 +1,4 @@
+ATTACH ttmodels
+ATTACH otp
+MODREL ETC_PATH etc
+

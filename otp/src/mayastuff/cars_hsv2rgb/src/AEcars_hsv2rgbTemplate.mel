@@ -1,0 +1,18 @@
+global proc AEcars_hsv2rgbTemplate( string $nodeName )
+{
+	AEswatchDisplay $nodeName;
+	editorTemplate -beginScrollLayout;
+
+	editorTemplate -beginLayout "Cars HSV to RGB Attributes" -collapse 0;
+		editorTemplate -addControl "inSv";
+		editorTemplate -addControl "inH";
+	editorTemplate -endLayout;
+
+	// include/call base class/node attributes
+	AEdependNodeTemplate $nodeName;
+
+	editorTemplate -addExtraControls;
+	editorTemplate -endScrollLayout;
+}
+
+

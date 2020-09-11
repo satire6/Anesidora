@@ -1,0 +1,7 @@
+#!/bin/bash
+
+NODENAME=`cat nodename.cfg`
+
+python ../sbdebug.py -h localhost -p 6053 -n $NODENAME -s
+
+

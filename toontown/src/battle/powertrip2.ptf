@@ -1,0 +1,57 @@
+
+self.reset()
+self.setPos(-2.000, 2.500, 2.200)
+self.setHpr(-90.000, 0.000, 0.000)
+self.setScale(4.800, 4.800, 4.800)
+p0 = Particles.Particles('particles-1')
+# Particles parameters
+p0.setFactory("PointParticleFactory")
+p0.setRenderer("SparkleParticleRenderer")
+p0.setEmitter("SphereVolumeEmitter")
+p0.setPoolSize(100)
+p0.setBirthRate(0.0800)
+p0.setLitterSize(1)
+p0.setLitterSpread(0)
+p0.setSystemLifespan(0.0000)
+p0.setLocalVelocityFlag(1)
+p0.setSystemGrowsOlderFlag(0)
+# Factory parameters
+p0.factory.setLifespanBase(0.2500)
+p0.factory.setLifespanSpread(0.050)
+p0.factory.setMassBase(1.0000)
+p0.factory.setMassSpread(0.0000)
+p0.factory.setTerminalVelocityBase(400.0000)
+p0.factory.setTerminalVelocitySpread(0.0000)
+# Point factory parameters
+# Renderer parameters
+p0.renderer.setAlphaMode(BaseParticleRenderer.PRALPHAUSER)
+p0.renderer.setUserAlpha(1.00)
+
+# Sparkle parameters
+p0.renderer.setCenterColor(Vec4(0.1, 0.95, 0.2, 1.00))
+p0.renderer.setEdgeColor(Vec4(0, 0, 0, 1.00))
+p0.renderer.setBirthRadius(0.1000)
+p0.renderer.setDeathRadius(15.0000)
+p0.renderer.setLifeScale(SparkleParticleRenderer.SPNOSCALE)
+# Emitter parameters
+p0.emitter.setEmissionType(BaseParticleEmitter.ETRADIATE)
+p0.emitter.setAmplitude(2.4000)
+p0.emitter.setAmplitudeSpread(1.1000)
+p0.emitter.setOffsetForce(Vec3(0.0000, 1.1000, 0.0000))
+p0.emitter.setExplicitLaunchVector(Vec3(1.0000, 0.0000, 0.0000))
+p0.emitter.setRadiateOrigin(Point3(0.0000, -4.0000, 0.0000))
+# Sphere Volume parameters
+p0.emitter.setRadius(0.120)
+self.addParticles(p0)
+f0 = ForceGroup.ForceGroup('forces')
+# Force parameters
+force0 = LinearSinkForce(Point3(-10.0000, 0.0000, 0.0000), LinearDistanceForce.FTONEOVERRSQUARED, 1.0000, 2.5308, 1)
+force0.setActive(1)
+f0.addForce(force0)
+force1 = LinearVectorForce(Vec3(0.0000, 0.0000, 0.0000), 1.0000, 0)
+force1.setActive(1)
+f0.addForce(force1)
+force2 = LinearJitterForce(4.5449, 0)
+force2.setActive(1)
+f0.addForce(force2)
+self.addForceGroup(f0)

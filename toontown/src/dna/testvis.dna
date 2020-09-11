@@ -1,0 +1,772 @@
+group "donalds_dock" [
+ visgroup "1001" [
+  vis [ "1001" "1002" ]
+  group "group_29" [
+   prop "prop_post_one_light" [
+    code [ "prop_post_one_light" ]
+    pos [ -8.38103 -84.7089 -1.67411e-15 ]
+    hpr [ -180 -5.26213e-26 0 ]
+    scale [ 1 1 1 ]
+    color [ 0.713726 0.494118 0.345098 1 ]
+   ]
+   prop "prop_post_one_light" [
+    code [ "prop_post_one_light" ]
+    pos [ -31.8862 -84.9161 8.20852e-14 ]
+    hpr [ -180 5.5797e-26 0 ]
+    scale [ 1 1 1 ]
+    color [ 0.713726 0.494118 0.345098 1 ]
+   ]
+   prop "prop_post_one_light" [
+    code [ "prop_crate" ]
+    pos [ -6.5163 -131.815 -1.17594e-38 ]
+    hpr [ -90 0 0 ]
+    scale [ 1 1 1 ]
+    color [ 1 1 1 1 ]
+   ]
+   prop "prop_post_one_light" [
+    code [ "prop_tree_small_ur" ]
+    pos [ -33.2297 -103.949 3.15972e-40 ]
+    hpr [ -90 0 0 ]
+    scale [ 1 1 1 ]
+    color [ 0.870588 0.690196 0.423529 1 ]
+   ]
+   prop "prop_mailbox" [
+    code [ "prop_mailbox" ]
+    pos [ -47.6526 -132.042 0 ]
+    hpr [ 90 -180 -180 ]
+    scale [ 1 1 1 ]
+    color [ 1 1 1 1 ]
+   ]
+   prop "prop_crate" [
+    code [ "prop_crate" ]
+    pos [ -4.88733 -127.825 0 ]
+    hpr [ 0 0 0 ]
+    scale [ 1 1 1 ]
+    color [ 1 1 1 1 ]
+   ]
+   prop "prop_post_one_light" [
+    code [ "prop_post_one_light" ]
+    pos [ -12 -132 0 ]
+    hpr [ -84.1699 0 0 ]
+    scale [ 1 1 1 ]
+    color [ 1 1 1 1 ]
+   ]
+  ]
+  group "group_29" [
+   street "street_full_corner" [
+    code [ "street_full_corner" ]
+    pos [ 7.34135e-15 -100 0 ]
+    hpr [ 180 0 0 ]
+    texture [ "street_street_dock_tex" ]
+    texture [ "street_sidewalk_dock_tex" ]
+   ]
+   street "street_10x40" [
+    code [ "street_10x40" ]
+    pos [ -40 -100 0 ]
+    hpr [ -180 0 0 ]
+    texture [ "street_street_dock_tex" ]
+    texture [ "street_sidewalk_dock_tex" ]
+   ]
+   street "street_20x40" [
+    code [ "street_20x40" ]
+    pos [ 4.76451e-08 -100 0 ]
+    hpr [ 90 0 0 ]
+    texture [ "street_street_dock_tex" ]
+    texture [ "street_sidewalk_dock_tex" ]
+   ]
+  ]
+  group "group_30" [
+   flat_building "random30" [
+    pos [ -2.38419e-06 -80 0 ]
+    hpr [ -90 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 20 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 2 ]
+     ]
+     cornice [
+      code [ "cornice_dental_ur" ]
+      color [ 0.572549 0.384314 0.337255 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ 0 -95 0 ]
+    hpr [ -90 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 0 ]
+     ]
+     cornice [
+      code [ "cornice_shingles_ur" ]
+      color [ 0.572549 0.384314 0.337255 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ 0 -110 0 ]
+    hpr [ -90 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_lg_rock_ur" ]
+     color [ 0.752941 0.45098 0.447059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 20 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.168627 0.454902 0.227451 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 4 ]
+     ]
+     cornice [
+      code [ "cornice_shingles_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ 0 -125 0 ]
+    hpr [ -90 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 20 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0.878431 0.427451 0.427451 1 ]
+      count [ 4 ]
+     ]
+    ]
+   ]
+  ]
+  group "group_31" [
+   flat_building "random30" [
+    pos [ -1.78814e-06 -140 0 ]
+    hpr [ -180 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.168627 0.454902 0.227451 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 20 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.168627 0.454902 0.227451 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -10 -140 0 ]
+    hpr [ -180 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 20 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 4 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 1 ]
+     ]
+     cornice [
+      code [ "cornice_dental_ur" ]
+      color [ 0.572549 0.384314 0.337255 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -25 -140 0 ]
+    hpr [ -180 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_lg_rock_ur" ]
+     color [ 0.752941 0.45098 0.447059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_lg_rock_ur" ]
+     color [ 0.752941 0.45098 0.447059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+     cornice [
+      code [ "cornice_shingles_ur" ]
+      color [ 0.760784 0.568627 0.286275 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -40 -140 0 ]
+    hpr [ -180 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_square_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_square_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 2 ]
+     ]
+    ]
+   ]
+  ]
+  group "group_32" [
+   flat_building "toonTenTenTen" [
+    pos [ -40 -100 0 ]
+    hpr [ 90 0 0 ]
+    width [ 20 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 2 ]
+     ]
+     cornice [
+      code [ "cornice_brick_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTenTen" [
+    pos [ -50 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+     cornice [
+      code [ "cornice_brick_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+     ]
+    ]
+   ]
+  ]
+ ]
+ visgroup "1002" [
+  vis [ "1002" ]
+  street "street_80x40" [
+   code [ "street_80x40" ]
+   pos [ -50 -100 0 ]
+   hpr [ -180 0 0 ]
+   texture [ "street_street_dock_tex" ]
+   texture [ "street_sidewalk_dock_tex" ]
+  ]
+  group "group_33" [
+   flat_building "toonTenTen" [
+    pos [ -70 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 0 ]
+     ]
+     cornice [
+      code [ "cornice_marble_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTen" [
+    pos [ -80 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 2 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTen" [
+    pos [ -95 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_square_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_square_ur" ]
+      color [ 0.823529 0.823529 0.4 1 ]
+      count [ 1 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTen" [
+    pos [ -110 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 5 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 1 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTen" [
+    pos [ -115 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 0 ]
+     ]
+     cornice [
+      code [ "cornice_shingles_ur" ]
+      color [ 0.760784 0.568627 0.286275 1 ]
+     ]
+    ]
+   ]
+   flat_building "toonTenTen" [
+    pos [ -125 -140 0 ]
+    hpr [ 180 0 0 ]
+    width [ 5 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_lg_brick_dr" ]
+     color [ 0.168627 0.454902 0.227451 1 ]
+     windows [
+      code [ "window_md_curtains_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_lg_brick_dr" ]
+     color [ 0.168627 0.454902 0.227451 1 ]
+     windows [
+      code [ "window_md_curtains_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+      count [ 1 ]
+     ]
+    ]
+   ]
+   landmark_building "toon_landmark_building_31" [
+    code [ "toon_landmark_building_31" ]
+    title [ "" ]
+    pos [ -50 -140 0 ]
+    hpr [ 180 0 0 ]
+    color [ 1 1 1 1 ]
+    door [
+     code [ "door_double_pillars_ur" ]
+     color [ 0.75 0.75 0.75 1 ]
+    ]
+   ]
+  ]
+  group "group_34" [
+   flat_building "random30" [
+    pos [ -130 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 20 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 1 ]
+     ]
+     cornice [
+      code [ "cornice_shingles_ur" ]
+      color [ 0.5 0.5 0.5 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -110 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_blank_ur" ]
+     color [ 0.415686 0.247059 0.247059 1 ]
+     windows [
+      code [ "window_sm_round_ur" ]
+      color [ 0.643137 0.933333 0.454902 1 ]
+      count [ 2 ]
+     ]
+     cornice [
+      code [ "cornice_stone_ur" ]
+      color [ 0.5 0.5 0.5 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -95 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 20 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 0 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_md_board_ur" ]
+     color [ 0.92549 0.152941 0.152941 1 ]
+     windows [
+      code [ "window_porthole_ur" ]
+      color [ 0 0.611765 0.364706 1 ]
+      count [ 2 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -75 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 15 ]
+    wall [
+     height [ 20 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 4 ]
+     ]
+    ]
+    wall [
+     height [ 10 ]
+     code [ "wall_bricks_ur" ]
+     color [ 0.627451 0.470588 0.235294 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 1 0.501961 0.376471 1 ]
+      count [ 0 ]
+     ]
+     cornice [
+      code [ "cornice_marble_ur" ]
+      color [ 0.75 0.75 0.75 1 ]
+     ]
+    ]
+   ]
+   flat_building "random30" [
+    pos [ -60 -100 0 ]
+    hpr [ 0 0 0 ]
+    width [ 10 ]
+    wall [
+     height [ 10 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 0.878431 0.427451 0.427451 1 ]
+      count [ 2 ]
+     ]
+    ]
+    wall [
+     height [ 20 ]
+     code [ "wall_sm_wood_ur" ]
+     color [ 0.713726 0.494118 0.345098 1 ]
+     windows [
+      code [ "window_sm_shuttered_ur" ]
+      color [ 0.878431 0.427451 0.427451 1 ]
+      count [ 2 ]
+     ]
+    ]
+   ]
+  ]
+  group "group_10" [
+   prop "prop_post_one_light" [
+    code [ "prop_post_one_light" ]
+    pos [ -100 -108 0 ]
+    hpr [ -84.1699 0 0 ]
+    scale [ 1 1 1 ]
+    color [ 1 1 1 1 ]
+   ]
+  ]
+ ]
+]

@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<TITLE>Pirates of the Carribean Online</TITLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+function PassParameter()
+{
+    DisneyOnlineGames.ModeId=4
+    DisneyOnlineGames.Token="UserLoggedOnToken"
+    DisneyOnlineGames.runPiratesOnline();
+}
+</SCRIPT>
+ 
+</HEAD>
+<BODY>
+<center>
+<p></p>
+<IMG SRC="\\neo\tspool\dev\disney\pirates\online\Workarea/dsnyblst\testActiveX\wwwroot-Example\PiratesSetup.gif">
+
+<object id="DisneyOnlineGames" classid="CLSID:3DCEC959-378A-4922-AD7E-FD5C925D927F" height="0" width="0" codebase="\\neo\tspool\dev\disney\pirates\online\Workarea/dsnyblst\testActiveX\built\signed\DisneyOnlineGames.cab#Version=7,6,6,1549">
+</object>
+<p></p>
+
+<INPUT TYPE="button" NAME="Install" VALUE="Begin the Adventure" ONCLICK=PassParameter()>
+
+<SCRIPT FOR=DisneyOnlineGames EVENT=onRunPiratesOnlineComplete()>
+<!-- {
+   window.document.write("onRunPiratesOnlineComplete = " + DisneyOnlineGames.ResponseCode)
+-->
+</SCRIPT>
+
+</BODY>
+</HTML>

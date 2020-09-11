@@ -1,0 +1,34 @@
+
+In src/publish/filelist:
+
+        add a new entry for the phase (for model only phases just copy and modify an existing phase)
+
+In src/launcher/DummyLauncher.py:
+
+        add to module "LauncherPhases" array
+        
+        add to DummyLauncher class self.phaseComplete dictionary
+
+        update self.finalPhase 
+
+        add to self.phaseComplete in "fakeDownload" method
+
+        
+In src/launcher/Launcher.py:
+
+        add to module "LauncherPhases" array
+
+        update tmpOverAllPhaseMap in __init__ (make sure the numbers still total to 1.0 though)
+
+In src/toonbase/TTLocalizerEnglish.py:
+
+        add the new phase and it's text description string to "LauncherPhaseNames"
+
+In src/toonbase/ToontownGlobals.py:
+
+        add the new phase to the "phaseMap" and the "streetPhaseMap"   
+
+In src/hood/HoodMgr.py:
+
+        add the new phase to the (base.launcher == None) return value
+        

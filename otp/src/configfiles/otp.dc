@@ -1,0 +1,824 @@
+// See Also: "direct/src/doc/sample.dc"
+// ownrecv: used to mean only send to owner/creator. Currently not used.
+// required: send on create/generate
+// broadcast: send on set and change, but not necessarily create/generate
+// broadcast ram: send on set and change (and generate?)
+// required broadcast ram: send on set, change, and create/generate
+
+from direct.distributed import DistributedObject/AI/UD
+from direct.distributed import DistributedNode/AI/UD
+from direct.distributed import DistributedSmoothNode/AI
+from direct.distributed import DistributedCartesianGrid/AI
+from direct.distributed import DistributedCamera/AI/OV
+
+from otp.distributed import Account/AI/UD
+from otp.ai import TimeManager/AI
+from otp.ai import MagicWordManager/AI
+from otp.avatar import DistributedAvatar/AI/UD
+from otp.avatar import DistributedPlayer/AI
+from otp.friends import FriendManager/AI
+from otp.friends import AvatarFriendsManager/UD
+from otp.friends import PlayerFriendsManager/UD
+from otp.friends import GuildManager/AI/UD
+from otp.friends import FriendInfo
+from otp.friends import AvatarFriendInfo
+from otp.distributed import ObjectServer/AI/UD
+from otp.distributed import DistributedDistrict/AI/UD
+from otp.distributed import DistributedDirectory/AI
+from otp.distributed import DistributedTestObject/AI
+from otp.snapshot import SnapshotDispatcher/AI/UD
+from otp.snapshot import SnapshotRenderer/AI/UD
+from otp.uberdog import OtpAvatarManager/AI/UD
+from otp.uberdog import DistributedChatManager/AI/UD
+from otp.uberdog import SpeedchatRelay/UD
+from otp.distributed import CentralLogger/AI/UD
+from otp.web import SettingsMgr/AI/UD
+from otp.status import StatusDatabase/UD
+from otp.avatar import AvatarHandle
+
+typedef uint8 bool;
+
+typedef uint32 DoId;
+typedef DoId [] DoIdList;
+
+// a pair of longs used to hold avatar id and delete time in DB
+struct  AvatarPendingDel {
+  uint32 Avatar;
+  uint32  date;
+};
+
+dclass Account {
+  // RHH
+  // This is for internal server only...
+  // the 6 avatars a person has
+  string DcObjectType  db;
+  //
+  uint32array ACCOUNT_AV_SET = [0,0,0,0,0,0] required db;
+  uint32array pirateAvatars = [0,0,0,0,0,0] required db;
+  // the 6 houses a person has
+  uint32array HOUSE_ID_SET db;
+  uint32 ESTATE_ID db;
+  AvatarPendingDel [] ACCOUNT_AV_SET_DEL db; 
+  string PLAYED_MINUTES db;
+  string PLAYED_MINUTES_PERIOD db;
+  string CREATED db;
+  string LAST_LOGIN db;
+};
+
+
+struct BarrierData {
+  uint16 context;
+  string name;
+  uint32 avIds[];
+};
+
+// The most fundamental class
+dclass DistributedObject {
+  // These are used to support DistributedObjectAI.beginBarrier() and
+  // the matching DistributedObject.doneBarrier().  If you don't call
+  // these functions, you don't care about these distributed methods.
+  // (Actually, you probably don't care anyway.)
+  setBarrierData(BarrierData data[]) broadcast ram;
+  setBarrierReady(uint16 context) airecv clsend;
+  execCommand(string, uint32 mwMgrId, uint32 avId, uint32 zoneId);
+  // this is to allow the client to force a disconnect from the server
+  broadcastMessage() broadcast;
+};
+
+// general-purpose test class
+// use this when you just need to create a new distributed object
+// and the type doesn't matter
+// also used for test cases
+dclass DistributedTestObject: DistributedObject {
+  uint32[] AutoInterest = [10];
+  setParentingRules(string type="Stated", string Rule="") broadcast ram;
+  setRequiredField(uint32 r=78) required broadcast ram;
+  // fields to test for erroneous default values when no value has been set
+  setB(uint32 B) broadcast;
+  setBA(uint32 BA) broadcast airecv;
+  setBO(uint32 BO) broadcast ownsend;
+  setBR(uint32 BR) broadcast ram;
+  setBRA(uint32 BRA) broadcast ram airecv;
+  setBRO(uint32 BRO) broadcast ram ownsend;
+  setBROA(uint32 BROA) broadcast ram ownsend airecv;
+};
+
+struct OSInfo {
+  string name;
+  int16 platform;
+  int16 major;
+  int16 minor;
+};
+
+struct CPUSpeed {
+  int32 maxSpeed / 1000;
+  int32 currentSpeed / 1000;
+};
+
+// The TimeManager should be created before all other objects, because
+// network timestamps can't be accurately decoded until the
+// TimeManager has been created.
+dclass TimeManager: DistributedObject {
+  requestServerTime(uint8 context) airecv clsend;  // safe...
+  serverTime(uint8 context, int32 timestamp, uint32 timeOfDay);
+
+  // This message is sent from the client to the AI when it disconnects
+  // cleanly.  It is a bit of a hack to put it here in the TimeManager
+  // (because what does the TimeManager have to do with that?) but we
+  // can't put it on the toon because it is a message to the AI, and
+  // this is a convenient place to put it instead.
+  setDisconnectReason(uint8 disconnectCode) airecv clsend; //appears to be safe...
+  // For DisconnectPythonError, we also send a string describing the
+  // exception, for logging.
+  setExceptionInfo(string info) airecv clsend;     //appears safe. perhaps set a limit to the length of info
+
+  // This is the "signature" value read from the xrc file, which
+  // presumably indicates a particular xrc file in use.  The client
+  // sets this at startup time.  It probably ought to be on the player
+  // too, but then we have trouble sending it before the AI hears
+  // about the player.
+  setSignature(string signature, char hash[16], char pyc[16]) airecv clsend;
+
+  // This is the average frame rate reported by the client, along with
+  // some relevant machine and game statistics.
+  setFrameRate(uint16 fps / 10, uint16 deviation / 1000, uint16 numAvs,
+               string locationCode, 
+               uint32 timeInLocation / 10, uint32 timeInGame / 10,
+               string gameOptionsCode,
+               uint16 vendorId, uint16 deviceId, 
+               uint32 processMemory / 10, uint32 pageFileUsage / 10,
+               uint32 physicalMemory / 10, uint32 pageFaultCount,
+               OSInfo osInfo, CPUSpeed cpuSpeed,
+               uint16 num_cpu_cores, uint16 num_logical_cpus,
+               string apiName) airecv clsend;
+
+  // This is sent at startup to provide verbose CPU information.
+  setCpuInfo(string info, string cacheStatus) airecv clsend;
+
+  // This message tells the dev AI to check for garbage leaks
+  checkForGarbageLeaks(bool wantReply) airecv clsend;
+  setNumAIGarbageLeaks(uint32 numLeaks);
+  // for logging
+  setClientGarbageLeak(uint32 num, string leak) airecv clsend;
+};
+
+// See Also:
+//     "otp/src/distributed/ObjectServer.py"
+dclass ObjectServer {
+  setName(string serverName) airecv ram required;
+  setDcHash(uint32 hash) ram required;
+  setDateCreated(uint32 date) airecv;
+};
+
+//dclass  PiratesRoot {
+//  requestDistricts() clsend;
+//  requestDistrictsResponse(uint32[] doId) broadcast;
+//  newDistrict(uint32 doId) broadcast;
+//  delDistrict(uint32 doId) broadcast;
+//};
+
+// Generic named container.  Intended to be a parent for
+// other objects, somewhat like a directory in a file system.
+//
+// This object has no attributes and none of them get created, but it
+// is still needed.  It is used as a parent for the individual games.
+// The dc system uses the parenting rules as if this object existed.
+//
+// See Also:
+//     "otp/src/distributed/DistributeDirectory.py"
+dclass  DistributedDirectory: DistributedObject {
+  setParentingRules(string type="Stated", string Rule="") broadcast ram;
+};
+
+// See Also:
+//     "otp/src/distributed/DistributedDistrict.py"
+//     "otp/src/distributed/DistributedDistrictAI.py"
+dclass DistributedDistrict: DistributedObject {
+  setName(string districtName="unnamed") required broadcast ram;
+  setAvailable(uint8 = 0) required broadcast ram;
+};
+
+dclass DistributedNode: DistributedObject {
+  // if other than '', overrules setParent
+  setParentStr(blob token) broadcast ram ownsend airecv;
+  setParent(uint32 token) broadcast ram ownsend airecv;
+
+  setX(int16 / 10) broadcast ram ownsend airecv;
+  setY(int16 / 10) broadcast ram ownsend airecv;
+  setZ(int16 / 10) broadcast ram ownsend airecv;
+  setH(int16 % 360 / 10) broadcast ram ownsend airecv;
+  setP(int16 % 360 / 10) broadcast ram ownsend airecv;
+  setR(int16 % 360 / 10) broadcast ram ownsend airecv;
+
+  setPos: setX, setY, setZ;
+  setHpr: setH, setP, setR;
+  setPosHpr: setX, setY, setZ, setH, setP, setR;
+  setXY: setX, setY;
+  setXZ: setX, setZ;
+  setXYH: setX, setY, setH;
+  setXYZH: setX, setY, setZ, setH;
+};
+
+dclass DistributedSmoothNode: DistributedNode {
+  // Component set pos and hpr functions.
+
+  setComponentL(uint64) broadcast ram ownsend airecv;
+  setComponentX(int16 / 10) broadcast ram ownsend airecv;
+  setComponentY(int16 / 10) broadcast ram ownsend airecv;
+  setComponentZ(int16 / 10) broadcast ram ownsend airecv;
+  setComponentH(int16 % 360 / 10) broadcast ram ownsend airecv;
+  setComponentP(int16 % 360 / 10) broadcast ram ownsend airecv;
+  setComponentR(int16 % 360 / 10) broadcast ram ownsend airecv;
+  setComponentT(int16 timestamp) broadcast ram ownsend airecv;
+
+  // Composite set pos and hpr functions.  These map to combinations
+  // of one or more of the above components.  They all include
+  // setComponentT(), which must be called last.
+  setSmStop: setComponentT;
+  setSmH: setComponentH, setComponentT;
+  setSmZ: setComponentZ, setComponentT;
+  setSmXY: setComponentX, setComponentY, setComponentT;
+  setSmXZ: setComponentX, setComponentZ, setComponentT;
+  setSmPos: setComponentX, setComponentY, setComponentZ, setComponentT;
+  setSmHpr: setComponentH, setComponentP, setComponentR, setComponentT;
+  setSmXYH: setComponentX, setComponentY, setComponentH, setComponentT;
+  setSmXYZH: setComponentX, setComponentY, setComponentZ, setComponentH, setComponentT;
+  setSmPosHpr: setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
+  // special update if L (being location, such as zoneId) changes, send everything, intended to
+  // keep position and 'location' in sync
+  setSmPosHprL: setComponentL, setComponentX, setComponentY, setComponentZ, setComponentH, setComponentP, setComponentR, setComponentT;
+
+  // I don't need any parameters, but for some reason leaving the
+  // parameter list empty on this one causes a server crash.
+  clearSmoothing(int8 bogus) broadcast ownsend;
+
+  suggestResync(uint32 avId, int16 timestampA, int16 timestampB, 
+                int32 serverTimeSec, uint16 serverTimeUSec,
+                uint16 / 100 uncertainty) ownrecv clsend;
+  returnResync(uint32 avId, int16 timestampB, 
+               int32 serverTimeSec, uint16 serverTimeUSec,
+               uint16 / 100 uncertainty) ownrecv clsend;
+};
+
+dclass DistributedCartesianGrid: DistributedNode {
+// Make sure setCellWidth gets called before setParentingRules
+  setCellWidth(uint32 width) required broadcast ram;
+// base:size:resolution  
+//.. 0:100:1 == 3x3  interest grids.. with 100x100 size.. numbering starting at 0 ie 0.0 = 0
+  setParentingRules(string type="Cartesian", string Rule="0:100:1") broadcast ram;
+};
+
+
+struct Fixture {
+  int32 x / 10;
+  int32 y / 10;
+  int32 z / 10;
+  int16 h / 10;
+  int16 p / 10;
+  int16 r / 10;
+  string state = 'Standby';
+};
+
+dclass DistributedCamera: DistributedNode {
+  setCamParent(uint32 doId = 0) required broadcast ram ownsend airecv;
+  setFixtures(Fixture[] fixtures) required broadcast ram ownsend airecv;
+};
+
+// dc base classes for autofiltered chat. now referred to as "talk"
+
+struct  TalkModification
+
+{
+      uint16      offset;
+      uint16  size;
+};
+
+ 
+dclass  TalkPath_owner
+{
+  setTalk(uint32 fromAV, uint32 fromAC, string avatarName, string chat,  TalkModification mods[], uint8 flags ) broadcast ownsend; 
+};
+
+ 
+dclass TalkPath_whisper
+{
+  setTalkWhisper(uint32 fromAV,uint32 fromAC,string avatarName, string chat,  TalkModification mods[], uint8 flags ) ownrecv clsend;
+};
+
+ 
+dclass TalkPath_group
+{
+  setTalkGroup(uint32 fromAV, uint32 fromAC,string avatarName,string chat,  TalkModification mods[], uint8 flags ) clsend airecv;
+};
+
+ 
+dclass TalkPath_account
+{
+  setTalkAccount(uint32 toAc,  uint32 fromAC, string fromName, string chat,  TalkModification mods[], uint8 flags ) airecv clsend;
+};
+
+
+dclass AvatarHandle: TalkPath_whisper {
+};
+
+
+
+// Base class for DistributedToon, DistributedSuit, etc.
+dclass DistributedAvatar: DistributedSmoothNode,  TalkPath_owner, TalkPath_whisper {
+  string DcObjectType db;
+  setName(string = "unknownDistributedAvatar") required broadcast db airecv;
+
+  // This message is sent by the AI to notify the client when friends
+  // are added or removed without the client's participation, if the
+  // client happens to be logged in.  It also might be sent directly
+  // from the friend (or former friend).
+  // TODO: this is still clsend but should not be to be secure
+  // avId and status is verified. appears safe. no suspect notification though
+  friendsNotify(int32 avId, int8 status) ownrecv airecv clsend;
+  // These messages are used to check if a certain avatar is on my shard
+  checkAvOnShard(uint32 avId) clsend airecv;
+  confirmAvOnShard(uint32 avId, int8 onShard);
+};
+
+// This is the base class for distributed classes (e.g. DistributedToon)
+// that might represent player avatars.  It excludes non-player avatar
+// types like DistributedSuit.
+dclass DistributedPlayer: DistributedAvatar {
+  // The parent rules are handled specially by Roger's server for
+  // localAvatars, if it where defined here it would look roughly like:
+  // If we ever need to look into other avatar's "pockets" you might want
+  // to setup parenting rules here.
+  // setParentingRules(string type="Stated", string Rule="") broadcast ram;
+
+  // sent by AI avatar to client when avatar is created on the district server
+  arrivedOnDistrict(uint32 districtId) ownrecv ram;
+
+  setAccountName(string = "unknown") required ownrecv db;
+
+
+  // These whisper messages are sent from another client.  For now, we
+  // have to put the fromId in the message, but eventually we need to
+  // have a way to validate these.
+  setWhisperFrom(uint32 fromId, string, uint32 senderDISLid) ownrecv clsend; // safe: nice fromId check, string size limit will be nice
+  setWhisperWLFrom(uint32 fromId, string, uint32 senderDISLid) ownrecv clsend;
+  setWhisperSCFrom(uint32 fromId, uint16 msgIndex) ownrecv clsend;  //security breach: msgIndex need to be range checked...need help = DROSE
+  setWhisperSCCustomFrom(uint32 fromId, uint16 msgIndex) ownrecv clsend;  //security breach: same as above...need help
+  setWhisperSCEmoteFrom(uint32 fromId, uint16 emoteId) ownrecv clsend;  //security breach: emoteId needs range checking...need help = DROSE
+  // setWhisperIgnored(uint32 fromId) airecv clsend; // fromId validated. appears safe
+
+  // This is an onscreen message sent by the system.
+  setSystemMessage(uint32 aboutId, string) ownrecv;
+
+  setCommonChatFlags(uint8) broadcast ownrecv ram airecv;
+
+  // RAU weird, I had to add ownrecv to make sure localAvatar and other clients get this message
+  setWhitelistChatFlags(uint8) broadcast ownrecv ram airecv;
+
+  setSC(uint16 msgIndex) broadcast ownsend airecv;
+  setSCCustom(uint16 msgIndex) broadcast ownsend airecv;
+  // this is sent as a setEmoteState call instead
+  //setSCEmote(uint16 emoteId) broadcast ownsend;
+
+  // This field is airecv so we hear about friend making
+  // for the questManager. Perhaps there is a better way to do
+  // this when Roger gets back to help.
+  setFriendsList(uint32uint8array = {}) ownrecv required db airecv;
+
+  // Added for new friend make/break flows
+  setDISLname(string="unknown") broadcast ownrecv ram;
+  // We want to store
+  setDISLid(uint32=0) broadcast ownrecv ram db airecv required;
+
+  // these fields are for the Servers .. client should never see these ??
+  // the index
+  OwningAccount(uint32 avId = 0);
+  // the string the person want to be there av's name
+  WishName(string = "") db ram;
+  // CLOSED,OPEN,USED,.. The state of the name review process         
+  WishNameState(string = "") db ram;
+  //Access Contorl for velvet rope
+  setPreviousAccess(uint8 access = 0) required db airecv;
+  setAccess(uint8 access = 2) broadcast ownrecv required ram airecv;
+
+  setAsGM(bool isGM = 0) required ram broadcast ownrecv airecv;
+};
+
+dclass MagicWordManager: DistributedObject {
+  setMagicWord(string, uint32 avId, uint32 zoneId,
+               string signature) airecv clsend;
+  setMagicWordResponse(string) airecv;
+  setWho(uint32array avIds) airecv clsend;
+};
+
+// See Also:
+//     "otp/src/uberdog/OtpAvatarManager.py"
+//     "otp/src/uberdog/OtpAvatarManagerAI.py"
+dclass OtpAvatarManager: DistributedObject {
+  online();
+
+  // In response to this message, expect one of
+  // rejectCreateAvatar() or createAvatarResponse().
+  requestAvatarList(uint32 senderId) airecv clsend;
+  
+  // result is an error code.
+  rejectAvatarList(uint32 result);
+  
+  // avatarId is the newly created avatarId.
+  avatarListResponse(blob pickleData);
+
+
+
+  //-----------------------------------
+  // Ask to lock a slot for avatar creation
+  requestAvatarSlot(uint32 senderId,uint32 subId, uint8 slot) clsend airecv;
+  rejectAvatarSlot(uint32 result, uint32 subId, uint8 slot);
+  avatarSlotResponse(uint32 subId, uint8 slot);
+
+  //-----------------------------------
+  // Ask to play an avatar
+  requestPlayAvatar(uint32 senderId, uint32 avatarId, uint32 subId) clsend airecv;
+  rejectPlayAvatar(uint32 result, uint32 avatarId);
+
+  // Access codes that the Game Server will sniff out and
+  // store as broadcast fields on the avatar
+  // 1 = VELVET_ROPE
+  // 2 = FULL
+  playAvatarResponse(uint32 avatarId, uint32 subId, uint8 access, uint8 founder);
+
+  // requestCreateAvatar has to be defined in pirates.dc or toon.dc
+  // because the DNA has different definitions
+  
+  // result is an error code.
+  rejectCreateAvatar(uint32 result);
+  
+  // avatarId is the newly created avatarId
+  createAvatarResponse(uint32 avatarId, uint32 subId, uint8 access, uint8 founder);
+        
+  //-----------------------------------
+  
+  // In response to this message, expect one of
+  // rejectRemoveAvatar() or removeAvatarResponse().
+  requestRemoveAvatar(uint32 senderId, uint32 avatarId, uint32 subId, string confirmPassword) airecv clsend;
+
+  // result is an error code.
+  rejectRemoveAvatar(uint32 result);
+  
+  // avatarId is the newly removed avatarId.
+  removeAvatarResponse(uint32 avatarId, uint32 subId);
+
+  //-----------------------------------
+  
+  // In response to this message, expect one of
+  // rejectShareAvatar() or shareAvatarResponse().
+  requestShareAvatar(uint32 senderId, uint32 avatarId, uint32 subId, uint8 shared) airecv clsend;
+
+  // result is an error code.
+  rejectShareAvatar(uint32 result);
+  
+  // avatarId is the modified avatarId.
+  shareAvatarResponse(uint32 avatarId, uint32 subId, uint8 shared);
+
+};
+
+//----------------------------------------------------------------------------
+dclass DistributedChatManager: DistributedObject {
+  online();
+  
+  // UD to Clients (ALL clients)
+  adminChat(uint32 aboutId, string message);
+
+  // AI to Client
+  //aiChat(string message);
+
+  // AI to UD
+  setAvatarLocation(uint32 avatarId, uint32 parentId, uint32 zoneId);
+  setAvatarCrew(uint32 avatarId, uint32 zoneId);
+  setAvatarGuild(uint32 avatarId, uint32 zoneId);
+  
+  // New Chat
+  chatParentId(uint32 parentId) airecv clsend;
+  chatZoneId(uint32 zoneOrAvatarId) airecv clsend;
+  chatFace(uint32 doId) airecv clsend; // LookAt
+  chatEmote(uint16 emoteId) airecv clsend;
+  chatEmoteTarget(uint32 doId) airecv clsend;
+  chatIndex(uint16 msgIndex) airecv clsend;
+  chatString(string message) airecv clsend;
+
+  chatToAvatarIndex:
+    chatZoneId, chatIndex;
+  chatParentZoneFaceEmoteWithTargetIndex:
+    chatParentId, chatZoneId, chatFace, chatEmote, chatEmoteTarget, chatIndex;
+
+  chatToAvatarString:
+    chatZoneId, chatString;
+  chatParentZoneFaceEmoteWithTargetString:
+    chatParentId, chatZoneId, chatFace, chatEmote, chatEmoteTarget, chatString;
+  
+  // Client to location (zone)
+
+  speedChatTo(uint16 msgIndex) airecv clsend;
+  speedChatFrom(uint32 fromId, uint16 msgIndex);
+  speedChatCustomTo(uint16 msgIndex) airecv clsend;
+  speedChatCustomFrom(uint32 fromId, uint16 msgIndex);
+
+  // Client to avatar (doId)
+  whisperSCTo(uint32 toId, uint16 msgIndex) airecv clsend;
+  whisperSCFrom(uint32 fromId, uint16 msgIndex);
+  whisperSCCustomTo(uint32 toId, uint16 msgIndex) airecv clsend;
+  whisperSCCustomFrom(uint32 fromId, uint16 msgIndex);
+  whisperSCEmoteTo(uint32 toId, uint16 emoteId) airecv clsend;
+  whisperSCEmoteFrom(uint32 fromId, uint16 emoteId);
+  whisperIgnored(uint32 fromId);
+
+};
+
+//----------------------------------------------------------------------------
+
+dclass FriendManager: DistributedObject {
+  // Messages from inviter client to AI
+  // ****
+  friendQuery(int32 inviteeId) airecv clsend;      //security breach: inviteeId need validation//Done,inviteeId validated and suspicious log entered if invalid
+  // ****
+  cancelFriendQuery(int32 context) airecv clsend;  //security breach: context need range check...need help = DROSE
+
+  // Messages from invitee client to AI
+  // ****
+  inviteeFriendConsidering(int8 yesNo, int32 context) airecv clsend;       //security breach: yesNo and context need range check
+  // ****
+  inviteeFriendResponse(int8 yesNoMaybe, int32 context) airecv clsend;     //security breach: yesNoMaybe and context need range check
+  // ****
+  inviteeAcknowledgeCancel(int32 context) airecv clsend;   //security breach: context need range check
+
+  // Messages from AI to inviter client
+  friendConsidering(int8 yesNo, int32 context);
+  friendResponse(int8 yesNoMaybe, int32 context);
+
+  // Messages from AI to invitee client
+  inviteeFriendQuery(int32 inviterId, string inviterName,
+                     blob inviterDna, int32 context);
+  inviteeCancelFriendQuery(int32 context);
+
+
+  // Messages involving secrets.
+  requestSecret() airecv clsend;   //safe, timing could be an issue...owner, please check
+  requestSecretResponse(int8 result, string secret);
+
+  submitSecret(string secret) airecv clsend;       //possible security breach: secret might need sanity check...need help = ROGER/DROSE
+  submitSecretResponse(int8 result, int32 avId);
+};
+
+
+// Player (Switchboard) Friends ONLY
+struct FriendInfo
+{
+ string avatarName;
+ uint32 avatarId;
+ string playerName; 
+ uint8 onlineYesNo;
+ uint8 openChatEnabledYesNo;  // does my friend have blacklist chat enabled
+ uint8 openChatFriendshipYesNo; // am i true friend, implies i can blacklist chat to him
+ uint8 wlChatEnabledYesNo;   // does my friend have whitelist chat enabled
+ string location;
+ string sublocation;
+ uint32 timestamp; 
+};
+
+// Avatar (Product-specific) Friends ONLY
+struct AvatarFriendInfo
+{
+ string avatarName;
+ string playerName; 
+ uint32 playerId;
+
+ uint8 onlineYesNo;
+ uint8 openChatEnabledYesNo;  // does my friend have blacklist chat enabled
+ uint8 openChatFriendshipYesNo; // am i true friend, implies i can blacklist chat to him
+ uint8 wlChatEnabledYesNo;   // does my friend have whitelist chat enabled
+};
+
+struct MemberInfo
+{
+ uint32 avatarId;
+ string avatarName;
+ uint8 avatarRank;
+ uint8 avatarOnline;
+ uint32 bandManagerId;
+ uint32 bandId;
+};
+
+struct leaderBoardRecordResponces 
+{
+    char    found;      // was a record found 
+    uint32 id;          // the id of the requested object
+    string text;        // the optional text for the object
+    int32 value;        // the value of the object...
+};
+
+struct leaderBoardRecord 
+{
+    uint32 id;      // the is in the leader board..
+    string text;    // the optional text string defining this object
+    int32 value;    // the value of the object
+};
+
+dclass LeaderBoardReceiver
+{
+    getTopTenResponce( string contest, leaderBoardRecord[]  details);        
+    getValuesResponce(string  contest, leaderBoardRecordResponces[] out) ;        
+};
+
+dclass LeaderBoard : LeaderBoardReceiver{
+    // SETTERS
+    setValue(string[] contest, uint32 id, string text, int32 value) ;
+    alterValue(string[] contest, uint32 id, string text, int32 delta) ;    
+    setHighScore(string[] contest, uint32 id, string text, int32 value) ;    
+    // ACCESSERS 
+    //
+    // Used for normal DC responce .. as a distributed object...
+    getValues(string contest, uint32[] id);
+    getTopTen( string contest);
+
+    // Used to enable to LeaderBoardReceiver functionality
+    // the output update will be sent on the object doid passed as
+    // a last input value...
+    getValuesRespondTo(string contest, uint32[] id, uint32 doid);
+    getTopTenRespondTo( string contest, uint32 doid);
+};
+
+dclass GuildManager: DistributedObject, LeaderBoardReceiver, TalkPath_group {
+  online();
+  //setParentingRules(string type="Stated", string Rule="");
+
+  guildRejectInvite(uint32 avatarId,uint32 reason);
+  invitationFrom(uint32 avatarId, string avatarName, uint32 guildId, string guildName);
+  requestInvite(uint32 avatarId) airecv clsend;  // CL -> UD
+  memberList() airecv clsend;                    // CL -> UD
+  createGuild() airecv clsend;                   // CL -> UD
+  acceptInvite() airecv clsend;                  // CL -> UD
+  declineInvite() airecv clsend;                 // CL -> UD
+  setWantName(string newName) airecv clsend;     // CL -> UD
+  removeMember(uint32 avatarId) airecv clsend;   // CL -> UD
+  changeRank(uint32 avatarId, uint8 rank) airecv clsend;  // CL -> UD
+  statusRequest() airecv clsend;                 // CL -> UD
+  requestLeaderboardTopTen() airecv clsend;      // CL -> UD
+  guildStatusUpdate(uint32 guildId, string guildname, uint8 rank); // CL -> UD
+  guildNameReject(uint32 guildId);               // UD -> CL
+  guildNameChange(string guildname, uint8 rank); // UD -> CL
+  receiveMember(MemberInfo member);              // UD -> CL
+  receiveMembersDone();                          // UD -> CL
+  guildAcceptInvite(uint32 avatarId);            // UD -> CL
+  guildDeclineInvite(uint32 avatarId);           // UD -> CL
+  updateRep(uint32 avatarId, uint32 rep);        // AI -> UD
+  leaderboardTopTen(leaderBoardRecord [] stuff); // UD -> CL
+
+  recvAvatarOnline(uint32 avatarId, string avatarName, uint32 bandManagerId, uint32 bandId); // UD -> CL
+  recvAvatarOffline(uint32 avatarId, string avatarName); // UD -> CL
+
+  sendChat(string msgText,uint8 chatFlags,uint32 DISLid) airecv clsend; 
+  sendWLChat(string msgText,uint8 chatFlags,uint32 DISLid) airecv clsend;
+  sendSC(uint16 msgIndex) airecv clsend;
+  sendSCQuest(uint16 questInt, uint16 msgIndex, uint16 taskNum) airecv clsend;
+
+  recvChat(uint32 senderId,string msgText,uint8 chatFlags,uint32 DISLid);
+  recvWLChat(uint32 senderId,string msgText,uint8 chatFlags,uint32 DISLid);
+  recvSC(uint32 senderId,uint16 msgIndex);
+  recvSCQuest(uint32 senderId, uint16 questInt, uint16 msgIndex, uint16 taskNum);
+
+  sendTokenRequest() airecv clsend;
+  recvTokenGenerated(string tokenString);
+  recvTokenInviteValue(string tokenValue, int8 preExistPerm);
+  sendTokenForJoinRequest(string token, string name) airecv clsend;
+  recvTokenRedeemMessage(string guildName);
+  recvTokenRedeemedByPlayerMessage(string redeemerName);
+  sendTokenRValue(string tokenString, int8 rValue) airecv clsend;
+  sendPermToken() airecv clsend;
+  sendNonPermTokenCount() airecv clsend;
+  recvPermToken(string token);
+  recvNonPermTokenCount(uint8 count);
+  sendClearTokens(uint8 type) airecv clsend;
+  // The next three are currently commented out;
+  // waiting for "send-to-a-friend" system access
+  // sendRequestEmailNotificationPref() airecv clsend;
+  // respondEmailNotificationPref(int8 notify, string emailAddress);
+  // sendEmailNotificationPrefUpdate(int8 notify, string emailAddress) airecv clsend;
+
+  sendAvatarBandId(uint32 avatarId, uint32 bandManagerId, uint32 bandId);
+  recvMemberAdded(MemberInfo info);
+  // (uint32 avatarId, string avatarName, uint8 rank, uint8 rank, uint32 bandManagerId, uint32 bandId);
+  recvMemberRemoved(uint32 avatarId);
+  recvMemberUpdateName(uint32 avatarId, string name);
+  recvMemberUpdateRank(uint32 avatarId, uint8 rank);
+  recvMemberUpdateBandId(uint32 avatarId, uint32 bandManagerId, uint32 bandId);
+
+  avatarOnline(uint32 avatarId, uint16 avatarType); // AvatarMgrUD to AvatarFriendMgrUD
+  avatarOffline(uint32 avatarId); // AvatarMgrUD to AvatarFriendMgrUD
+
+  reflectTeleportQuery(uint32 sendToId, uint32 bandMgrId, uint32 bandId, uint32 guildId, uint32 shardId) clsend airecv; 
+  teleportQuery(uint32 requesterId, uint32 bandMgrId, uint32 bandId, uint32 guildId, uint32 shardId);
+  reflectTeleportResponse(uint32 sendToId, int8 available,
+                          uint32 shardId, uint32 instanceDoId, 
+                          uint32 areaDoId) clsend airecv;
+  teleportResponse(uint32 responderId, int8 available,
+                   uint32 shardId, uint32 instanceDoId, 
+                   uint32 areaDoId);
+  requestGuildMatesList(uint32 doId, uint32 channel, uint32 avId);
+  updateAvatarName(uint32 avatarId,string avatarName);
+  avatarDeleted(uint32 avatarId);
+};
+
+dclass AvatarFriendsManager: DistributedObject {
+  online();
+  requestInvite(uint32 avatarId) airecv clsend;
+  friendConsidering(uint32 avatarId) airecv clsend;
+  invitationFrom(uint32 avatarId,string avatarName);
+  retractInvite(uint32 avatarId);
+  rejectInvite(uint32 avatarId,uint32 reason);
+
+  requestRemove(uint32 avatarId) airecv clsend;
+  rejectRemove(uint32 avatarId,uint32 reason);
+
+  updateAvatarFriend(uint32 avatarId,AvatarFriendInfo info);
+  removeAvatarFriend(uint32 avatarId);
+
+  updateAvatarName(uint32 avatarId,string avatarName);
+
+  avatarOnline(uint32 avatarId, uint32 accountId, string playerName, bool playerNameApproved, bool openChatEnabled, string createFriendsWithChat, string chatCodeCreation); // AvatarMgrUD to AvatarFriendMgrUD
+  avatarOffline(uint32 avatarId); // AvatarMgrUD to AvatarFriendMgrUD
+};
+
+dclass PlayerFriendsManager: DistributedObject, TalkPath_account {
+  //online();
+  requestInvite(uint32 senderId,uint32 otherPlayerId,uint8 secretYesNo) airecv clsend;
+  invitationFrom(uint32 playerId, string playerName);
+  retractInvite(uint32 playerId);
+  //rejectInvite(uint32 playerId, uint32 reason);  // obsolete in SB 2.0
+  invitationResponse(uint32 doid, uint16 respCode, uint32 context);
+
+  requestDecline(uint32 senderId, uint32 playerId) airecv clsend;
+  requestDeclineWithReason(uint32 senderId, uint32 playerId, uint32 reason) airecv clsend;  // new field 249
+  requestRemove(uint32 senderId, uint32 playerId) airecv clsend;
+  //rejectRemove(uint32 playerId, uint32 reason);
+
+  //requestUnlimitedSecret(uint32 senderId) airecv clsend; // no codes for player friends
+  //requestLimitedSecret(uint32 senderId,string parentUser,string parentPass) airecv clsend; // no codes for player friends
+  secretResponse(string secret);
+  rejectSecret(string reason);
+
+  //requestUseUnlimitedSecret(uint32 senderId,string secret) airecv clsend; // no codes for player friends
+  //requestUseLimitedSecret(uint32 senderId,string secret,string parentUser,string parentPass) airecv clsend; // no codes for player friends
+  rejectUseSecret(string reason);
+
+  //whisperTo(uint32 senderId,uint32 playerId,string msg) airecv clsend;  //no longer needed accdg to John
+  //whisperWLTo(uint32 senderId,uint32 playerId,string msg) airecv clsend; //no longer needed accdg to John
+  //whisperSCTo(uint32 senderId,uint32 playerId,uint32 msgId) airecv clsend;
+  //whisperSCCustomTo(uint32 senderId,uint32 playerId,uint32 msgId) airecv clsend;
+  //whisperSCEmoteTo(uint32 senderId,uint32 playerId,uint32 msgId) airecv clsend;
+  //whisperFrom(uint32 playerId,string msg);
+  //whisperWLFrom(uint32 playerId,string msg);
+  //whisperSCFrom(uint32 playerId,string msg);
+
+  updatePlayerFriend(uint32 playerId,FriendInfo info,uint8 is_newfriend);
+  removePlayerFriend(uint32 playerId);
+
+  //avatarOnline(uint32 avatarId, uint32 accountId, string playerName, bool playerNameApproved, bool openChatEnabled, string createFriendsWithChat, string chatCodeCreation); // AvatarMgrUD to AvatarFriendMgrUD
+  //avatarOffline(uint32 avatarId); // AvatarMgrUD to AvatarFriendMgrUD
+};
+
+dclass SnapshotDispatcher: DistributedObject {
+  online();
+  requestRender(uint32 avatarId);                        // AI -> Dispatcher
+  avatarDeleted(uint32 avatarId);                        // AvatarManager -> Dispatcher
+  requestNewWork(uint32 rendererLoc);                    // Renderer -> Dispatcher
+  errorFetchingAvatar(uint32 rendererLoc,uint32 jobId); // Renderer -> Dispatcher
+  errorRenderingAvatar(uint32 rendererLoc,uint32 jobId); // Renderer -> Dispatcher
+  renderSuccessful(uint32 rendererLoc,uint32 jobId);    // Renderer -> Dispatcher
+};
+
+dclass SnapshotRenderer: DistributedObject {
+  online();
+  requestRender(uint32 jobId,uint32 avatarId,string writeToFile); // Dispatcher -> Renderer
+};
+
+dclass SpeedchatRelay : DistributedObject, TalkPath_account{
+    forwardSpeedchat(uint32 receiverDISLid, uint8 type, uint32 [] index, uint32 senderDISLId, string senderDISLName, uint8 flags)  clsend;
+};
+
+
+dclass CentralLogger : DistributedObject {
+   sendMessage(string category, string text, uint32 targetDISLId, uint32 targetAvatarID) clsend;
+};
+
+dclass SettingsMgr: DistributedObject {
+  requestAllChangedSettings() airecv clsend; // AI->UD, client->UD
+  settingChange(string name, string value) airecv; // UD->AI/client or UD->all AIs/clients
+};
+
+dclass StatusDatabase : DistributedObject {
+  requestOfflineAvatarStatus(uint32[] avIds) airecv clsend;                 // CL -> UD
+  recvOfflineAvatarStatus(uint32 avId, uint32 lastOnline);                // UD -> CL
+};
+
+// Mixin class for objects to receive a generic ACK/NACK callback response
+dclass CallbackObject {
+  callback(uint32 context,bool success,uint8 errorCode);
+};

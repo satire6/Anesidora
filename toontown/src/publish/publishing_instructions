@@ -1,0 +1,203 @@
+======================================================================
+Instructions for publishing Toontown (including old versions)
+======================================================================
+
+
+==================================================
+GET THE TREES
+==================================================
+
+Attach to the trees you want to publish from. We currently have an toontown-alpha
+branch and the main development branch. To attach to the toontown-alpha branch, I
+would make a new directory ~/alpha (just like ~/player) for the cvs trees
+to go. For additional help on cvs go to cvshome.org. To checkout the alpha tree, 
+
+cd ~/
+mkdir alpha
+cd alpha
+cvs checkout -r toontown-alpha wintools
+cvs checkout -r toontown-alpha dtool
+cvs checkout -r toontown-alpha panda
+cvs checkout -r toontown-alpha direct
+cvs checkout -r toontown-alpha otp
+cvs checkout -r toontown-alpha toontown
+
+You also need model trees on an Irix somewhere. A good place might be
+/fit/people/myname
+
+cd /fit/people/myname
+mkdir alpha
+cd alpha
+cvs checkout -r toontown-alpha pandatool
+cvs checkout -r toontown-alpha dtool
+cvs checkout -r toontown-alpha panda
+cvs checkout -r toontown-alpha direct
+cvs checkout -r toontown-alpha otp
+cvs checkout -r toontown-alpha toontown
+cvs checkout -r toontown-alpha dmodels
+cvs checkout -r toontown-alpha ttmodels
+
+Of course if you are not publishing off a branch, just cvs checkout the
+module without the -r <tag> parameter.
+
+
+==================================================
+ATTACH TO THE WINDOWS TREES
+==================================================
+
+You will need to update your vspec files so you can attach to these new
+trees. Copy your personal attach rule and make an alpha version of it that
+points into ~/alpha instead of ~/player. Example below.
+
+myname:croot:path=/usr/myname/player/toontown:server=,pserver,myname@dimbo,/fit/cvs
+myname_alpha:croot:path=/usr/myname/alpha/toontown:server=,pserver,myname@dimbo,/fit/cvs
+
+The model trees will need to point back to the place you checked them out
+(like /fit/people/myname/alpha/ttmodels). You can map this drive onto a
+windows drive and make your dmodels.vspec and ttmodels.vspec point
+there. Example below where //dimbo/usr2 is mapped to the h drive:
+
+myname_alpha:root:path=/h/fit/people/myname/alpha/ttmodels
+
+Next attach to all the trees.
+
+cta wintools myname_alpha
+cta dtool myname_alpha
+cta panda myname_alpha
+cta direct myname_alpha
+cta otp myname_alpha
+cta toontown myname_alpha
+cta dmodels myname_alpha
+cta ttmodels myname_alpha
+
+
+
+==================================================
+BUILD THE WINDOWS CODE TREES
+==================================================
+
+Build all the code trees. Model trees are special and are described
+below. If you already have them built, just update and build them. Don't
+forget to ppremake and regenerate Python code.
+
+
+==================================================
+BUILD THE IRIX CODE TREES
+==================================================
+
+You will need to build your Irix trees on an irix box like mother.  Update
+your irix vspecs and attach to those trees like how you attached to the
+windows trees. ppremake, build, etc...
+
+
+==================================================
+BUILD THE MODEL TREES
+==================================================
+
+The model trees need to be built on Irix. A good place to build is on
+mother. You will need alpha versions of all the model building trees
+too. Actually dwdtool is not versioned for alpha because it never
+changes. Just attach to dwdtool install.
+
+
+rlogin mother
+cta -def dwdtool install
+cta -def pandatool myname_alpha
+cta -def toontown myname_alpha
+
+Now you can actually build the models. It takes many hours to finish.
+
+cd $DMODELS
+ppremake
+make install
+make opt-pal
+
+cd $TTMODELS
+ppremake
+make install
+make opt-pal
+
+
+==================================================
+INSTALL WISE
+==================================================
+
+Wise is used to create the initial set of files that get downloaded by the
+activeX control or netscape plugin. It is a self extracting installation
+that includes Python, libpandaexpress, the Launcher and some other
+files. It also sets some registry variables and deals with the uninstall.
+
+You need Wise Installation System 9 installed on Windows to publish. Install
+with the standard settings, standard location. The publish script looks for
+it in C:\Program Files\Wise Installation System\wise32.exe so make sure it
+ends up there.
+
+
+==================================================
+PUBLISHING OVERVIEW
+==================================================
+
+
+
+==================================================
+FILELIST
+==================================================
+
+Update $TOONTOWN/src/publish/filelist with the files you want to publish.
+You will need to add any new source py files, remove any old ones. This is
+also where the phases breakdown for source code is noted, so if you want to
+change the phase of a source code file, do it there. If you want to change
+the phase of content (model/anim/sound) that is done in the $TTMODELS tree
+makefiles.
+
+==================================================
+SCRUBBER
+==================================================
+
+Background on the Scrubber: $TOONTOWN/src/publish/Scrubber.py is a python
+script that copies the necessary files out of the CVS trees onto a stage
+directory. It then builds the multifiles, patches, and file databases
+needed to publish.
+
+==================================================
+PUBLISH SCRIPT
+==================================================
+
+run the shell script $TOONTOWN/src/publish/publish <server>
+It takes one argument which is the server directory.
+
+We have mapped J:/ to Jack's apache directory for the test server and H:/
+to stage1 which is the real production server
+
+This script automates these steps:
+  - signs and publishes the ActiveX control
+  - Runs the scrubber
+  - Publishes the output of the scrubber
+  - Runs wise
+  - Publishes the output of wise
+
+==================================================
+TESTING
+==================================================
+
+Point your browser at the new distribution and test and adjust
+
+
+
+==================================================
+SERVER
+==================================================
+setenv CVSROOT :pserver:shochet@jumbo:/vol2/cvs
+cvs login
+cd ~/player
+cvs co pserver
+cd pserver
+make release (for now type "make OSNAME=WIN32 release")
+
+
+
+
+
+
+
+

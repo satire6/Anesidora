@@ -1,0 +1,186 @@
+#! /bin/bash
+#
+# THE PUBLISH SCRIPT
+# $Id$
+#
+# This script generates the multifiles needed for a publish. These 
+# multi-files get dropped off in C:\ttown-persist\<language> for 
+# further processing/patching.
+#
+# Usage:
+# 
+# publish [options]
+# 
+#   Options:
+# 
+#    -l language
+#        Specifies the language to publish in
+#        Default is "english"
+# 
+#    -d 
+#        If this is specified, a debug publish will be generated,
+#        leaving assertions in the Python code.  This is unrelated to
+#        building a debug version of Panda, which is controlled by
+#        your Config.pp settings and has nothing to do with this
+#        script.
+#
+#ENDCOMMENT
+
+# default binaries location
+RSYNC=`which rsync`
+
+GAMEDIR=$TOONTOWN
+
+case `uname` in
+  C[yY][gG][wW][iI][nN]*)
+    	PLATFORM=WIN32;
+        RSYNC=/bin/rsync;;
+  Darwin) 
+        PLATFORM=OSX;
+	    RSYNC=/usr/bin/rsync;;
+  Linux) 
+        PLATFORM=OSX;;  # For convenience while developing
+  *) 
+        echo Unknown platform.  Fix the publish script.; 
+        exit 1;;
+esac
+
+if [ $PLATFORM = WIN32 ]; then
+  web=/c/publish-web-launcher
+else
+  web=~/publish-web
+fi
+language=english
+publish_debug=
+
+while getopts l:d OPT; do
+    case $OPT in
+       l) language="$OPTARG";;
+       d) publish_debug=1;;
+      \?) exit 1;;
+    esac
+done
+
+# See if we want to publish a debug version of the show (-d flag).
+if [ $publish_debug ]; then
+  pythonargs="-d"
+else
+  pythonargs=
+fi
+
+# Determine the language to build in
+# This gets set for Configrc.cxx to read
+if [ "$language" = "english" ]; then
+  export USE_ENGLISH=1
+elif [ "$language" = "castillian" ]; then
+  export USE_CASTILLIAN=1
+elif [ "$language" = "japanese" ]; then
+  export USE_JAPANESE=1
+elif [ "$language" = "german" ]; then
+  export USE_GERMAN=1
+elif [ "$language" = "portuguese" ]; then
+  export USE_PORTUGUESE=1
+elif [ "$language" = "french" ]; then
+  export USE_FRENCH=1
+else
+  echo 'Invalid language "'$language'".'
+  exit 1
+fi
+
+# tag configrc to be rebuilt if building in a different language from last build
+if [ "$language" ]; then
+  if ! [ -f "$GAMEDIR/.lang-$language" ]; then
+    rm -f $GAMEDIR/.lang-*
+    (cd $OTP && make clean-configrc) || exit
+  fi
+fi
+touch $GAMEDIR/.lang-$language
+# make install || exit
+
+if [ $PLATFORM = WIN32 ]; then
+    persist="C:/ttown-persist/$language"
+else
+    persist=~/ttown-persist/$language
+fi
+
+# We'd better be attached to all of the source trees.
+test "$DTOOL"    || { echo 'Not attached to DTOOL'; exit; }
+test "$PANDA"    || { echo 'Not attached to PANDA'; exit; }
+test "$DIRECT"   || { echo 'Not attached to DIRECT'; exit; }
+test "$OTP"      || { echo 'Not attached to OTP'; exit; }
+test "$GAMEDIR"  || { echo 'Not attached to TOONTOWN'; exit; }
+test "$TTMODELS" || { echo 'Not attached to TTMODELS'; exit; }
+
+echo "web           : " $web
+echo "persist       : " $persist
+echo "language      : " $language
+
+if [ $PLATFORM = WIN32 ]; then
+  installBase=download/$language/currentVersion
+else
+  installBase=download/$language/currentVersionOSX
+fi
+
+installDir="$web"/$installBase
+
+# Make sure the persistance store and web install working directories
+# exist.
+
+test -d "$persist" || mkdir -p "$persist" || exit
+test -d "$installDir" || mkdir -p "$installDir" || exit
+
+# clean up any leftover cruft from before
+cd "$persist" && rm -rf pyz mftemp toplevel || exit
+
+cd "$GAMEDIR"/src/publish || exit
+
+if [ $PLATFORM = WIN32 ]; then
+    export PYTHON_LIB=$WINTOOLS/sdk/python/Python-2.4.1/Lib
+    export PYTHON_BIN=$WINTOOLS/sdk/python/Python-2.4.1/PCbuild
+elif [ $PLATFORM = OSX ]; then
+    export PYTHON_LIB=$OSXTOOLS/built/lib/python2.4
+    export PYTHON_BIN=$OSXTOOLS/built/bin
+fi
+
+python $pythonargs -OO QuickScrubber.py -p $PLATFORM scrub "$installDir" "$persist" || exit
+echo "Scrubber Complete"
+
+# this is temporary until bzip compressing files is native
+#
+cd "$persist"
+
+if [ $PLATFORM = WIN32 ]; then
+    PHASE_1=phase_1.mf
+    PHASE_2=phase_2.mf
+    PHASE_FILES="$PHASE_1 $PHASE_2 phase_3.mf phase_3.5.mf phase_4.mf phase_5.mf phase_5.5.mf phase_6.mf phase_7.mf phase_8.mf phase_9.mf phase_10.mf phase_11.mf phase_12.mf phase_13.mf"
+elif [ $PLATFORM = OSX ]; then
+    mv phase_1.mf phase_1OSX.mf
+    mv phase_2.mf phase_2OSX.mf
+    PHASE_1=phase_1OSX.mf
+    PHASE_2=phase_2OSX.mf
+
+    # we only care about phase_1 for OSX 
+    # ???????????? PHASE_FILES="$PHASE_1" 
+fi
+
+for f in $PHASE_FILES ; do
+    echo deleting $f.bz2
+    rm -rf $f.bz2 
+done
+
+echo "PHASE_1 : " $PHASE_1
+echo "PHASE_2 : " $PHASE_2
+
+echo "*** Adding index file to $PHASE_1 and $PHASE_2 ***"
+$TOONTOWN/src/publish/build_multifile_index.pl $PHASE_1
+$TOONTOWN/src/publish/build_multifile_index.pl $PHASE_2
+echo ""
+
+for f in $PHASE_FILES ; do
+    echo bzipping $f
+    bzip2 -k1 $f
+done
+
+# Clean up temporary directories
+cd "$persist" || exit
+rm -rf pyz mftemp toplevel

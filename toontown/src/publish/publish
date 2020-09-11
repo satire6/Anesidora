@@ -1,0 +1,715 @@
+#! /bin/bash
+#
+# THE PUBLISH SCRIPT
+# $Id$
+#
+# This script generates all of the necessary patches against a
+# previous version of Toontown, creates the appropriate files to put
+# on the download server, and copies them to ttown for testing and/or
+# publishing to the world.
+#
+# It can run either in "live" mode, "qa" mode, or "test" mode, which
+# determines which files are used as the previous version to generate
+# the diffs from.  In test mode, the default, the previous version is
+# simply stored in a local directory on your computer,
+# c:/ttown-persist by default, which means the generated patches will
+# be based on whatever previous publishes you have made from your
+# computer in test mode.  In live and qa mode, the previous version is
+# stored in a CVS directory called $TTPUBLISH, which allows the
+# generated patches to be based on the previously published version.
+# It is your responsibility to ensure this directory is properly
+# updated before you begin, and to cvs commit the directory when
+# appropriate.  Even if you are doing a test publish, it might be
+# appropriate to run in live mode rather than test mode, in order to
+# test the patches that you would have generated had you done an
+# actual publish (but in this case you should be careful not to cvs
+# commit the $TTPUBLISH directory).
+#
+# This script performs the following discrete steps:
+#
+#  * (b) Cvs update and build the dtool/panda/direct/otp/toontown trees.
+#  * (x) Build and sign the ActiveX control.
+#  * (p) Run the Scrubber to generate patches against previous publishes.
+#  * (w) Run the Wise installer to generate InstallLauncher.exe.  On
+#        OSX, builds Toontown_OSX.tar.
+#  * (z) Compress and copy all files to the temporary staging
+#        directory (requires c, below)
+#  * (c) perform z, then scp files from the staging directory to
+#        ttown for testing or release.
+#
+# The default is to perform all steps, but any subset of the above
+# steps may be selected with the -o option, using the letter shown in
+# parentheses for each option (without using the parentheses).
+#
+# Usage:
+#
+# publish [options]
+#
+#   Options:
+#
+#    -m mode
+#        Specifies the publish mode.  This should be one of "local",
+#        "live", or "test"; if omitted, the default is "local".  This
+#        Mode "local" means the persist directory is a local directory;
+#        modes "live" and "test" use a CVS-controlled persist directory.
+#
+#    -c
+#        If this is specified, the persistent-state directory is
+#        cleaned out before the script begins.  This option may only
+#        be used in "local" mode, but also see -C.  The
+#        persistent-state directory will be completely emptied.  This
+#        means you will not produce any patches at all (just complete
+#        multifiles), so the download may be a little slower, but the
+#        publish script will run significantly faster.
+#
+#    -C
+#        If this is specified, the persistent-state directory is
+#        cleaned out and CVS updated with -A before the script begins.
+#        This option may only be used in "test" or "live" mode, but
+#        also see -c.  This ensures you are generating patches against
+#        the most-recently published version, eliminating intervening
+#        patches you might have generated during test publishes.
+#
+#    -r tag
+#        Specifies a CVS tag to use to update all source trees (dtool,
+#        panda, direct, toontown).  If this is omitted, the trees are
+#        not updated prior to running the script.  Omitting this also
+#        implicitly omits the 'b' (build) step from -o.
+#
+#    -s series
+#        Specifies the series on ttown to publish to; e.g. 1400, 2000,
+#        3000, etc.  If this is omitted, the publish is built in the
+#        staging directory C:\publish-web, but is not copied to ttown.
+#        If you specify series 1400, you must also specify -m live.
+#
+#    -u username
+#        Specifies the username on ttown to use when copying the files
+#        to the appropriate series.  If this is omitted, the
+#        appropriate username for each series is looked up in a table.
+#
+#    -o action-flags
+#        Performs only the indicated major steps of the script, as
+#        described above.  action-flags should be one or more of b, x,
+#        p, w, z, or c.
+#
+#    -w web-dir
+#        Specifies the name of the temporary staging web directory
+#        that files are copied to in a ready-to-install state, before
+#        they are scp'ed to ttown.  The default is "C:\publish-web".
+#
+#    -l language
+#        Specifies the language to publish in
+#        Default is "english"
+#
+#    -d
+#        If this is specified, a debug publish will be generated,
+#        leaving assertions in the Python code.  This is unrelated to
+#        building a debug version of Panda, which is controlled by
+#        your Config.pp settings and has nothing to do with this
+#        script.
+#
+#    -R  [CD version patch rollup number]
+#
+#    -B  Make one more build pass during publish to pick up any missed changes.
+#
+#ENDCOMMENT
+
+case `uname` in
+  Darwin) PLATFORM=OSX;;
+  Linux) PLATFORM=OSX;;  # For convenience while developing
+  Cygwin*) PLATFORM=WIN32;;
+  CYGWIN*) PLATFORM=WIN32;;
+  *) echo Unknown platform.  Fix the publish script.; exit 1;;
+esac
+
+mode=local
+clean_persist=
+cvs_clean_persist=
+cvs_tag=
+ttown_series=
+ttown_username=
+perform_b=          # force client rebuild
+perform_x=1         # build the ActiveX
+perform_p=1         # clean out persist directory
+perform_w=1         # build Wise installer
+perform_c=1         # upload files to ttown2 for testing and check-in
+no_z=               # turn off pcompress files and copy to persist directory
+if [ $PLATFORM = WIN32 ]; then
+  web=/c/publish-web
+else
+  web=~/publish-web
+fi
+language=english
+publish_debug=
+cd_rollup=
+
+# security lock down the exact location of binaries (under cygwin)
+
+# On second thought, why should we do this?  We trust everyone who will
+# be running this script not to try to hack the paths, and locking the
+# paths makes it difficult to run the script portably on OSX or Cygwin.
+
+#SSH=/bin/ssh
+#SCP=/bin/scp
+#RSYNC=/bin/rsync
+SSH=`which ssh`
+SCP=`which scp`
+RSYNC=`which rsync`
+
+RSYNCFLAGS="-rpt --progress -e $SSH -C --include=*.exe"
+
+while getopts m:cCr:s:u:o:w:l:dhR:XB OPT; do
+    case $OPT in
+       m) mode="$OPTARG";;
+       c) clean_persist=1;;
+       C) cvs_clean_persist=1;;
+       r) cvs_tag="$OPTARG";;
+       s) ttown_series="$OPTARG";;
+       u) ttown_username="$OPTARG";;
+       o) test "${OPTARG#*b}" = "$OPTARG" && perform_b=
+          test "${OPTARG#*x}" = "$OPTARG" && perform_x=
+          test "${OPTARG#*p}" = "$OPTARG" && perform_p=
+          test "${OPTARG#*w}" = "$OPTARG" && perform_w=
+          test "${OPTARG#*c}" = "$OPTARG" && perform_c=
+          test "${OPTARG#*z}" = "$OPTARG" && no_z=1
+          ;;
+       w) web="OPTARG";;
+       l) language="$OPTARG";;
+       d) publish_debug=1;;
+       h) sed '/ENDCOMMENT/,$d' <$0
+          exit 1;;
+       R) cd_rollup="$OPTARG";;
+       X) perform_x=;;
+       B) perform_b=1;;
+      \?) exit 1;;
+    esac
+done
+shift `expr $OPTIND - 1`
+
+if [ $PLATFORM != WIN32 ]; then
+  # The ActiveX control is Windows-only.
+  perform_x=
+fi
+
+if [ -z "$ttown_username" ]; then
+  # Infer the username based on the series.  Feel free to add to or
+  # modify the usernames in this list to reflect reality.
+  case "$ttown_series" in
+    2000) ttown_username=drose;;
+    3000) ttown_username=darren;;
+    4200) ttown_username=masad;;
+    5000) ttown_username=cxgeorge;;
+    6000) ttown_username=roger;;
+    8000) ttown_username=jtlee;;
+    9000) ttown_username=skyler;;
+    9800) ttown_username=skyler;;
+    *) ttown_username=toonpub;;
+  esac
+fi
+
+# If we omitted the CVS tag, that also implies omitting the build.
+if [ -z "$cvs_tag" ]; then
+  perform_b=
+fi
+
+# See if we want to publish a debug version of the show (-d flag).
+if [ $publish_debug ]; then
+  pythonargs="-d"
+  installerargs="debug"
+  # The ActiveX control assumes if debug is set, OPTIMIZE was 1
+  activex_optimize=1
+else
+  pythonargs=
+  installerargs="release"
+  # The ActiveX control assumes if release is set, OPTIMIZE was 4
+  activex_optimize=4
+fi
+
+if [ -z "$PPREMAKE_PLATFORM" ]; then
+  PPREMAKE_PLATFORM="Cygwin"
+  export PPREMAKE_PLATFORM
+fi
+
+# Determine the language to build in
+# This gets set for Configrc.cxx to read
+if [ "$language" = "english" ]; then
+  export USE_ENGLISH=1
+elif [ "$language" = "castillian" ]; then
+  export USE_CASTILLIAN=1
+elif [ "$language" = "japanese" ]; then
+  export USE_JAPANESE=1
+elif [ "$language" = "german" ]; then
+  export USE_GERMAN=1
+elif [ "$language" = "portuguese" ]; then
+  export USE_PORTUGUESE=1
+elif [ "$language" = "french" ]; then
+  export USE_FRENCH=1
+else
+  echo 'Invalid language "'$language'".'
+  exit 1
+fi
+
+if [ "$mode" = "test" ]; then
+  installerargs="$installerargs testserver"
+  #ppremake in installer will use this
+  USE_TESTSERVER=1
+  export USE_TESTSERVER
+  activeXBuildDir="Opt$activex_optimize-$PPREMAKE_PLATFORM-test"
+else
+  installerargs="$installerargs releaseserver"
+  activeXBuildDir="Opt$activex_optimize-$PPREMAKE_PLATFORM"
+fi
+
+if [ ! "$language" = "english" ]; then
+  activeXBuildDir="$activeXBuildDir-$language"
+fi
+
+# Rebuild Toontown to get any Config.pp changes
+# This picks up the USE_TESTSERVER flag and the LANGUAGE, among other possibles
+#cd "$TOONTOWN" || exit
+#ppremake || exit
+
+# tag configrc to be rebuilt if building in a different language from last build
+if [ "$language" ]; then
+  if ! [ -f "$TOONTOWN/.lang-$language" ]; then
+    rm -f $TOONTOWN/.lang-*
+    (cd $OTP && make clean-configrc) || exit
+  fi
+fi
+touch $TOONTOWN/.lang-$language
+make install || exit
+
+if [ $PLATFORM = WIN32 ]; then
+  echo activeX build dir is $activeXBuildDir
+fi
+
+if [ "$ttown_series" = "1400" ]; then
+  # A few sanity checks if we're publishing to the 1400 series.
+  if [ "$mode" != "live" ]; then
+    echo 'You must make a "live" publish to series 1400.'
+    exit 1
+  fi
+  if [ "$publish_debug" ]; then
+    echo 'You must not publish debug to series 1400.'
+    exit 1
+  fi
+else
+  if [ "$mode" = "live" -o "$mode" = "test" ]; then
+    echo
+    if [ "$ttown_series" ]; then
+      echo 'Warning: Publishing "'$mode'"-type build to series '$ttown_series'.'
+    else
+      echo 'Warning: Publishing "'$mode'" without specifying a series.'
+    fi
+    echo
+  fi
+fi
+
+# Set the persistent directory according to the publish mode.
+if [ "$mode" = "live" ]; then
+  if [ $PLATFORM = WIN32 ]; then
+    persist="$TTPUBLISH/wdig/$language"
+  else
+    persist="$TTPUBLISH/liveOSX/$language"
+  fi
+  cvs_persist=1
+  if [ -z "$TTPUBLISH" ]; then
+    echo 'You must be attached to TTPUBLISH to make a "live" publish.'
+    exit 1
+  fi
+elif [ "$mode" = "test" ]; then
+  if [ $PLATFORM = WIN32 ]; then
+    persist="$TTPUBLISH/qa/$language"
+  else
+    persist="$TTPUBLISH/testOSX/$language"
+  fi
+  cvs_persist=1
+  if [ -z "$TTPUBLISH" ]; then
+    echo 'You must be attached to TTPUBLISH to make a "qa" publish.'
+    exit 1
+  fi
+elif [ "$mode" = "local" ]; then
+  if [ $PLATFORM = WIN32 ]; then
+    persist="C:/ttown-persist/$language"
+  else
+    persist=~/ttown-persist/$language
+  fi
+  cvs_persist=
+else
+  # Error
+  echo 'Invalid publish mode "'$mode'".'
+  exit 1
+fi
+
+if [ $cd_rollup ]; then
+  persist="$persist/CD_"$cd_rollup
+fi
+
+# We'd better be attached to all of the source trees.
+test "$DTOOL" || { echo 'Not attached to DTOOL'; exit; }
+test "$PANDA" || { echo 'Not attached to PANDA'; exit; }
+test "$DIRECT" || { echo 'Not attached to DIRECT'; exit; }
+test "$OTP" || { echo 'Not attached to OTP'; exit; }
+test "$TOONTOWN" || { echo 'Not attached to TOONTOWN'; exit; }
+test "$TTMODELS" || { echo 'Not attached to TTMODELS'; exit; }
+if [ $cvs_persist ]; then
+  test "$TTPUBLISH" || { echo 'Not attached to TTPUBLISH'; exit; }
+fi
+
+echo "mode          : " $mode
+echo "web           : " $web
+echo "persist       : " $persist
+echo "language      : " $language
+
+if [ $PLATFORM = WIN32 ]; then
+  installBase=download/$language/currentVersion
+else
+  installBase=download/$language/currentVersionOSX
+fi
+
+if [ $cd_rollup ]; then
+  installBase=$installBase/CD_$cd_rollup
+fi
+installDir="$web"/$installBase
+
+bundle=ToontownClient.bundle
+tarball=Toontown_$PLATFORM.tar
+if [ "$mode" = "test" ]; then
+  bundle=Test$bundle
+  tarball=Test$tarball
+fi
+
+if [ -z $no_z ]; then
+  # Make sure the overall web install directory is clean (we will fill
+  # it up again with the appropriate contents).
+  test -d "$web" || mkdir -p "$web" || exit
+  rm -rf "$web"/*
+fi
+
+# Make sure the persistance store and web install working directories
+# exist.
+
+test -d "$persist" || mkdir -p "$persist" || exit
+test -d "$installDir" || mkdir -p "$installDir" || exit
+
+# Update all trees to tag and build
+
+if [ $perform_b ]; then
+  echo "Rebuilding client"
+
+  cd "$DTOOL" || exit
+  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+  ppremake || exit
+  make install || exit
+
+  cd "$PANDA" || exit
+  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+  ppremake || exit
+  make install || exit
+
+  cd "$DIRECT" || exit
+  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+  ppremake || exit
+  make install || exit
+
+  cd "$OTP" || exit
+  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+  ppremake || exit
+  make install || exit
+
+  cd "$TOONTOWN" || exit
+  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+  ppremake || exit
+  make install || exit
+
+  genPyCode -n win-publish || exit
+
+else
+  echo
+  echo NOT doing full client rebuild
+  echo
+fi
+
+if [ -z $cd_rollup ]; then
+  # CD patchset doesn't need an activeX
+  if [ $perform_x ]; then
+    # testserver TT/installer be rebuilt with USE_TESTSERVER envvar build flag.
+    # need to make sure it's up-to-date.
+
+    echo "Rebuilding Toontown ActiveX installer"
+    installerDir="$TOONTOWN"/src/installer
+    cd "$installerDir" || exit
+    #  test "$cvs_tag" && cvs update -r "$cvs_tag" || exit
+
+    # We have to temporarily force the optimize level to a particular
+    # value to satisfy the expectations of publish.pl (the activeX
+    # builder script).
+    export PANDA_OPTIMIZE=$activex_optimize
+    export WANT_INSTALLER=1
+    ppremake installer || exit
+    make install || exit
+    echo "Creating signed Toontown ActiveX installer .cab package."
+    ./publish.pl $installerargs $language || exit
+
+    # Now restore the installer directory to whatever optimize it
+    # should be set to normally.
+    unset PANDA_OPTIMIZE
+    unset WANT_INSTALLER
+    ppremake installer || exit
+  fi
+fi
+
+if [ $perform_p ]; then
+
+  # Clean out the previous persist directory if the user so requested.
+  if [ $clean_persist ]; then
+    if [ $cvs_persist ]; then
+      if [ "$ttown_series" = "1400" ]; then
+        echo "*** YOU SHOULD NOT SPECIFY -c and PUBLISH to SERIES 1400. ***"
+        #exit 1
+      fi
+    fi
+    cd "$persist" && rm -rf *
+  elif [ $cvs_clean_persist ]; then
+    if [ -z "$cvs_persist" ]; then
+      echo "You may only specify -C in conjunction with -m live."
+      exit 1
+    fi
+
+    echo "Restoring persist directory."
+    # Completely blow away the subdirectory in the ttpublish tree, and
+    # check it out again.  We don't want to have any locally-modified
+    # files in there.
+    abovedir=`dirname "$persist"`
+    base=`basename "$persist"`
+    cd "$abovedir" || exit
+# TODO: create flag to turn off CVS updates here
+    rm -rf "$base"
+#    cvs update -dP -A "$base" || exit	# this doesn't allow merging branches
+    cvs update -dP "$base" || exit
+
+  else
+    # Don't empty the tree, but do clean up junk that may have been left
+    # over from past runs.
+    cd "$persist" && rm -rf pyz mftemp toplevel || exit
+  fi
+
+  if [ $clean_persist ]; then
+    echo "NOT generating patch files."
+  else
+    echo "Generating patches."
+  fi
+  cd "$TOONTOWN"/src/publish || exit
+
+  if [ $PLATFORM = WIN32 ]; then
+    export PYTHON_LIB=$WINTOOLS/sdk/python/Python-2.4.1/Lib
+    export PYTHON_BIN=$WINTOOLS/sdk/python/Python-2.4.1/PCbuild
+  elif [ $PLATFORM = OSX ]; then
+    export PYTHON_LIB=$OSXTOOLS/built/lib/python2.4
+    export PYTHON_BIN=$OSXTOOLS/built/bin
+  fi
+  if [ -z $cd_rollup ]; then
+    python $pythonargs -OO Scrubber.py -m $mode -p $PLATFORM scrub "$installDir" "$persist" || exit
+  else
+    python $pythonargs -OO Scrubber.py -m $mode -p $PLATFORM -R scrub "$installDir" "$persist" || exit
+  fi
+  echo "Scrubber Complete"
+fi
+
+if [ -z $cd_rollup -a $perform_w ]; then
+  # Now extract out the contents of the "toplevel" directory so we can
+  # have it for Wise.
+  cd "$persist" || exit
+
+  if [ $PLATFORM = WIN32 ]; then
+    # Unpack the phase_2 archive so we can Wise it up.
+    multify xvf phase_2.mf || exit
+
+    # We pass in the persist directory name as a compile-time variable (/d)
+    # wise 9 seems to require no " " between '/d' and the varname
+    echo "Running Wise."
+    toplevel=`cygpath -w "$persist"/toplevel`
+    launcherwse=`cygpath -w $TOONTOWN/src/launcher/launcher.wse`
+    wise_extra=
+    if [ "$mode" = "test" ]; then
+      wise_extra="/d_USE_TESTSERVER_=1"
+    fi
+    /c/Program\ Files/Wise\ Installation\ System/Wise32.exe /c /d_STAGE_=$toplevel /d_LANGUAGE_=$language $wise_extra $launcherwse || exit 1
+    echo "Wise Complete!"
+
+  elif [ $PLATFORM = OSX ]; then
+    # On OSX, we unpack phase 2, and put it in an OSX bundle
+    # directory, then tar it up into a tarball.
+    rm -rf $bundle ToontownClient.bundle toplevel
+    tar xvf $TOONTOWN/src/publish/toontown_bundle.tar || exit
+    if [ "$bundle" != ToontownClient.bundle ]; then
+      mv ToontownClient.bundle $bundle || exit
+    fi
+
+    multify xvf phase_2.mf || exit
+    mv toplevel $bundle/Contents/MacOS || exit
+
+    if [ "$mode" = "test" ]; then
+      sed s/com\.toontown/com.toontown.test/ <$bundle/Contents/Info.plist >t || exit
+      mv -f t $bundle/Contents/Info.plist || exit
+    fi
+
+    cd $bundle/Contents/MacOS || exit
+    cp "$persist"/phase_3.mf . || exit
+
+    cp $TOONTOWN/src/publish/run.sh . || exit
+    chmod 755 Configrc Toontown run.sh
+
+    echo "Generating $tarball."
+
+    cd "$persist" || exit
+
+    # We don't care about date stamps.  Set them all to the same
+    # arbitrary date, so we don't get irrelevant patch differences on
+    # the tar file.
+    find $bundle -exec touch -t 200601011200 {} \;
+
+    tar cf $TOONTOWN/src/launcher/$tarball $bundle || exit
+    rm -rf $bundle || exit
+  fi
+
+  cd "$TOONTOWN"/src/publish || exit
+  if [ -z $cd_rollup ]; then
+    python $pythonargs -OO Scrubber.py -m $mode wise "$installDir" "$persist" || exit
+  else
+    python $pythonargs -OO Scrubber.py -m $mode -R wise "$installDir" "$persist" || exit
+  fi
+fi
+
+# Clean up temporary directories
+cd "$persist" || exit
+rm -rf pyz mftemp toplevel
+
+# Copy files to the web directory, and then to ttown2 for testing and checkin
+if [ $perform_c ]; then
+  echo "Copying files to $installDir"
+
+  cd $TOONTOWN/src/publish || exit
+
+  if [ -z $no_z ]; then
+    if [ -z $cd_rollup ]; then
+      python $pythonargs -OO Scrubber.py -m $mode copy "$installDir" "$persist" || exit
+    else
+      python $pythonargs -OO Scrubber.py -m $mode -R copy "$installDir" "$persist" || exit
+    fi
+  fi
+
+  if [ $PLATFORM = WIN32 ]; then
+    # Copy in the ActiveX control too.
+    installerDir=$TOONTOWN/src/installer
+    cabFileBase=ttinst
+    if [ "$mode" = "test" ]; then
+      cabFileBase=tt_test
+    fi
+    if [ ! "$language" = "english" ]; then
+      cabFileBase=$cabFileBase-$language
+    fi
+    cabFile=$cabFileBase.cab
+
+    cp "$installerDir/$activeXBuildDir/$cabFile" $installDir || exit
+    chmod 644 $installDir/$cabFile
+
+    # Now copy in InstallLauncher.exe.
+    # Scrubber.py does the copy and takes care of its patches
+    #launcher=$TOONTOWN/src/launcher/InstallLauncher.exe
+    #chmod 755 $launcher
+    #cp $launcher $installDir || exit
+    #check_md5 -d $launcher >> $installDir/launcherFileDb || exit
+
+    # copy installer & patches when doing just straight copy command
+    cp "$persist"/InstallLauncher.exe* $installDir
+    chmod 755 $installDir/InstallLauncher.exe
+    chmod 644 $installDir/InstallLauncher.exe.*pch*
+  fi
+
+  if [ "$ttown_series" ]; then
+    if [ "$ttown_series" = "2100" ]; then       # castillian
+      baseDir=''
+      echo
+      echo "Cleaning download directory on ttown-$ttown_series."
+      echo
+      $SSH $ttown_username@ttown "rm -f $baseDir/toontown-$ttown_series/common/$installBase/content/*.pz"
+
+      echo "Copying files to ttown-$ttown_series."
+      cd "$web" || exit
+      $SCP -r "$web"/* $ttown_username@ttown:$baseDir/toontown-$ttown_series/common/. || exit
+
+    elif [ "$ttown_series" = "2200" ]; then     # japanese
+      baseDir='/toontown'
+      echo
+      echo "Cleaning download directory on ttown2-$ttown_series."
+      echo
+      $SSH $ttown_username@ttown2 "rm -f $baseDir/$ttown_series/common/$installBase/content/*.pz"
+
+      echo "Copying files to ttown2-$ttown_series."
+      $SCP -r "$web"/* $ttown_username@ttown2:$baseDir/$ttown_series/common/. || exit
+
+      # Copy over $TTMODELS data for Pets AI
+      #
+      echo
+      echo "Copying $TTMODELS to ttown2"
+      EXCLUDE='--exclude=audio/ --exclude=maps/ --exclude=*.ico --exclude=*.cur'
+      $RSYNC $RSYNCFLAGS --delete-after $EXCLUDE $TTMODELS/phase_* $ttown_username@ttown2:/toontown/2200/ttmodels/
+    elif [ "$ttown_series" = "2300" ]; then     # german
+      baseDir='/toontown'
+      echo
+      echo "Cleaning download directory on ttown2-$ttown_series."
+      echo
+      $SSH $ttown_username@ttown2 "rm -f $baseDir/$ttown_series/$installBase/content/*.pz"
+
+      echo "Copying files to ttown2-$ttown_series."
+      $SCP -r "$web"/download/german/* $ttown_username@ttown2:$baseDir/$ttown_series/download/german || exit
+
+      # Copy over $TTMODELS data for Pets AI
+      #
+      echo
+      echo "Copying $TTMODELS to ttown2"
+      EXCLUDE='--exclude=audio/ --exclude=maps/ --exclude=*.ico --exclude=*.cur'
+      $RSYNC $RSYNCFLAGS --delete-after $EXCLUDE $TTMODELS/phase_* $ttown_username@ttown2:/toontown/2300/ttmodels/
+    elif [ "$ttown_series" = "2400" ]; then     # portuguese
+      baseDir='/toontown'
+      echo
+      echo "Cleaning download directory on ttown2-$ttown_series."
+      echo
+      $SSH $ttown_username@ttown2 "rm -f $baseDir/$ttown_series/$installBase/content/*.pz"
+
+      echo "Copying files to ttown2-$ttown_series."
+      $SCP -r "$web"/download/portuguese/* $ttown_username@ttown2:$baseDir/$ttown_series/download/portuguese || exit
+    elif [ "$ttown_series" = "2500" ]; then     # french
+      baseDir='/toontown'
+      echo
+      echo "Cleaning download directory on ttown2-$ttown_series."
+      echo
+      $SSH $ttown_username@ttown2 "rm -f $baseDir/$ttown_series/$installBase/content/*.pz"
+
+      echo "Copying files to ttown2-$ttown_series."
+      $SCP -r "$web"/download/french/* $ttown_username@ttown2:$baseDir/$ttown_series/download/french || exit
+    else                                        # english publish
+      baseDir='/toontown/web'
+      echo
+      echo "Cleaning download directory on ttown4-$ttown_series."
+      $SSH $ttown_username@ttown4 "rm -f $baseDir/toontown-$ttown_series/$installBase/content/*.pz; rm -f $baseDir/toontown-$ttown_series/$installBase/*.pch"
+
+      echo
+      echo "Copying files to ttown4-$ttown_series."
+      EXCLUDE='--exclude=*.php --exclude=static/ --exclude="CD_*/" --exclude=*.dmg'
+      $RSYNC $RSYNCFLAGS --delete $EXCLUDE "$web"/$installBase/ $ttown_username@ttown4:$baseDir/toontown-$ttown_series/$installBase/ || exit
+
+      if [ "$ttown_series" = "1400" ] || [ "$ttown_series" = "1600" ] || [ "$ttown_series" = "1200" ] || [ "$ttown_series" = "1800" ]; then
+        # Copy over $TTMODELS data for Pets AI
+        #
+        echo
+        echo "Copying $TTMODELS to ttown4"
+        EXCLUDE='--exclude=audio/ --exclude=maps/ --exclude=*.ico --exclude=*.cur'
+        $RSYNC $RSYNCFLAGS --delete $EXCLUDE $TTMODELS/built/phase_* $ttown_username@ttown4:/toontown/$ttown_series/ttmodels/
+      fi
+    fi
+  fi
+fi
+
+echo "Finished at" `/bin/date`

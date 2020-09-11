@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://business.srv.disl.disney.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://business.srv.disl.disney.com" xmlns:intf="http://business.srv.disl.disney.com" xmlns:tns1="http://beans.srv.disl.disney.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.3
+Built on Oct 05, 2005 (05:23:37 EDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://business.srv.disl.disney.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://beans.srv.disl.disney.com"/>
+   <element name="generateToken">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="generateTokenResponse">
+    <complexType>
+     <sequence>
+      <element name="generateTokenReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="generateTokenParentAuth">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+      <element name="username" type="xsd:string"/>
+      <element name="password" type="xsd:string"/>
+      <element name="affiliate" type="xsd:string"/>
+      <element name="browserAgent" type="xsd:string"/>
+      <element name="ip_address" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="generateTokenParentAuthResponse">
+    <complexType>
+     <sequence>
+      <element name="generateTokenParentAuthReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="redeemToken">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+      <element name="token" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="redeemTokenResponse">
+    <complexType>
+     <sequence>
+      <element name="redeemTokenReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="redeemTokenParentAuth">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+      <element name="token" type="xsd:string"/>
+      <element name="username" type="xsd:string"/>
+      <element name="password" type="xsd:string"/>
+      <element name="affiliate" type="xsd:string"/>
+      <element name="browserAgent" type="xsd:string"/>
+      <element name="ip_address" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="redeemTokenParentAuthResponse">
+    <complexType>
+     <sequence>
+      <element name="redeemTokenParentAuthReturn" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="makeCasualFriends">
+    <complexType>
+     <sequence>
+      <element name="user_id1" type="xsd:int"/>
+      <element name="user_id2" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="makeCasualFriendsResponse">
+    <complexType/>
+   </element>
+   <element name="makeFriends">
+    <complexType>
+     <sequence>
+      <element name="user_id1" type="xsd:int"/>
+      <element name="user_id2" type="xsd:int"/>
+      <element name="is_secret" type="xsd:boolean"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="makeFriendsResponse">
+    <complexType/>
+   </element>
+   <element name="getFriends">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getFriendsResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getFriendsReturn" type="tns1:Friend"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getNamedFriends">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getNamedFriendsResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getNamedFriendsReturn" type="tns1:NamedFriend"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getTokens">
+    <complexType>
+     <sequence>
+      <element name="user_id" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getTokensResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getTokensReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="deleteFriend">
+    <complexType>
+     <sequence>
+      <element name="friend1" type="xsd:int"/>
+      <element name="friend2" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="deleteFriendResponse">
+    <complexType/>
+   </element>
+   <element name="generateRandomToken">
+    <complexType/>
+   </element>
+   <element name="generateRandomTokenResponse">
+    <complexType>
+     <sequence>
+      <element name="generateRandomTokenReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+  <schema elementFormDefault="qualified" targetNamespace="http://beans.srv.disl.disney.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <complexType name="Friend">
+    <sequence>
+     <element name="friendId" type="xsd:int"/>
+     <element name="secret" type="xsd:boolean"/>
+    </sequence>
+   </complexType>
+   <complexType name="NamedFriend">
+    <complexContent>
+     <extension base="tns1:Friend">
+      <sequence>
+       <element name="displayName" nillable="true" type="xsd:string"/>
+      </sequence>
+     </extension>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="makeFriendsRequest">
+
+      <wsdl:part element="impl:makeFriends" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getNamedFriendsRequest">
+
+      <wsdl:part element="impl:getNamedFriends" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="redeemTokenParentAuthRequest">
+
+      <wsdl:part element="impl:redeemTokenParentAuth" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateTokenParentAuthRequest">
+
+      <wsdl:part element="impl:generateTokenParentAuth" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateTokenParentAuthResponse">
+
+      <wsdl:part element="impl:generateTokenParentAuthResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteFriendRequest">
+
+      <wsdl:part element="impl:deleteFriend" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTokensRequest">
+
+      <wsdl:part element="impl:getTokens" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="redeemTokenParentAuthResponse">
+
+      <wsdl:part element="impl:redeemTokenParentAuthResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="redeemTokenResponse">
+
+      <wsdl:part element="impl:redeemTokenResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateRandomTokenRequest">
+
+      <wsdl:part element="impl:generateRandomToken" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="makeCasualFriendsResponse">
+
+      <wsdl:part element="impl:makeCasualFriendsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateRandomTokenResponse">
+
+      <wsdl:part element="impl:generateRandomTokenResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getNamedFriendsResponse">
+
+      <wsdl:part element="impl:getNamedFriendsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getFriendsResponse">
+
+      <wsdl:part element="impl:getFriendsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getTokensResponse">
+
+      <wsdl:part element="impl:getTokensResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteFriendResponse">
+
+      <wsdl:part element="impl:deleteFriendResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getFriendsRequest">
+
+      <wsdl:part element="impl:getFriends" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="makeFriendsResponse">
+
+      <wsdl:part element="impl:makeFriendsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="makeCasualFriendsRequest">
+
+      <wsdl:part element="impl:makeCasualFriends" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateTokenRequest">
+
+      <wsdl:part element="impl:generateToken" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="generateTokenResponse">
+
+      <wsdl:part element="impl:generateTokenResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="redeemTokenRequest">
+
+      <wsdl:part element="impl:redeemToken" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="FriendManager">
+
+      <wsdl:operation name="generateToken">
+
+         <wsdl:input message="impl:generateTokenRequest" name="generateTokenRequest"/>
+
+         <wsdl:output message="impl:generateTokenResponse" name="generateTokenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="generateTokenParentAuth">
+
+         <wsdl:input message="impl:generateTokenParentAuthRequest" name="generateTokenParentAuthRequest"/>
+
+         <wsdl:output message="impl:generateTokenParentAuthResponse" name="generateTokenParentAuthResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="redeemToken">
+
+         <wsdl:input message="impl:redeemTokenRequest" name="redeemTokenRequest"/>
+
+         <wsdl:output message="impl:redeemTokenResponse" name="redeemTokenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="redeemTokenParentAuth">
+
+         <wsdl:input message="impl:redeemTokenParentAuthRequest" name="redeemTokenParentAuthRequest"/>
+
+         <wsdl:output message="impl:redeemTokenParentAuthResponse" name="redeemTokenParentAuthResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="makeCasualFriends">
+
+         <wsdl:input message="impl:makeCasualFriendsRequest" name="makeCasualFriendsRequest"/>
+
+         <wsdl:output message="impl:makeCasualFriendsResponse" name="makeCasualFriendsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="makeFriends">
+
+         <wsdl:input message="impl:makeFriendsRequest" name="makeFriendsRequest"/>
+
+         <wsdl:output message="impl:makeFriendsResponse" name="makeFriendsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getFriends">
+
+         <wsdl:input message="impl:getFriendsRequest" name="getFriendsRequest"/>
+
+         <wsdl:output message="impl:getFriendsResponse" name="getFriendsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getNamedFriends">
+
+         <wsdl:input message="impl:getNamedFriendsRequest" name="getNamedFriendsRequest"/>
+
+         <wsdl:output message="impl:getNamedFriendsResponse" name="getNamedFriendsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTokens">
+
+         <wsdl:input message="impl:getTokensRequest" name="getTokensRequest"/>
+
+         <wsdl:output message="impl:getTokensResponse" name="getTokensResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteFriend">
+
+         <wsdl:input message="impl:deleteFriendRequest" name="deleteFriendRequest"/>
+
+         <wsdl:output message="impl:deleteFriendResponse" name="deleteFriendResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="generateRandomToken">
+
+         <wsdl:input message="impl:generateRandomTokenRequest" name="generateRandomTokenRequest"/>
+
+         <wsdl:output message="impl:generateRandomTokenResponse" name="generateRandomTokenResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="FriendManagerSoapBinding" type="impl:FriendManager">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="generateToken">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="generateTokenRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="generateTokenResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="generateTokenParentAuth">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="generateTokenParentAuthRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="generateTokenParentAuthResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="redeemToken">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="redeemTokenRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="redeemTokenResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="redeemTokenParentAuth">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="redeemTokenParentAuthRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="redeemTokenParentAuthResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="makeCasualFriends">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="makeCasualFriendsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="makeCasualFriendsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="makeFriends">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="makeFriendsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="makeFriendsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getFriends">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getFriendsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getFriendsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getNamedFriends">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getNamedFriendsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getNamedFriendsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getTokens">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getTokensRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getTokensResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteFriend">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteFriendRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteFriendResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="generateRandomToken">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="generateRandomTokenRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="generateRandomTokenResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="FriendManagerService">
+
+      <wsdl:port binding="impl:FriendManagerSoapBinding" name="FriendManager">
+
+         <wsdlsoap:address location="http://dnhspapp02/disl/services-admin/FriendManager"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,27 @@
+HKCR
+{
+	Installer.installerCtrl.1 = s 'ACTIVEX_CONTROLNAME'
+	{
+		CLSID = s '{INSTALLERCTRL_GUID}'
+	}
+	Installer.installerCtrl = s 'ACTIVEX_CONTROLNAME'
+	{
+		CLSID = s '{INSTALLERCTRL_GUID}'
+		CurVer = s 'Installer.installerCtrl.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {INSTALLERCTRL_GUID} = s 'ACTIVEX_CONTROLNAME'
+		{
+			ProgID = s 'Installer.installerCtrl.1'
+			VersionIndependentProgID = s 'Installer.installerCtrl'
+			ForceRemove ToolBoxBitmap32 = s '%MODULE%, 210'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{INSTALLERCTRL_TYPELIBGUID}'
+		}
+	}
+}

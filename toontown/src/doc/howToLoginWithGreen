@@ -1,0 +1,19 @@
+
+Open server web page to DB
+run SQL query to list all accounts
+find toon you want to login as by searching for his name
+get his OwningAccount hex number (like 0xFEE1F505)
+convert that hex to dec (little endian)
+  On windows, use calc but type in hex pairs backwards, 
+   so 0xFEE1F505 becomes 05 F5 E1 FE (without the spaces)
+Convert to decimal to get a number like 100000254
+
+Look for that decimal number under primary_int
+Get the swid from the primary_str field under that primary_int 
+  it will look something like {A6A07F9F-4BD9-4ADB-4BD9-4ADB}
+
+Dconfig auto-login with that swid
+
+auto-login {A6A07F9F-4BD9-4ADB-4BD9-4ADB}
+
+Now run the game - you should see that account's avatars!

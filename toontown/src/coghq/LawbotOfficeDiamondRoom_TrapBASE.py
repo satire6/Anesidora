@@ -1,0 +1,57 @@
+from toontown.coghq.SpecImports import *
+
+GlobalEntities = {
+    # LEVELMGR
+    1000: {
+        'type': 'levelMgr',
+        'name': 'LevelMgr',
+        'comment': '',
+        'parentEntId': 0,
+        'cogLevel': 0,
+        'farPlaneDistance': 1500,
+        'modelFilename': 'phase_10/models/cashbotHQ/ZONE13a',
+        'wantDoors': 1,
+        }, # end entity 1000
+    # EDITMGR
+    1001: {
+        'type': 'editMgr',
+        'name': 'EditMgr',
+        'parentEntId': 0,
+        'insertEntity': None,
+        'removeEntity': None,
+        'requestNewEntity': None,
+        'requestSave': None,
+        }, # end entity 1001
+    # ZONE
+    0: {
+        'type': 'zone',
+        'name': 'UberZone',
+        'comment': '',
+        'parentEntId': 0,
+        'scale': 1,
+        'description': '',
+        'visibility': [],
+        }, # end entity 0
+    # ATTRIBMODIFIER
+    10055: {
+        'type': 'attribModifier',
+        'name': '<unnamed>',
+        'comment': '',
+        'parentEntId': 10001,
+        'attribName': 'modelPath',
+        'recursive': 1,
+        'typeName': 'model',
+        'value': '',
+        }, # end entity 10055
+    }
+
+
+Scenario0 = {
+    }
+
+levelSpec = {
+    'globalEntities': GlobalEntities,
+    'scenarios': [
+        Scenario0,
+        ],
+    }

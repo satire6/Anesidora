@@ -1,0 +1,39 @@
+Document Type: DLG
+item: Custom Dialog
+  Name=Welcome
+  item: Dialog
+    Title=Disney's Toontown Online
+    Width=370
+    Height=370
+    Font Name=Helv
+    Font Size=8
+    Flags=0000000000000011
+    item: Push Button
+      Rectangle=239 301 329 321
+      Action=1
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000010000000000000001
+      Text=Start Install
+    end
+    item: Push Button
+      Rectangle=239 327 329 347
+      Action=3
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000010000000000000000
+      Text=Exit
+    end
+    item: Static
+      Rectangle=0 0 365 295
+      Action=2
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000001011
+      Pathname=C:\Cygwin\usr\shochet\player\toontown\src\launcher\cdlogo.bmp
+    end
+    item: Static
+      Rectangle=30 301 230 333
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=After the installation is complete, you will automatically be forwarded to the Toontown web page which will launch the game. You must be connected to the internet for this installation to complete.
+    end
+  end
+end

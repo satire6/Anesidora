@@ -1,0 +1,51 @@
+
+==================================================
+suit-type
+
+Set to one of these values - in order from the chart:
+(ie f = flunky, bf = bottom feeder)
+
+  corporate
+    f, p, ym, mm, ds, hh, cr, tbc,
+  legal
+    bf, b, dt, ac, bs, sd, le, bw,
+  money
+    sc, pp, tw, bc, nc, mb, ls, rb,
+  sales
+    cc, tm, nd, gh, ms, tf, m, mh,
+
+So to only get the Flunky, use:
+suit-type f
+
+==================================================
+attack-type
+
+Can be one of the following, but only certain suits have certian
+attacks. You can look in $TOONTOWN/src/battle/SuitBattleGlobals.py for
+the list of Suits and which attacks they have.
+
+    Audit, Bite, BounceCheck, BrainStorm, BuzzWord
+    Calculate, Canned, Chomp, CigarSmoke, ClipOnTie
+    Crunch, Demotion, DoubleTalk, Downsize, EvictionNotice
+    EvilEye, Filibuster, FillWithLead, FingerWag, Fired
+    FiveOClockShadow, FloodTheMarket, FountainPen
+    FreezeAssets, Gavel, GlowerPower, GuiltTrip, HalfWindsor
+    HangUp, HeadShrink, HotAir, Jargon, Legalese
+    Liquidate, MarketCrash, MumboJumbo, ParadigmShift
+    PeckingOrder, PickPocket, PinkSlip, PlayHardball
+    PoundKey, PowerTie, PowerTrip, Quake, RazzleDazzle
+    RedTape, ReOrg, RestrainingOrder, Rolodex, RubberStamp
+    RubOut, Sacked, SandTrap, Schmooze, Shake, Shred
+    SongAndDance, Spin, Synergy, Tabulate, TeeOff
+    ThrowBook, Tremor, Watercooler, Withdrawal, WriteOff
+
+So to get only the PoundKey attack, use:
+attack-type PoundKey
+
+==================================================
+suits-always-join
+
+Set to 1 if you want every suit that walks up to the battle to join,
+set to 0 if you want their default behavior.
+
+==================================================

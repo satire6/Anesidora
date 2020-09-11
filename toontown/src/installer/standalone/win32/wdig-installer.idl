@@ -1,0 +1,57 @@
+import "wtypes.idl";    // for BSTR support
+//import "oaidl.idl";
+//import "ocidl.idl";
+[
+    uuid(976e0c58-26ec-457e-9540-7b4c2a6dbcf2),
+    version(1.1),
+    pointer_default(unique),
+    //endpoint("ncalrpc:[wdig_installer]"),
+]
+interface IWDIG_InstallerRPC
+{
+#pragma optimize ("g", off)
+#ifdef _UNICODE
+	typedef wchar_t *STR;
+#else
+	typedef char *STR;
+#endif
+
+//#define MIN_COUNT 0
+//#define MAX_COUNT 1024
+//    typedef [range(MIN_COUNT,MAX_COUNT)] unsigned short RANGED_SHORT;
+//    typedef struct VSTR {
+//        RANGED_SHORT pLen;
+//        [size_is(,pLen)] STR pStr;
+//    } VSTR;
+
+    int __stdcall ISRPC_ready();
+
+    int __stdcall ISRPC_DoMediumIntegrity([in] int game);
+
+    void __stdcall ISRPC_Init();
+    int __stdcall ISRPC_InitForStatus([in] __int64 hwnd);
+    int __stdcall ISRPC_InitForRun([in] __int64 hwnd,
+        [in] BSTR bsDeployment,
+        [in] BSTR bsDownloadServer,
+        [in] BSTR bsDownloadVersion );
+/*
+    int __stdcall ISRPC_InitForRun([in] HWND bhwnd,
+        [in] volatile BSTR bsDeployment,
+        [in,string] volatile BSTR bsDownloadServer,
+        [in,string] volatile BSTR bsDownloadVersion );
+*/
+//	int ISRPC_getValue(
+//        [in, string, ref] STR key,
+//        [out] RANGED_SHORT *pLength,
+//        [out, size_is(,*pLength)] STR *pVal
+//        );
+	void __stdcall ISRPC_getValue(
+       [in] BSTR key,
+       [out, retval] BSTR *pVal
+       );
+	void __stdcall ISRPC_setValue([in] BSTR key, [in] BSTR val);
+
+    void __stdcall ISRPC_RunInstaller();
+
+    void __stdcall ISRPC_Shutdown(void);
+}

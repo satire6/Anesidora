@@ -1,0 +1,61 @@
+Sharing Source Trees
+====================
+
+This document explains how to make two (or more) computers share a single
+source tree.
+
+Sharing source trees is useful for situations where you are editing code,
+and you want to run the modified code simultaneously on two different
+computers. One inelegant solution would be to check out a copy of the
+source tree on both computers, make changes on one computer, check in the
+changes, and update the source tree on the other computer. This works, but
+it is time-consuming, error-prone, and an abuse of source control. It would
+be much better if we could check out the source tree once, on one computer,
+and have both computers use that single source tree. To accomplish this,
+follow these instructions:
+
+First choose one computer to be the 'host' of the source tree. Check out
+the tree just as you normally would. Next, tell Windows to share the source
+tree folder, or a parent folder of the source tree folder. I recommend
+sharing your user directory. (e.g. C:\cygwin\usr\darren) Browse to the
+folder in the Windows explorer. Right-click the folder, and choose
+'Sharing...'. Select 'Share this folder'. Give the shared folder a simple
+share name. (I call mine 'darren', the same as the folder name)
+
+On the remote computer, map a drive to point to the shared folder on the
+host computer. I recommend using Z: (If you would like to use a
+different drive, replace 'z' in the following commands.) In cygwin, on the
+remote computer:
+
+> net use z: "\\hostname\sharename" /persistent:yes
+
+where 'hostname' is the network name of the host computer, and 'sharename'
+is the name of your shared folder.
+
+Next, set up cygwin to access the new drive through a '/z' directory:
+
+> mkdir /z
+> mount -s -b z:/ /z
+
+Now we need to modify the view settings on the remote computer. Open up the
+vspec file for the tree, in /usr/local/etc. For the $TOONTOWN tree, you
+would open /usr/local/etc/toontown.vspec. Locate the line that has your
+settings. It should start with your Windows username. For instance, mine
+looks like this:
+
+dcranall:croot:path=/usr/darren/player/toontown:server=,pserver,darren@dimbo,/fit/cvs
+
+Make a copy of your line. Add '_remote' to the username ('dcranall' becomes
+'dcranall_remote') and change the 'path' to point to the tree on the Z:
+drive. For example, my new line becomes:
+
+dcranall_remote:croot:path=/z/player/toontown:server=,pserver,darren@dimbo,/fit/cvs
+
+Now, to attach to the shared tree on the remote computer, do
+
+> cta toontown dcranall_remote
+
+Of course, replace 'toontown' with the name of the tree you're connecting
+to, and change 'dcranall_remote' to contain your username.
+
+Congratulations, you are now attached to a remote tree!

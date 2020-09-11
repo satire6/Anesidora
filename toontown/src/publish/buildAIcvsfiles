@@ -1,0 +1,38 @@
+#! /bin/sh
+#
+# Use this script to copy all of the files necessary for an AI publish
+# into the CVS directory in ~/aifiles.
+#
+
+devroot=`pwd | sed -e 's_/player__'`
+srcdir=$devroot/player
+destdir=$devroot/aifiles
+PATH=$PATH:$srcdir/toontown/src/publish
+
+# First, make sure our CVS directory is up-to-date.
+echo 'buildAIcvsfiles $Revision$'
+echo "cleaning and CVS updating $destdir"
+cd $destdir || exit
+find . -mindepth 1 -maxdepth 1 -name CVS -prune -o -type d -exec rm -rf {} \;
+find . -name '.#*' -exec rm -f {} \;
+cvs update -Pd $* || exit
+
+# Then completely empty the CVS directory of ordinary files (leaving
+# the CVS stuff behind).
+find . -name CVS -prune -o -type f -a \! -name '*.buildings' -a \! -name autorestart.fc4 -a \! -name badwordpy.so -exec rm -f {} \;
+
+# There should be just the directory "CVS" (and "." and "..") remaining.
+#numfiles=`\ls -a | wc -l`
+#if [ $numfiles != 3 ]; then
+#  echo "Could not empty $destdir!"
+#  exit 1
+#fi
+
+# Now populate it with the new set of files.
+echo "populating $destdir with new files"
+(cd $srcdir && AIcopyfiles ${debug_state} ${destdir}) || exit
+
+pushd ./
+cd $srcdir
+cp -f toontown/src/configfiles/${LANGUAGE}PRC ${destdir}/language.prc
+popd

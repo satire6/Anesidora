@@ -1,0 +1,1098 @@
+Document Type: WSE
+item: Global
+  Version=9.0
+  Title=Disney's Toontown Online Installation
+  Flags=00010100
+  Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+  Copy Default=1
+  Japanese Font Name=MS Gothic
+  Japanese Font Size=9
+  Start Gradient=0 0 255
+  End Gradient=0 0 0
+  Windows Flags=00010100000010000001010001000010
+  Log Pathname=%MAINDIR%\INSTALL.LOG
+  Message Font=MS Sans Serif
+  Font Size=8
+  Icon Pathname=C:\Cygwin\usr\shochet\player\toontown\src\launcher\toontown.ico
+  Pages Modified=10011100011101100000011100000101
+  Extra Pages=00000000000000000000000000111011
+  Disk Label=Default
+  Disk Filename=SETUP
+  Patch Flags=0000000000001001
+  Patch Threshold=85
+  Patch Memory=4000
+  MIF PDF Version=1.0
+  MIF SMS Version=2.0
+  EXE Filename=Setup.exe
+  FTP Cluster Size=20
+  Per-User Version ID=1
+  Dialogs Version=7
+  Version File=UKDPC1
+  Version Description=Disney's Toontown Online
+  Version Copyright=Disney
+  Version Company=Walt Disney Internet Group
+  Crystal Format=10111100101100000010001001001001
+  Crystal Destination=00000000000000000000000000001011
+  Distribute Path=I:\beta\toons\cdrom
+  Distribute Type=1
+  Step View=&All
+  Variable Name1=_SYS_
+  Variable Default1=C:\Windows\System32
+  Variable Flags1=00001000
+  Variable Name2=_WISE_
+  Variable Default2=C:\PROGRA~1\WISEIN~1
+  Variable Flags2=00001000
+  Variable Name3=_DX_OPTIONS_
+  Variable Default3=D
+  Variable Flags3=00001000
+  Variable Name4=_ALIASNAME_
+  Variable Flags4=00001000
+  Variable Name5=_ALIASPATH_
+  Variable Flags5=00001000
+  Variable Name6=_ALIASTYPE_
+  Variable Flags6=00001000
+  Variable Name7=_DXVERNO_
+  Variable Default7=B
+  Variable Flags7=00001000
+  Variable Name8=_LICENSEFILE_
+  Variable Default8=eula_UK.txt
+  Variable Flags8=00001000
+  Variable Name9=_USE_TESTSERVER_
+  Variable Default9=0
+  Variable Flags9=00001000
+  Variable Name10=_CDROM_STAGE_
+  Variable Default10=C:/toontown-cd
+  Variable Name11=_INIT_WINDOW_
+  Variable Default11=C:\cygwin\usr\shochet\player\toontown\src\launcher\cdlogo_UK.bmp
+  Variable Flags11=00001000
+  Variable Name12=_ODBC16_
+  Variable Default12=C:\Windows\System32
+  Variable Flags12=00001000
+  Variable Name13=_ODBC32_
+  Variable Default13=C:\Windows\System32
+  Variable Flags13=00001000
+end
+item: Check Configuration
+  Flags=10100000
+end
+item: Check Configuration
+  Message=The computer you are using does not meet the minimum requirements to run. 
+  Message=
+  Message=Disney's Toontown Online requires Microsoft Windows 98, ME, 2000, or XP.
+  Title=Missed System Requirements
+  Flags=11010001
+end
+item: End Block
+end
+item: Check Configuration
+  Flags=10000000
+end
+item: Check Configuration
+  Message=The computer you are using does not meet the minimum requirements to run. 
+  Message=
+  Message=Disney's Toontown Online requires Microsoft Windows 98, ME, 2000, or XP.
+  Title=Missed System Requirements
+  Flags=11000001
+end
+item: End Block
+end
+item: Open/Close INSTALL.LOG
+  Flags=00000001
+end
+item: Get Temporary Filename
+  Variable=READMEFILE
+end
+item: Install File
+  Source=%_LICENSEFILE_%
+  Destination=%TEMP%\%READMEFILE%
+  Flags=0000000000100010
+end
+item: Set Variable
+  Variable=AGREEMENT
+  Value=B
+end
+item: Remark
+  Text=GROUP is the variable that holds the Program Files Group that shortcuts will be placed on the Windows Start Menu
+end
+item: Set Variable
+  Variable=GROUP
+  Flags=10000000
+end
+item: Remark
+  Text=DISABLED variable is initialized for backward compatability
+end
+item: Set Variable
+  Variable=DISABLED
+  Value=!
+end
+item: Remark
+  Text=USERNAME is the variable that holds the Windows Logon name
+end
+item: Get System Information
+  Variable=USERNAME
+  Flags=00010001
+end
+item: Remark
+  Text=APPTITLE is used in TTuninst
+end
+item: Set Variable
+  Variable=APPTITLE
+  Value=Disney's Toontown Online
+  Flags=10000000
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=C:\Program Files\Disney\Disney Online\Toontown
+end
+item: Set Variable
+  Variable=EXPLORER
+  Value=1
+end
+item: Remark
+  Text=BACKUP is the variable that holds the path that all backup files will be copied to when overwritten
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+  Flags=10000000
+end
+item: Remark
+  Text=DOBACKUP determines if a backup will be performed.  The possible values are A (do backup) or B (do not do backup)
+end
+item: Set Variable
+  Variable=DOBACKUP
+  Value=B
+  Flags=10000000
+end
+item: Remark
+  Text=If COMPONENTS are enabled, the COMPONENTS variable is initialized with possible selections
+end
+item: Set Variable
+  Variable=COMPONENTS
+  Flags=10000000
+end
+item: Remark
+  Text=The Wizard Loop contains the dialog screens that the user sees in the installation
+end
+item: Remark
+  Text=If you would like to change the graphic on the dialog boxes, you need to change it by double-clicking on the Wizard Loop line and change the bitmap path.
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
+  X Position=9
+  Y Position=10
+  Filler Color=16777215
+  Flags=00000011
+end
+remarked item: Custom Dialog Set
+  Name=License Agreement
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=License Agreement
+    Title French=Fichier Lisez-moi
+    Title German=Liesmich-Datei
+    Title Portuguese=Ficheiro Leia-me
+    Title Spanish=Archivo Léeme
+    Title Italian=File Leggimi
+    Title Danish=Vigtigt fil
+    Title Dutch=Leesmij-bestand
+    Title Norwegian=Informasjonsfil
+    Title Swedish=Läs mig-fil
+    Width=334
+    Height=334
+    Font Name=Helv
+    Font Size=8
+    Flags=0000000100100000
+    item: Push Button
+      Control Name=AGREE
+      Rectangle=142 294 184 308
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=192 294 234 308
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Exit
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Slet
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Editbox
+      Rectangle=32 52 294 230
+      Value=%TEMP%\%READMEFILE%
+      Help Context=16711681
+      Create Flags=01010000101000000000100000000100
+    end
+    item: Push Button
+      Rectangle=100 294 142 308
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Back
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Static
+      Rectangle=31 238 296 260
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+    end
+    item: Radio Button
+      Rectangle=139 239 189 259
+      Variable=AGREEMENT
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000010000000000001001
+      Text=I Agree
+      Text=I Disagree
+      Text=
+    end
+    item: Static
+      Rectangle=0 0 329 317
+      Action=2
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000001011
+      Pathname=C:\cygwin\usr\shochet\player\toontown\src\launcher\cd_screen_step1_UK.bmp
+    end
+    item: Set Control Attribute
+      Control Name=AGREE
+      Operation=1
+    end
+    item: If/While Statement
+      Variable=AGREEMENT
+      Value=A
+    end
+    item: Set Control Attribute
+      Control Name=AGREE
+    end
+    item: End Block
+    end
+  end
+end
+remarked item: Custom Dialog Set
+  Name=Custom Destination Directory
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Custom Destination Directory
+    Title French=Commencer l'installation
+    Title German=Installation beginnen
+    Title Portuguese=Iniciar Instalação
+    Title Spanish=Comenzar la Instalación
+    Title Italian=Avvia Installazione
+    Title Danish=Start installationen
+    Title Dutch=Start de installatie
+    Title Norwegian=Start installeringen
+    Title Swedish=Starta installationen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+  end
+end
+item: Remark
+  Text=If you need to change the size of your Custom Dialogs, you need only change the "Welcome" screen.  
+end
+item: Remark
+  Text=It's size is the template for all following dialogs within the Wizard Loop.
+end
+item: Remark
+  Text=This reinitialized the BACKUP directory so that it reflects the change the user made to MAINDIR
+end
+item: If/While Statement
+  Variable=DISPLAY
+  Value=Select Destination Directory
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+end
+item: End Block
+end
+item: End Block
+end
+item: Custom Script Item
+  Filename=Check In-use File.wse
+  Variable Name1=_INUSE_VAR_
+  Variable Value1=PANDAINUSE
+  Variable Name2=HELPFILE
+  Variable Value2=C:\Program Files\Wise Installation System\Help\Wise.hlp
+  Variable Name3=_INUSE_PATH_
+  Variable Value3=%MAINDIR%\toontown.exe
+end
+item: If/While Statement
+  Variable=MAINDIR
+  Value=In-Use
+end
+item: Display Message
+  Title=Panda In Use
+  Text=Toontown is currently running on your computer, which is preventing the installer from updating Toontown files.  Please exit Toontown before running the Toontown installer again.
+  Flags=00001000
+end
+item: Exit Installation
+end
+item: End Block
+end
+item: Remark
+  Text=Remove files from old beta versions, if they exist
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\Configrc
+  Flags=01000100
+end
+item: Delete File
+  Pathname=%MAINDIR%\Configrc
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\setup_db
+  Flags=01000100
+end
+item: Delete File
+  Pathname=%MAINDIR%\*_db
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\python.exe
+  Flags=01000100
+end
+item: Delete File
+  Pathname=%MAINDIR%\python.exe
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\msvcp60.dll
+  Flags=01000100
+end
+item: Delete File
+  Pathname=%MAINDIR%\msvc*60.dll
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_2
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_2\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_3
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_3\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_3.5
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_3.5\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_4
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_4\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_5
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_5\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_6
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_6\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_7
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_7\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Check if File/Dir Exists
+  Pathname=%MAINDIR%\phase_8
+  Flags=01000101
+end
+item: Delete File
+  Pathname=%MAINDIR%\phase_8\*.*
+  Flags=00001100
+end
+item: End Block
+end
+item: Remark
+  Text=When the BACKUP feature is enabled, the BACKUPDIR is initialized
+end
+item: If/While Statement
+  Variable=DOBACKUP
+  Value=A
+end
+item: Set Variable
+  Variable=BACKUPDIR
+  Value=%BACKUP%
+end
+item: End Block
+end
+item: Remark
+  Text=Begin writing to the INSTALL.LOG 
+end
+item: Open/Close INSTALL.LOG
+end
+item: Edit Registry
+  Total Keys=25
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=C:\Program Files\Disney\Disney Online\Toontown
+    Value Name=INSTALL_DIR
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_OVERALL_COMPLETE
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=NO GREEN
+    Value Name=TOONTOWN_GREEN
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    Value Name=TOONTOWN_BLUE
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    Value Name=TOONTOWN_PLAYTOKEN
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=1
+    Value Name=LAUNCHER_EXTRACTED
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=http://ukdownload.toontown.com;http://a.download.toontown.com
+    Value Name=DOWNLOAD_SERVER
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_3
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_3.5
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_4
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_5
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_5.5
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_6
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_7
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_8
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=100
+    Value Name=PERCENT_PHASE_COMPLETE_9
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=Starting Toontown...
+    Value Name=LAUNCHER_MESSAGE
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=normal
+    Value Name=EXIT_PAGE
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=0
+    Value Name=PANDA_ERROR_CODE
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    Value Name=NEED_PW_FOR_SECRET
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=1
+    Value Name=PAID_USER_LOGGED_IN
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=1
+    Value Name=USER_LOGGED_IN
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=0
+    Value Name=IS_NEW_INSTALLATION
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=6
+    Value Name=CDROM_INSTALLATION
+    Root=2
+    Data Type=3
+  end
+  item: Key
+    Key=SOFTWARE\Disney\Disney Online\Toontown
+    New Value=toontownUKDPC1
+    Value Name=REFERRER_CODE
+    Root=2
+  end
+end
+item: Remark
+  Text=Uninstall Support (modified for Toontown from %_WISE_%\INCLUDE\uninstal.wse)
+end
+item: Include Script
+  Pathname=TTuninst.wse
+end
+item: Remark
+  Text=This include script allows uninstall support
+end
+item: Get Registry Key Value
+  Variable=IEBUILD
+  Key=SOFTWARE\Microsoft\Internet Explorer
+  Value Name=Build
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=IEVERSION
+  Key=SOFTWARE\Microsoft\Internet Explorer
+  Value Name=Version
+  Flags=00000100
+end
+item: Parse String
+  Source=%IEVERSION%
+  Pattern=.
+  Variable1=IEMAJORVERSION
+  Variable2=IEMINORVERSION
+end
+item: If/While Statement
+  Variable=IEMAJORVERSION
+  Value=4
+  Flags=00001000
+end
+item: Display Message
+  Title=Missing System Requirement
+  Text=Disney's Toontown Online requires Microsoft Internet Explorer version 4 or newer. Please install a newer version and run this installer again.
+  Flags=00101000
+end
+item: Exit Installation
+end
+item: End Block
+end
+item: Check Disk Space
+end
+item: Install File
+  Source=%_CDROM_STAGE_%
+  Destination=%MAINDIR%
+  Flags=0000000010000010
+end
+item: Set Variable
+  Variable=STARTMENU_URL
+  Value=http://www.disney.co.uk/toontown/redirect/redirect.jsp?affiliate=disneypc&type=startmenu
+end
+item: Set Variable
+  Variable=DESKTOP_URL
+  Value=http://www.disney.co.uk/toontown/redirect/redirect.jsp?affiliate=disneypc&type=desktop
+end
+item: Set Variable
+  Variable=WELCOME_URL
+  Value=http://www.disney.co.uk/toontown/redirect/redirect.jsp?affiliate=disneypc&type=welcome
+end
+item: Set Variable
+  Variable=TTINST_LOGNAME
+  Value=ToontownInstaller*.log
+end
+item: Set Variable
+  Variable=TT_URL
+  Value=Toontown.url
+end
+item: Set Variable
+  Variable=PLAY_TT_URL
+  Value=PlayToontown.url
+end
+item: Set Variable
+  Variable=PLAYTT_LINKNAME
+  Value=Play Toontown.lnk
+end
+item: Set Variable
+  Variable=TOONTOWN_REGKEY
+  Value=Toontown
+end
+item: Set Variable
+  Variable=ACTIVEX_UNINSTALL_ARG
+  Value=-uninstall_activex
+end
+item: Set Variable
+  Variable=TEST_SERVER_STR
+end
+item: Edit Registry
+  Total Keys=1
+  Key=Software\Disney\Disney Online\Toontown
+  New Value=1
+  Value Name=LAUNCHER_EXTRACTED
+  Root=2
+  Data Type=3
+end
+item: Remark
+end
+item: Remark
+  Text=Get the path to internet explorer from the registry
+end
+item: Get Registry Key Value
+  Variable=IEPATH
+  Key=SOFTWARE\Microsoft\IE4\Setup
+  Value Name=Path
+  Flags=00010100
+end
+item: Remark
+end
+item: Remark
+  Text=Add start menu shortcuts to web and uninstall
+end
+item: Get Registry Key Value
+  Variable=PROGRAMS
+  Key=SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\
+  Value Name=Programs
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=DESKTOPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Desktop
+  Value Name=Desktop
+  Flags=00000010
+end
+item: Set Variable
+  Variable=PROG_GROUP_NAME
+  Value=%PROGRAMS%\Disney's Toontown Online%TEST_SERVER_STR%
+end
+item: Create Shortcut
+  Source=%IEPATH%\IEXPLORE.EXE
+  Destination=%PROG_GROUP_NAME%\%PLAYTT_LINKNAME%
+  Command Options=%STARTMENU_URL%
+  Icon Number=0
+  Icon Pathname=%MAINDIR%\toontown.ico
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\unwise.exe
+  Destination=%PROG_GROUP_NAME%\Uninstall.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Remark
+  Text=Add desktop icon to web page
+end
+item: Create Shortcut
+  Source=%IEPATH%\IEXPLORE.EXE
+  Destination=%DESKTOPDIR%\Disney's Toontown Online.lnk
+  Command Options=%DESKTOP_URL%
+  Icon Number=0
+  Icon Pathname=%MAINDIR%\toontown.ico
+  Key Type=1536
+  Flags=00000001
+end
+item: Remark
+end
+item: Add Text to INSTALL.LOG
+  Text=Execute Program: %MAINDIR%\Configrc.exe %ACTIVEX_UNINSTALL_ARG%
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_2\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_3\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_4\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_5\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_6\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_7\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\phase_8\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\maps\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\db\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\mf\
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %MAINDIR%\*.*
+end
+item: Add Text to INSTALL.LOG
+  Text=File Tree: %TEMP%\%TTINST_LOGNAME%
+end
+remarked item: Add Text to INSTALL.LOG
+  Text=File Tree: %NETSCAPE_DIR%\Plugins\ttinst.zip
+end
+remarked item: Add Text to INSTALL.LOG
+  Text=File Tree: %NETSCAPE_DIR%\Plugins\NPttinst.dll
+end
+remarked item: Add Text to INSTALL.LOG
+  Text=File Tree: %NETSCAPE_DIR%\WDIAppLauncher.exe
+end
+remarked item: Add Text to INSTALL.LOG
+  Text=File Tree: %NETSCAPE_DIR%\WDIAppLauncher.txt
+end
+item: Add Text to INSTALL.LOG
+  Text=RegDB Tree: SOFTWARE\Disney\Disney Online\%TOONTOWN_REGKEY%
+end
+item: Add Text to INSTALL.LOG
+  Text=RegDB Root: 2
+end
+item: Remark
+end
+item: Remark
+  Text=After everything has been written, run cacls to make all files global writeable
+end
+item: Remark
+  Text=Only required to do this on NTFS, but no way to detect that (w/o Call DLL).
+end
+item: Remark
+  Text=Must do it for non-admins too, since any files they create must be global-writeable too
+end
+item: Check Configuration
+  Title=NT is detected
+  Flags=10100000
+end
+item: Win32 System Directory
+  Variable=WINSYSDIR
+end
+item: Add Directory to Path
+  Directory=%WINSYSDIR%
+  Flags=00000001
+end
+item: Execute Program
+  Pathname=%WINSYSDIR%\cacls.exe
+  Command Line="%MAINDIR%" /E /T /C /G Everyone:F
+  Flags=00001010
+end
+item: End Block
+end
+remarked item: Remark
+  Text=point to web site
+end
+remarked item: Remark
+  Text=***Get association for .htm documents
+end
+remarked item: Get Registry Key Value
+  Variable=A
+  Key=.htm
+end
+remarked item: Remark
+end
+remarked item: Remark
+  Text=***Get program run by association
+end
+remarked item: Get Registry Key Value
+  Variable=A
+  Key=%A%\shell\open\command
+end
+remarked item: Remark
+end
+remarked item: Remark
+  Text=***Rid the "%1" (used by registry to pass URL as parameter)
+end
+remarked item: Remark
+  Text=***WISE uses %% to refer to a % sign. Otherwise it thinks it's a variable
+end
+remarked item: If/While Statement
+  Variable=A
+  Value=-
+  Flags=00000010
+end
+remarked item: Remark
+  Text=The following line is for IE
+end
+remarked item: Parse String
+  Source=%A%
+  Pattern=-
+  Variable1=VALA
+  Variable2=VALB
+  Flags=00000101
+end
+remarked item: End Block
+end
+remarked item: If/While Statement
+  Variable=VALA
+  Value=%%1
+  Flags=00000010
+end
+remarked item: Remark
+  Text=The following line is for Netscape
+end
+remarked item: Parse String
+  Source=%VALA%
+  Pattern=%%1
+  Variable1=VALA
+  Variable2=VALB
+  Flags=00000001
+end
+remarked item: End Block
+end
+remarked item: If/While Statement
+  Variable=VALA
+  Value="
+  Flags=00000010
+end
+remarked item: Remark
+  Text=strip quotes
+end
+remarked item: Set Variable
+  Variable=QUOTE
+  Value="
+end
+remarked item: Set Variable
+  Variable=VALA
+  Value=After$(VALA,QUOTE)
+  Flags=00100000
+end
+remarked item: Parse String
+  Source=%VALA%
+  Pattern="
+  Variable1=VALA
+  Variable2=VALB
+  Flags=00000001
+end
+remarked item: End Block
+end
+item: Edit Registry
+  Total Keys=1
+  Key=SOFTWARE\Disney\Disney Online\Toontown
+  New Value=UK
+  Value Name=DEPLOYMENT
+  Root=2
+end
+item: Edit Registry
+  Total Keys=1
+  Key=SOFTWARE\Disney\Disney Online\Toontown
+  New Value=1
+  Value Name=GAME2_DONE
+  Root=2
+  Data Type=3
+end
+item: Remark
+  Text=For simulating the DirectX restart
+end
+remarked item: Set Variable
+  Variable=RESTART
+  Value=W
+end
+item: Remark
+end
+item: Remark
+  Text=***Execute the program with the URL as a parameter.
+end
+remarked item: If/While Statement
+  Variable=RESTART
+  Value=W
+end
+remarked item: Edit Registry
+  Total Keys=1
+  Key=Software\Microsoft\Windows\CurrentVersion\RunOnce
+  New Value=%IEPATH%\IEXPLORE.EXE %WELCOME_URL%
+  New Value=
+  Value Name=My Setup
+  Root=2
+end
+remarked item: Else Statement
+end
+remarked item: Execute Program
+  Pathname=%IEPATH%\IEXPLORE.EXE
+  Command Line=%WELCOME_URL%
+end
+remarked item: End Block
+end
+item: New Event
+  Name=Cancel
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\rollback.wse
+end

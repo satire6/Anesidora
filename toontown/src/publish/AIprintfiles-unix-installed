@@ -1,0 +1,219 @@
+#! /bin/sh
+
+# Actually, Unix doesn't care about debug vs. non-debug.
+debug_state=$1
+
+if [ -z "$INSTALL" ]; then
+  INSTALL=install
+fi
+
+if [ ! -d "$INSTALL" ]; then
+  echo Invalid INSTALL directory: $INSTALL 1>&2
+  exit 1
+fi
+
+# Libraries
+
+# DTOOL
+echo $INSTALL/lib/libdtool.so
+echo $INSTALL/lib/libdconfig.so
+echo $INSTALL/lib/libdtoolbase.so
+echo $INSTALL/lib/libdtoolconfig.so
+echo $INSTALL/lib/libdtoolutil.so
+echo $INSTALL/lib/libinterrogatedb.so
+
+# PANDA
+echo $INSTALL/lib/libpandaexpress.so
+echo $INSTALL/lib/libdownloader.so
+echo $INSTALL/lib/libevent.so
+echo $INSTALL/lib/libexpress.so
+echo $INSTALL/lib/libpandabase.so
+
+# Generated code for libpandaexpress
+AIprintlib $INSTALL/lib/pandac libpandaexpress
+
+# DIRECT stuff
+AIprintdir direct/src/actor .py
+AIprintdir direct/src/controls .py
+AIprintdir direct/src/directbase .py
+AIprintdir direct/src/directnotify .py
+AIprintdir direct/src/directtools .py
+AIprintdir direct/src/directutil .py
+AIprintdir direct/src/distributed .py
+AIprintdir direct/src/extensions_native .py
+AIprintdir direct/src/ffi .py
+AIprintdir direct/src/fsm .py
+AIprintdir direct/src/gui .py
+AIprintdir direct/src/http .py
+AIprintdir direct/src/interval .py
+AIprintdir direct/src/motiontrail .py
+AIprintdir direct/src/particles .py
+AIprintdir direct/src/showbase .py
+AIprintdir direct/src/showutil .py
+AIprintdir direct/src/stdpy .py
+AIprintdir direct/src/task .py
+echo $INSTALL/bin/autorestart
+
+# Libraries
+
+echo $INSTALL/lib/libtoontown.so
+echo $INSTALL/lib/libpanda.so
+echo $INSTALL/lib/libaudio.so
+echo $INSTALL/lib/libchan.so
+echo $INSTALL/lib/libchar.so
+echo $INSTALL/lib/libcollide.so
+echo $INSTALL/lib/libdevice.so
+echo $INSTALL/lib/libdgraph.so
+echo $INSTALL/lib/libdisplay.so
+echo $INSTALL/lib/libdistributed.so
+echo $INSTALL/lib/libeffects.so
+echo $INSTALL/lib/libglstuff.so
+echo $INSTALL/lib/libgobj.so
+echo $INSTALL/lib/libgrutil.so
+echo $INSTALL/lib/libgsgbase.so
+#echo $INSTALL/lib/libgsgmisc.so
+echo $INSTALL/lib/libheapq.so
+echo $INSTALL/lib/libhttp.so
+echo $INSTALL/lib/liblerp.so
+echo $INSTALL/lib/liblinmath.so
+echo $INSTALL/lib/libmathutil.so
+echo $INSTALL/lib/libmesadisplay.so
+echo $INSTALL/lib/libmotiontrail.so
+echo $INSTALL/lib/libmovies.so
+echo $INSTALL/lib/libnametag.so
+echo $INSTALL/lib/libnavigation.so
+echo $INSTALL/lib/libnet.so
+echo $INSTALL/lib/libotp.so
+echo $INSTALL/lib/libparametrics.so
+echo $INSTALL/lib/libpgraph.so
+echo $INSTALL/lib/libpgui.so
+echo $INSTALL/lib/libpnmimage.so
+echo $INSTALL/lib/libpnmimagetypes.so
+echo $INSTALL/lib/libpstatclient.so
+echo $INSTALL/lib/libputil.so
+echo $INSTALL/lib/libsecure.so
+echo $INSTALL/lib/libsettings.so
+echo $INSTALL/lib/libtext.so
+echo $INSTALL/lib/libtform.so
+
+echo $INSTALL/lib/libpandaphysics.so
+echo $INSTALL/lib/libphysics.so
+echo $INSTALL/lib/libparticlesystem.so
+
+echo $INSTALL/lib/libpandaode.so
+echo $INSTALL/lib/libpode.so
+
+# We assume ldd exists.  This is a Unix tool (works on Linux, at
+# least) to list the shared libraries that a particular .so or
+# executable depends on.
+LD_LIBRARY_PATH=$INSTALL/lib ldd $INSTALL/lib/libtoontown.so | awk '{print $3}' | egrep -v '(\(.*\)|libc\.so|libm\.so|libdl\.so|libpthread\.so)'
+
+echo /lib/ld-linux.so.2
+
+
+# ODE for physics, used in MiniGolf
+
+if [ `uname -i` = "x86_64" ]; then
+  echo /usr/lib64/libode.so.1
+else
+  echo /usr/lib/libode.so
+fi
+
+
+# system libs for Mesa support
+# used for Top Toons headshot rendering
+
+echo /usr/local/lib/libGL.so.1
+echo /usr/local/lib/libGLU.so.1
+echo /usr/local/lib/libOSMesa.so.6
+echo /usr/lib64/libfftw.so.2
+echo /usr/lib64/libjpeg.so.62
+echo /usr/lib64/librfftw.so.2
+
+
+
+echo $INSTALL/lib/libdirect.so
+echo $INSTALL/lib/libdcparser.so
+echo $INSTALL/lib/libdeadrec.so
+echo $INSTALL/lib/libdirectbase.so
+echo $INSTALL/lib/libshowbase.so
+echo $INSTALL/lib/libinterval.so
+
+# Etc files
+echo toontown/src/configfiles/toon.dc
+echo otp/src/configfiles/otp.dc
+echo toontown/src/configfiles/download.par
+echo toontown/src/configfiles/PetNameMasterEnglish.txt
+
+# Generated code for libpanda
+AIprintlib $INSTALL/lib/pandac libpanda
+AIprintlib $INSTALL/lib/pandac libpandaphysics
+echo $INSTALL/lib/pandac/PandaModules.py
+
+# Generated code for libdirect
+AIprintlib $INSTALL/lib/pandac libdirect
+
+# Generated code for libotp
+AIprintlib $INSTALL/lib/pandac libotp
+
+# Generated code for libtoontown
+AIprintlib $INSTALL/lib/pandac libtoontown
+
+# AI code
+
+AIprintdir otp/src/ai .py
+AIprintdir otp/src/avatar .py
+AIprintdir otp/src/chat .py
+AIprintdir otp/src/distributed .py
+AIprintdir otp/src/friends .py
+AIprintdir otp/src/guild .py
+AIprintdir otp/src/launcher .py
+AIprintdir otp/src/level .py
+AIprintdir otp/src/movement .py
+AIprintdir otp/src/otpbase .py
+AIprintdir otp/src/otpgui .py
+AIprintdir otp/src/snapshot .py
+AIprintdir otp/src/speedchat .py
+AIprintdir otp/src/status .py
+AIprintdir otp/src/switchboard .py
+AIprintdir otp/src/uberdog .py
+AIprintdir otp/src/web .py
+
+AIprintdir toontown/src/ai .py
+AIprintdir toontown/src/avatar .py
+AIprintdir toontown/src/battle .py
+AIprintdir toontown/src/building .py
+AIprintdir toontown/src/catalog .py
+AIprintdir toontown/src/chat .py
+AIprintdir toontown/src/classicchars .py
+AIprintdir toontown/src/coderedemption .py
+AIprintdir toontown/src/cogdominium .py
+AIprintdir toontown/src/coghq .py
+AIprintdir toontown/src/distributed .py
+AIprintdir toontown/src/effects .py
+AIprintdir toontown/src/estate .py
+AIprintdir toontown/src/fishing .py
+AIprintdir toontown/src/friends .py
+AIprintdir toontown/src/golf .py
+AIprintdir toontown/src/hood .py
+AIprintdir toontown/src/launcher .py
+AIprintdir toontown/src/minigame .py
+AIprintdir toontown/src/parties .py
+AIprintdir toontown/src/pets .py
+AIprintdir toontown/src/quest .py
+AIprintdir toontown/src/racing .py
+AIprintdir toontown/src/rpc .py
+AIprintdir toontown/src/safezone .py
+AIprintdir toontown/src/scavengerhunt .py
+AIprintdir toontown/src/shtiker .py
+AIprintdir toontown/src/speedchat .py
+AIprintdir toontown/src/suit .py
+AIprintdir toontown/src/toon .py
+AIprintdir toontown/src/toonbase .py
+AIprintdir toontown/src/toontowngui .py
+AIprintdir toontown/src/tutorial .py
+AIprintdir toontown/src/uberdog .py
+
+# DNA files
+echo $INSTALL/phase_*/dna/*.dna
+

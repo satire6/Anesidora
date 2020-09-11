@@ -1,0 +1,20 @@
+// See Also: "direct/src/doc/sample.dc"
+
+from otp.tutorial import DTutorialObject/AI
+
+struct Meal {
+  uint8 sandwich;
+  uint8 fruit;
+  uint8 cake;
+}
+
+dclass DTutorialObject: DistributedObject
+{
+  setName(string name = '') required broadcast ram;
+  setColor(uint8 r,uint8 g,uint8 b) broadcast ram;
+  setNumbers(uint8 a,uint8 b,uint8 c) broadcast ram;
+  setHeight(uint32/100 height) broadcast ram;
+  requestMeal(uint8 type) clsend airecv;
+  setMeal(Meal meal, int16 timestamp) broadcast ram;
+};
+

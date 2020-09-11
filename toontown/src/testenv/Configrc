@@ -1,0 +1,88 @@
+language japanese
+
+
+district-id 200000000
+district-name TestTown
+district-min-channel 200100000
+district-max-channel 200149999
+msg-director-port 6665
+account-old-auth 1
+server-version dev
+game-server https://localhost:6667
+
+dc-file ./toon.dc
+
+# This is a workaround to load Japanese fonts
+use-vfs 0
+
+audio-loader mp3
+audio-loader midi
+audio-loader wav
+
+win32-mono-cursor toonmono.cur
+
+load-display pandadx8
+chan-config-sanity-check #f
+multipass-viz none
+win-width 800
+win-height 600
+fullscreen 0
+sync-video #t
+want-magic-words 1
+teleport-all 1
+# We must currently set this to avoid messing up some of
+# the suits' faces.
+egg-retesselate-coplanar	#f
+
+# Custom ObjectTypes for Toontown.
+# "barrier" means a vertical wall, with bitmask 0x01
+# "floor" means a horizontal floor, with bitmask 0x02
+# "camera-collide" means things that the camera should avoid, with bitmask 0x04
+egg-object-type-barrier         <Scalar> collide-mask { 0x01 } <Collide> { Polyset descend }
+egg-object-type-trigger         <Scalar> collide-mask { 0x01 } <Collide> { Polyset descend intangible }
+egg-object-type-sphere          <Scalar> collide-mask { 0x01 } <Collide> { Sphere descend }
+egg-object-type-trigger-sphere  <Scalar> collide-mask { 0x01 } <Collide> { Sphere descend intangible }
+egg-object-type-floor           <Scalar> collide-mask { 0x02 } <Collide> { Polyset descend }
+egg-object-type-camera-collide  <Scalar> collide-mask { 0x04 } <Collide> { Polyset descend }
+egg-object-type-camera-collide-sphere  <Scalar> collide-mask { 0x04 } <Collide> { Sphere descend }
+egg-object-type-camera-barrier  <Scalar> collide-mask { 0x05 } <Collide> { Polyset descend }
+egg-object-type-camera-barrier-sphere  <Scalar> collide-mask { 0x05 } <Collide> { Sphere descend }
+
+# The modelers occasionally put <ObjectType> { model } instead of
+# <Model> { 1 }.  Let's be accommodating.
+egg-object-type-model           <Model> { 1 }
+egg-object-type-dcs             <DCS> { 1 }
+
+# Define a "shadow" object type, so we can render all shadows in their
+# own bin and have them not fight with each other (or with other
+# transparent geometry).
+egg-object-type-shadow          <Scalar> bin { shadow } <Scalar> alpha { blend-no-occlude }
+cull-bin shadow 15 unsorted
+
+# Define a "ground" type, for rendering ground surfaces immediately
+# behind the drop shadows.
+egg-object-type-ground          <Scalar> bin { ground }
+egg-object-type-shadow-ground   <Scalar> bin { ground }
+cull-bin ground 14 unsorted
+
+load-file-type toontown
+window-title Toontown
+win32-window-icon phase_3/models/gui/toontown.ico
+
+aux-display pandadx8
+aux-display pandadx7
+aux-display pandagl
+change-display-settings 0
+compress-channels #t
+text-encoding utf8
+ssl-certificates certificates.txt
+ssl-certificates gameserver.txt
+ssl-certificates ttown2.txt
+ssl-cipher-list RC4-MD5
+collect-tcp 1
+collect-tcp-interval 0.2
+notify-level-chan warning
+notify-level-gobj warning
+notify-level-loader warning
+notify-timestamp #t
+server-failover 80

@@ -1,0 +1,55 @@
+// DisneyOnlineGames.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (DisneyOnlineGames.tlb) that will become a resource in
+// DisneyOnlineGames.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(5F6C8F0A-6FE5-4546-82F1-9B50373A8EBD), version(1.0),
+  helpfile("DisneyOnlineGames.hlp"),
+  helpstring("Disney Online Games ActiveX Control module"),
+  control ]
+library DisneyOnlineGamesLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CDisneyOnlineGamesCtrl
+
+	[ uuid(33BDF503-F6F7-456C-B3C9-F74F294C8EB7),
+	  helpstring("Dispatch interface for Disney Online Games Control")]
+	dispinterface _DDisneyOnlineGames
+	{
+		properties:
+        [id(2), helpstring("property ModeId")] BSTR ModeId;
+            [id(9) , helpstring("property ResponseCode")] ULONG ResponseCode;
+            [id(10) , helpstring("property Token")] BSTR Token;
+methods:
+        [id(5), helpstring("method runPiratesOnline")] void runPiratesOnline(void);
+    };
+
+	//  Event dispatch interface for CDisneyOnlineGamesCtrl
+
+	[ uuid(CAC95DCF-C37B-4173-901A-ED2D6EDC5177),
+	  helpstring("Event interface for Disney Online Games Control") ]
+	dispinterface _DDisneyOnlineGamesEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+        [id(1)] void onRunPiratesOnlineComplete(void);
+    };
+
+	//  Class information for CDisneyOnlineGamesCtrl
+
+	[ uuid(3DCEC959-378A-4922-AD7E-FD5C925D927F),
+	  helpstring("Disney Online Games Control"), control ]
+	coclass DisneyOnlineGames
+	{
+		[default] dispinterface _DDisneyOnlineGames;
+		[default, source] dispinterface _DDisneyOnlineGamesEvents;
+	};
+
+};

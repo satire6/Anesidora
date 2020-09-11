@@ -1,0 +1,84 @@
+#
+
+class RejectCode:
+    TIMEOUT =                     65535
+
+    NO_GUILD =                    10000
+    MAY_NOT_JOIN_GUILD =          10001 # NO_GUILD+n
+    MAY_NOT_INVITE_GUILD =        10002 # NO_GUILD+n
+    NO_MEMBERSHIP =               10003 # NO_GUILD+n
+    GUILD_FULL =                  10004 # NO_GUILD+n
+    LEAVE_CURRENT_GUILD_FIRST =   10005 # NO_GUILD+n
+    ALREADY_IN_GUILD =            10006 # NO_GUILD+n
+    JOIN_OWN_GUILD =              10007 # NO_GUILD+n
+    NOT_IN_A_GUILD =              10008 # NO_GUILD+n
+    OTHER_AVATAR_NO_MEMBERSHIP =  10009 # NO_GUILD+n
+    OTHER_AVATAR_NO_GUILD =       10010 # NO_GUILD+n
+    OTHER_AVATAR_NO_GUILD_FOUND = 10011 # NO_GUILD+n
+    ALREADY_HAS_GUILD =           10012 # NO_GUILD+n
+    MAY_NOT_CREATE_GUILD =        10013 # NO_GUILD+n
+    BUSY =                        10014 # NO_GUILD+n
+
+    NO_CREW =                     20000
+    MAY_NOT_JOIN_CREW =           20001 # NO_CREW+n
+    JOIN_OWN_CREW =               20002 # NO_CREW+n
+    NOT_IN_A_CREW =               20003 # NO_CREW+n
+    MAY_NOT_INVITE_CREW =         20004 # NO_CREW+n
+    ALREADY_IN_CREW =             20005 # NO_CREW+n
+    ALREADY_INVITED_TO_CREW =     20006 # NO_CREW+n
+    NOT_CAPTAIN_OF_CREW =         20007 # NO_CREW+n
+    NO_SELF_CREW_INVITE =         20008 # NO_CREW+n
+    CREW_INVITATION_DECLINED =    20009 # NO_CREW+n
+    ALREADY_LOCKED =              20010 # NO_CREW+n
+    NOT_LOCKED =                  20011 # NO_CREW+n
+    NOT_YOUR_LOCK =               20012 # NO_CREW+n
+    YOUR_CREW_IS_LOCKED =         20013 # NO_CREW+n
+    OTHER_CREW_IS_LOCKED =        20014 # NO_CREW+n
+    NOT_IN_YOUR_CREW =            20015 # NO_CREW+n
+
+    NO_TRADE =                    30000
+    NOT_YOUR_TRADE =              30001 # NO_TRADE+n
+    TRADE_NOT_ACTIVE =            30002 # NO_TRADE+n
+    AVATAR_NOT_HERE =             30003 # NO_TRADE+n
+    MAY_NOT_TRADE =               30004 # NO_TRADE+n
+    NO_SELF_TRADE =               30005 # NO_TRADE+n
+    OTHER_AVATAR_NOT_HERE =       30006 # NO_TRADE+n
+    OTHER_AVATAR_MAY_NOT_TRADE =  30007 # NO_TRADE+n
+
+    NO_INVENTORY =                40000
+    CONTENT_TYPE_NOT_ALLOWED =    40001 # NO_INVENTORY+n
+    HAS_NONE_OF_THAT_TYPE =       40002 # NO_INVENTORY+n
+    NO_MORE_SLOTS =               40003 # NO_INVENTORY+n
+    SLOT_TYPE_NOT_FOUND =         40004 # NO_INVENTORY+n
+    OVERFLOW =                    40005 # NO_INVENTORY+n
+    UNDERFLOW =                   40006 # NO_INVENTORY+n
+    MULTIPLE_OF_SAME_ITEM =       40007 # NO_INVENTORY+n
+    MAY_NOT_DESTROY =             40008 # NO_INVENTORY+n
+    NO_REMOVE =                   40009 # NO_INVENTORY+n
+    NOT_YOUR_DO_ID =              40010 # NO_INVENTORY+n
+
+    NO_AVATAR =                   50000
+    NOT_YOUR_AVATAR =             50001 # NO_AVATAR+n
+    BAD_DELETE_PASSWORD =         50002 # NO_AVATAR+n
+    MAY_NOT_LIST_AVATARS =        50003 # NO_AVATAR+n
+    MAY_NOT_CREATE_AVATAR =       50004 # NO_AVATAR+n
+    MAY_NOT_REMOVE_AVATAR =       50005 # NO_AVATAR+n
+    SLOT_OUT_OF_RANGE =           50006 # NO_AVATAR+n
+    SLOT_TAKEN =                  50007 # NO_AVATAR+n
+    INVALID_ACCOUNT =             50008 # NO_AVATAR+n
+    AVATAR_ONLINE =               50009 # NO_AVATAR+n
+    MAX_AVATAR_LIMIT =            50010 # NO_AVATAR+n
+    NO_LOCK_ON_SLOT =             50011 # NO_AVATAR+n
+
+    NO_FRIENDS_LIST =             60000
+    FRIENDS_LIST_NOT_HANDY =      60001 # NO_FRIENDS_LIST+n
+    INVITEE_NOT_ONLINE =          60002 # NO_FRIENDS_LIST+n
+    ALREADY_INVITED =             60003 # NO_FRIENDS_LIST+n
+    ALREADY_YOUR_FRIEND =         60004 # NO_FRIENDS_LIST+n
+    FRIENDS_LIST_FULL =           60005 # NO_FRIENDS_LIST+n
+    OTHER_FRIENDS_LIST_FULL =     60006 # NO_FRIENDS_LIST+n
+    ALREADY_NOT_YOUR_FRIEND =     60007 # NO_FRIENDS_LIST+n
+    INVITATION_DECLINED =         60008 # NO_FRIENDS_LIST+n
+    NOT_YOUR_FRIENDS_LIST =       60009 # NO_FRIENDS_LIST+n
+    ALREADY_FRIENDS_WITH_SELF =   60010 # NO_FRIENDS_LIST+n
+    MAY_NOT_OPEN_INVITE =         60011 # NO_FRIENDS_LIST+n

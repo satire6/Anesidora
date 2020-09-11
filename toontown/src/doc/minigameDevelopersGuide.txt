@@ -1,0 +1,333 @@
+Toontown Minigame Developer's Guide
+===================================
+
+BACKGROUND
+==========
+
+This document assumes that you are familiar with Panda, and have read
+through the Panda User Guide, located at $DIRECT/src/doc/pandaUserGuide.doc
+and the DistributedObject Guide located at
+$TOONTOWN/src/doc/distributedObjectGuide.txt.
+
+MINIGAMES
+=========
+
+Minigames are distributed objects. They consist of code that runs on the
+clients and on the AI server.
+
+The Minigame Base Classes
+-------------------------
+
+All minigames are derived from DistributedMinigame and
+DistributedMinigameAI, which are located in the following files:
+
+$TOONTOWN/src/minigame/DistributedMinigame.py
+$TOONTOWN/src/minigame/DistributedMinigameAI.py
+
+These base classes take care of the details of waiting for all of the
+players to arrive, showing the rules, and setting up hooks to detect when a
+player exits unexpectedly.
+
+FSMs are used to control the minigame's state. (see the Panda User Guide
+for more information on FSMs) Minigame subclasses have their own FSM, which
+is entered when the base class FSM enters its 'game' state.
+
+The flow of execution in the DistributedMinigame base class during a
+minigame session is as follows:
+
+(entering the zone will create and generate the minigame)
+__init__()
+generate()
+  load()
+handleAnnounceGenerate()
+  sendUpdate("setAvatarJoined")
+  onstage()
+  request rules
+sendUpdate("setAvatarReady")
+request waitServerStart
+(wait for AI to say all avatars have joined)
+setGameReady message from AI
+(wait for AI to say all players have finished reading rules)
+setGameStart message from AI
+  request game
+(play minigame)
+gameOver() (called by child minigame subclass)
+  request cleanup
+sendUpdate("setAvatarExited")
+doneEvent to Hood
+leave zone
+(leaving the zone results in a disable and delete message from the server)
+disable()
+  offstage()
+delete()
+  unload()
+
+Note that many of these functions, such as onstage(), offstage(), load(),
+and unload(), are overridden by most minigames through inheritance.
+
+The Minigame Template
+---------------------
+
+There is an example of a simple minigame, with a detailed description of
+each method, in the following files:
+
+$TOONTOWN/src/minigame/DistributedMinigameTemplate.py
+$TOONTOWN/src/minigame/DistributedMinigameTemplateAI.py
+
+These files define the DistributedMinigameTemplate and
+DistributedMinigameTemplateAI classes, which inherit from the base classes
+described above. To create a new minigame, you should make copies of these
+files; for instance, to create a Toontown darts minigame, you might perform
+these file copies:
+
+cp DistributedMinigameTemplate.py DistributedDartsGame.py
+cp DistributedMinigameTemplateAI.py DistributedDartsGameAI.py
+
+When you write a minigame, you should make use of FSMs to control the state
+of your game. (see the Panda User Guide for more information on FSMs) The
+minigame template classes provide simple FSMs that you can build from,
+called 'gameFSM' on both the client and the AI. The template FSMs have only
+two states: 'off' and 'finish' on the client, and 'inactive' and 'cleanup'
+on the AI. You should insert your game states between the two template states.
+
+The Minigame Creator
+--------------------
+
+Each minigame has a numeric ID. These IDs are assigned in the file:
+
+$TOONTOWN/src/toonbase/ToontownGlobals.py
+
+Search for 'CannonGameId' to find the section where the IDs are
+assigned. Just below, there is a list of lists of minigame IDs. This
+structure specifies which minigames can be played with specific numbers of
+players. For instance, the ring game can be played by any number of
+players, whereas the tag game requires at least two players.
+
+The minigame IDs are used by the 'Minigame Creator'. The minigame creator
+is a function on the AI server that chooses a minigame, given a list of
+players. Once it has chosen a minigame, it creates the minigame and tells
+the players to go the minigame's zone. The minigame creator function is
+located in
+
+$TOONTOWN/src/minigame/MinigameCreatorAI.py
+
+When you are developing a minigame, it is useful to be able to tell the
+minigame creator to always choose your minigame. You can do this by putting
+the following line:
+
+minigame-id X
+
+where X is the minigame ID, in your Configrc file on the computer that is
+running your AI server. (see the Panda User Guide for more information on
+the Configrc file) For instance, to test the minigame template, put this
+line in your Configrc:
+
+minigame-id -1
+
+You must restart your AI server for the change to take effect.
+
+Players
+-------
+
+Minigames can involve one, two, three, or four players. The client-side
+minigame base class provides several variables and convenience functions
+for dealing with the players:
+
+DistributedMinigame player variables:
+numPlayers       : number of players
+avIdList         : list of players' avatar IDs
+                   NOTE: this list is IDENTICAL on all clients
+remoteAvIdList   : equal to avIdList, with the local player removed
+                   NOTE: this list is different on each client, but the
+                   relative order of each avatar ID remains consistent
+
+DistributedMinigame player convenience functions:
+isSinglePlayer()    : returns true if there is only one player
+getAvatar(avId)     : returns a player's distributed object 
+                      (ie DistributedToon; which is the player's
+                      representation on this computer)
+getAvatarName(avId) : returns a player's name
+
+
+On the AI server, the minigame base class provides a similar set of
+variables and functions:
+
+DistributedMinigameAI player variables:
+numPlayers  : number of players
+avIdList    : list of players' avatar IDs
+scoreDict   : dictionary of players' scores, keyed by the players' avatar IDs
+
+DistributedMinigameAI player convenience functions:
+isSinglePlayer()    : returns true if there is only one player
+
+Deterministic Random Number Generation
+--------------------------------------
+
+For most games, it is essential to be able to generate random numbers. For
+Toontown minigames, it is sometimes useful to be able to generate an
+identical sequence of random numbers on every player's machine.
+
+For instance, consider the Toontown ring game, where players must swim
+through rings that are in random positions, moving in randomly-chosen
+patterns. In order to play together, every player must see the same
+sequence of rings. The server could choose the ring sequence and send a
+copy to each client, but that would be a waste of network
+bandwidth. Instead, the players' minigame objects could use a special
+random number generator, all seeded with a common value, to generate
+identical sequences of numbers, which are then used to create identical
+sequences of rings.
+
+The DistributedMinigame base class creates a special random number
+generator for this purpose. Every time a minigame starts,
+DistributedMinigame initializes a random number generator called
+'DistributedMinigame.randomNumGen'. The minigame zone is used as the random
+seed, since the zone number is common to all players. Thus, randomNumGen is
+guaranteed to produce the same sequence of 'random' numbers for every
+player in the minigame.
+
+In your minigame class, you can use randomNumGen as follows:
+
+# return a randomly-chosen element from the list
+self.randomNumGen.choice([1,2,3,4])
+
+# return a random integer i, where 5 <= i <= 10
+self.randomNumGen.randint(5,10)
+
+# return a random number between 0.0 and 1.0
+self.randomNumGen.random()
+
+Keep in mind that randomNumGen should only be used when you need every
+client to generate an identical sequence of numbers. If you just need
+random numbers, and you don't care if players get different numbers, use
+the 'whrandom' or 'random' Python objects.
+
+Score
+-----
+
+Before the game finishes, you should fill in the DistributedMinigameAI's
+scoreDict member variable for each player. The numbers you provide
+determine how many jellybeans each player receives. If you do not specify a
+value, they will receive one jellybean by default.
+
+Unexpected Exits
+----------------
+
+If a player disconnects during a minigame, the minigame is aborted. The
+remaining players continue on to the reward screen, as if the minigame had
+ended normally.
+
+The code to detect unexpected player exits is in the minigame base
+classes. DistributedMinigameAI will end the game when it detects that a
+player has disconnected. DistributedMinigame sets up a callback to its own
+'handleDisabledAvatar' method, that will be called when an avatar
+disconnects. The handleDisabledAvatar method takes the toon's avatar ID as
+its only argument. You should override this function so that you can remove
+any references to the disconnected avatar; if you don't, your code may fail
+later when it attempts to reference the missing avatar.
+
+Development/Debugging Aids
+--------------------------
+
+There are several things you can do to make life easier when developing
+minigames:
+
+- You can tell your AI server to always choose your minigame. (see 'The
+Minigame Creator', above)
+
+- You can cause a minigame to end by using the "~endgame" magic word. Magic
+words are commands that you can issue on the client, using the chat
+interface, that result in some sort of action, usually involving the AI
+server. Magic words all start with the tilde (~) character. To use magic
+words, you must put
+
+want-magic-words #t
+
+in your Configrc on your client and AI server machines. For a complete list
+of magic words, see $TOONTOWN/src/doc/magicWords
+
+- To access your minigame object from the Python prompt, break out of
+execution by pressing Enter in the Python window. Your minigame is
+accessible as 'toonbase.curMinigame'
+
+If your minigame contains a timer, you can stop the timer from the Python
+prompt. For example, if your minigame had a timer named 'mgTimer', you
+would type:
+
+>>> toonbase.curMinigame.mgTimer.stop()
+
+- You can use the 'notify' system to display messages in the output
+stream. The DistributedMinigame and DistributedMinigameAI base classes each
+create a 'notify category' for minigames, named 'DistributedMinigame' and
+'DistributedMinigameAI' respectively. The base classes also keep a handle
+to the notify category in an object called 'notify'. Your minigame
+subclasses can use this notify object to display errors, warnings, and
+debug messages.
+
+You can use the notify object in your minigame like this:
+
+self.notify.debug("This is a debug message.")
+self.notify.warning("This is just a warning.")
+self.notify.error("Something bad happened.")
+
+A call to notify.error() will display the error message and cause the
+program to halt. By default, the system will only display warnings and
+errors. To see debug messages, put the following lines in your Configrc
+files:
+
+notify-level-DistributedMinigame debug
+notify-level-DistributedMinigameAI debug
+
+- You may also find the FSM Inspector to be of use in debugging your
+minigame's Finite State Machine. If you built your minigame using the
+minigame template, your minigame's FSM is called 'gameFSM'. To open up the
+FSM inspector, type:
+
+>>> inspect(toonbase.curMinigame.gameFSM)
+
+- Developing and testing minigames that involve two or more players can be
+a challenge. Assuming your computer is fast enough, it is possible to run
+multiple instances of Toontown on a single machine; just open up an Emacs
+window for each instance, and start up Toontown in each one. Note that you
+will need to log in with a different account for each instance, since a
+single account cannot be logged in more than once simultaneously.
+
+It is also possible to develop minigames using two computers, where both
+computers share a single toontown source tree. See
+$TOONTOWN/src/doc/howToShareSourceTrees.txt for more information.
+
+Stress Testing
+--------------
+
+Once your minigame is working properly, you can use several tools to
+test the game's behavior under unusual circumstances:
+
+- To test your game's handling of the '~endgame' abort command, put the
+following line in your client's Configrc:
+
+random-minigame-abort 1
+
+This will generate a '~endgame' message from the client at a random time
+during the minigame.
+
+- To test your game's handling of avatars that are disconnected while
+playing your game, put this in your client's Configrc:
+
+random-minigame-disconnect 1
+
+The client will be disconnected from the server at a random time during
+the minigame.
+
+- To test your game's handling of clients that stop responding to network
+messages, put this in your client's Configrc:
+
+random-minigame-netplugpull 1
+
+At a random time during the minigame, the client will stop receiving and
+sending network messages. This is a rough approximation of what happens
+when a client:
+  - unplugs their network cable
+  - suddenly reboots/shuts down, or
+  - locks up completely (including the operating system)
+In both cases, the client 'disappears' off of the network, without sending
+any disconnect messages of any kind. It is up to the server to decide that
+the client has 'timed out' and is not coming back.

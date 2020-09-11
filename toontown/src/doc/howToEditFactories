@@ -1,0 +1,36 @@
+HOW TO EDIT FACTORIES
+
+1. SETUP
+========
+You must be able to run DIRECT to edit factories.
+
+Check $DIRECT/src/level/EditorGlobals.py to see if you have an edit
+username. If not, add your username to the table (and make sure you assign
+yourself an unused EntIdRange).
+
+Once you have an edit username, you must config:
+
+level-edit-username <your username>
+
+You will need magic words, and you need to be running in the dev
+environment (want-dev 1, normally on by default in
+$TOONTOWN/src/configfiles/Configrc).
+
+2. EDITING
+==========
+Start Toontown, enter a factory, and type ~fedit. After a brief delay, the
+factory editor should pop up.
+
+The left pane of the editor shows the heirarchy of entities that exist in
+the level. To edit the properties of an entity, first select the entity by
+clicking on it in the left pane. (Any entities that have representations in
+the 3D game world can also be selected by left-clicking on them in the
+graphics window.) Once an entity is selected, its 'attributes' are
+displayed in the right pane of the editor. By editing these attributes, you
+change the selected entity.
+
+To add a new entity, first select a parent entity in the left pane; the new
+entity will appear under the parent entity in the heirarchy. Then open the
+Entity menu and select the desired entity type.
+
+To save your changes, select File->Save on AI.

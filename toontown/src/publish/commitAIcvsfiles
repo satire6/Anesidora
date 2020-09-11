@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Use this script to copy all of the files necessary for an AI publish
+# into the CVS directory in aifiles, and perform all the appropriate
+# cvs commands, including cvs add, cvs remove, and cvs commit.
+#
+
+CVS='/usr/bin/cvs -q'
+
+devroot=`pwd | sed -e 's_/player__'`
+destdir=$devroot/aifiles
+logfile=$devroot/player/publish.log
+teenew="/usr/bin/tee $logfile"
+teeadd="/usr/bin/tee -a $logfile"
+
+# Now populate it with the new set of files.
+cd $destdir || exit
+
+echo
+echo processing $destdir
+echo
+# CVS add the directories
+$CVS add `find . -name CVS -prune -o -type d -mindepth 1 -print` 2>&1 | $teenew
+
+# CVS add the text files
+$CVS add `find . -name '*.py' -o -name '*.dna' -o -name '*.dc' -o -name '*.par' -o -name *.prc` 2>&1 | $teeadd
+
+# CVS add the binary files
+$CVS add -kb *.so *.so.* autorestart autorestart.fc4 2>&1 | $teeadd
+
+# CVS remove anything that's not there anymore.
+$CVS remove 2>&1 | $teeadd || exit
+
+# Finally, commit the changes.
+$CVS commit -m "$*" 2>&1 | $teeadd || exit
+
+#
+# Now do TTMODELS for Pets AI
+#
+destdir=$devroot/ttmodels
+
+cd $destdir || exit
+echo
+echo processing $destdir
+echo
+$CVS add `find . -name CVS -prune -o -type d -mindepth 1 -print` 2>&1 | $teeadd
+$CVS add -kb `find . -name CVS -prune -o -type f -print` 2>&1 | $teeadd
+$CVS remove 2>&1 | $teeadd || exit
+$CVS commit -m "$*" 2>&1 | $teeadd || exit
+

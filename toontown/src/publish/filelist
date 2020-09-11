@@ -1,0 +1,663 @@
+#################################################
+# PHASE 2
+##################################################
+# toplevel is a directory that Wise uses to know
+# which files to store at the top level Toontown dir
+multifile phase_2.mf.pz 2
+
+# Configrc for running the show
+# This uses the executable system now, not the configrc
+file 2 $OTP/built/bin/Configrc.exe toplevel WIN32
+file 2 $OTP/built/bin/Configrc toplevel OSX
+file 1 $TTMODELS/built/phase_3/models/gui/toontown.ico toplevel WIN32
+file 1 $TTMODELS/built/phase_3/models/gui/toontown_mac_icon.rgb toplevel OSX
+file 2 $TOONTOWN/src/launcher/Toontown.url toplevel WIN32
+file 2 $TOONTOWN/src/launcher/PlayToontown.url toplevel WIN32
+file 2 $TOONTOWN/src/launcher/ToontownTest.url toplevel WIN32
+file 2 $TOONTOWN/src/launcher/PlayToontownTest.url toplevel WIN32
+
+# Python files
+file 2 $PYTHON_BIN/python24.dll toplevel WIN32
+file 2 $PYTHON_BIN/pywintypes24.dll toplevel WIN32
+file 2 $PYTHON_BIN/_socket.pyd toplevel WIN32
+file 2 $PYTHON_BIN/unicodedata.pyd toplevel WIN32
+file 2 $PYTHON_BIN/zlib.pyd toplevel WIN32
+
+file 2 $PYTHON_LIB/lib-dynload/array.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/datetime.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/time.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/_socket.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/zlib.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/math.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/operator.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/binascii.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/_random.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/_weakref.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/cPickle.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/cStringIO.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/itertools.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/collections.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/struct.so toplevel OSX
+file 2 $PYTHON_LIB/lib-dynload/unicodedata.so toplevel OSX
+
+# win32
+file 2 $PYTHON_LIB/site-packages/win32/win32api.pyd toplevel WIN32
+
+# ctypes
+file 2 $PYTHON_LIB/site-packages/_ctypes.pyd toplevel WIN32
+
+# needed by parties
+module _strptime
+
+# C/C++ stdlib runtime dlls for VC7
+file 2 $WINTOOLS/built/lib/msvcr71.dll toplevel WIN32
+file 2 $WINTOOLS/built/lib/msvcp71.dll toplevel WIN32
+
+# VC9 mainly to support Awesomium, which may never become a requirement
+# C/C++ stdlib runtime dlls for VC9
+#file 2 $WINTOOLS/built/lib/msvcr90.dll toplevel WIN32
+#file 2 $WINTOOLS/built/lib/msvcp90.dll toplevel WIN32
+
+# Libraries
+#file 2 $WINTOOLS/built/lib/nspr4.dll toplevel WIN32
+file 2 $DTOOL/built/lib/libdconfig.so toplevel OSX
+file 2 $DTOOL/built/lib/libdconfig.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolbase.so toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolbase.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolconfig.so toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolconfig.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libdtool.so toplevel OSX
+file 2 $DTOOL/built/lib/libdtool.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolutil.so toplevel OSX
+file 2 $DTOOL/built/lib/libdtoolutil.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libinterrogatedb.so toplevel OSX
+file 2 $DTOOL/built/lib/libinterrogatedb.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libprc.so toplevel OSX
+file 2 $DTOOL/built/lib/libprc.dylib toplevel OSX
+file 2 $DTOOL/built/lib/libdtool.dll toplevel WIN32
+file 2 $DTOOL/built/lib/libdtoolconfig.dll toplevel WIN32
+file 2 $PANDA/built/lib/libdownloader.so toplevel OSX
+file 2 $PANDA/built/lib/libdownloader.dylib toplevel OSX
+file 2 $PANDA/built/lib/libexpress.so toplevel OSX
+file 2 $PANDA/built/lib/libexpress.dylib toplevel OSX
+#file 2 $PANDA/built/lib/libpandaawesomium.dll toplevel WIN32
+file 2 $PANDA/built/lib/libpandabase.so toplevel OSX
+file 2 $PANDA/built/lib/libpandabase.dylib toplevel OSX
+file 2 $PANDA/built/lib/libpandaexpress.so toplevel OSX
+file 2 $PANDA/built/lib/libpandaexpress.dylib toplevel OSX
+file 2 $PANDA/built/lib/libpandaexpress.dll toplevel WIN32
+#file 2 $PANDA/built/lib/libpandaode.dylib toplevel OSX
+file 2 $PANDA/built/lib/libpandaode.dll toplevel WIN32
+file 2 $DIRECT/built/lib/libheapq.dll toplevel WIN32
+file 2 $DIRECT/built/lib/libheapq.so toplevel OSX
+file 2 $DIRECT/built/lib/libheapq.dylib toplevel OSX
+
+# Show code.
+  
+# Don't attempt to download these modules--they're not part of the game.
+forbid_module _dummy_threading
+forbid_module direct.tkpanels
+forbid_module direct.tkwidgets
+forbid_module direct.tkwidgets.AppShell
+forbid_module direct.tkwidgets.Tree
+forbid_module direct.cluster
+forbid_module direct.cluster.ClusterClient
+forbid_module direct.cluster.ClusterServer
+forbid_module direct.directdevices
+forbid_module otp.switchboard.badwordpy
+
+forbid_module tkCommonDialog
+forbid_module tkMessageBox
+forbid_module tkSimpleDialog
+forbid_module tkFileDialog
+forbid_module Tkconstants
+forbid_module Tkinter
+forbid_module Pmw
+forbid_module pdb
+forbid_module wx
+forbid_module _ssl
+forbid_module embedded
+forbid_module dbhash
+forbid_module gdbm
+forbid_module dbm
+forbid_module ElementPath
+
+# More modules attempted by osx build that also need to be forbidden.
+forbid_module ascii
+forbid_module us_ascii
+forbid_module strop
+forbid_module _bisect
+forbid_module _locale
+
+# These names will eventually replace libheapq and libdirect.
+forbid_module libp3heapq
+forbid_module libp3direct
+
+# Don't try to import PandaModules here--it's part of Phase3.
+forbid_module pandac.PandaModules
+
+# Since we need to be able to import Phase3 after we download it, we
+# simply exclude it rather than completely forbid it.
+exclude_module Phase3
+
+# The language-specific localizer file is dynamically imported.
+module otp.otpbase.OTPLocalizerEnglish
+module toontown.toonbase.TTLocalizerEnglish
+  
+freeze_exe 2 Toontown toontown.launcher.StartToontownLauncher toplevel
+
+##################################################
+# PHASE 3
+##################################################
+multifile  phase_3.mf.pz 3
+# Libraries
+file 2 $PANDA/built/lib/libaudio.so . OSX
+file 2 $PANDA/built/lib/libaudio.dylib . OSX
+file 2 $PANDA/built/lib/libchan.so . OSX
+file 2 $PANDA/built/lib/libchan.dylib . OSX
+file 2 $PANDA/built/lib/libchar.so . OSX
+file 2 $PANDA/built/lib/libchar.dylib . OSX
+file 2 $PANDA/built/lib/libcollide.so . OSX
+file 2 $PANDA/built/lib/libcollide.dylib . OSX
+file 2 $PANDA/built/lib/libcull.so . OSX
+file 2 $PANDA/built/lib/libcull.dylib . OSX
+file 2 $PANDA/built/lib/libdevice.so . OSX
+file 2 $PANDA/built/lib/libdevice.dylib . OSX
+file 2 $PANDA/built/lib/libdgraph.so . OSX
+file 2 $PANDA/built/lib/libdgraph.dylib . OSX
+file 2 $PANDA/built/lib/libdisplay.so . OSX
+file 2 $PANDA/built/lib/libdisplay.dylib . OSX
+file 2 $PANDA/built/lib/libdistort.so . OSX
+file 2 $PANDA/built/lib/libdistort.dylib . OSX
+file 2 $PANDA/built/lib/libeffects.so . OSX
+file 2 $PANDA/built/lib/libeffects.dylib . OSX
+file 2 $PANDA/built/lib/libevent.so . OSX
+file 2 $PANDA/built/lib/libevent.dylib . OSX
+file 2 $PANDA/built/lib/libframework.so . OSX
+file 2 $PANDA/built/lib/libframework.dylib . OSX
+file 2 $PANDA/built/lib/libglgsg.so . OSX
+file 2 $PANDA/built/lib/libglgsg.dylib . OSX
+file 2 $PANDA/built/lib/libglstuff.so . OSX
+file 2 $PANDA/built/lib/libglstuff.dylib . OSX
+file 2 $PANDA/built/lib/libosxdisplay.so . OSX
+file 2 $PANDA/built/lib/libosxdisplay.dylib . OSX
+file 2 $PANDA/built/lib/libgobj.so . OSX
+file 2 $PANDA/built/lib/libgobj.dylib . OSX
+file 2 $PANDA/built/lib/libgrutil.so . OSX
+file 2 $PANDA/built/lib/libgrutil.dylib . OSX
+file 2 $PANDA/built/lib/libgsgbase.so . OSX
+file 2 $PANDA/built/lib/libgsgbase.dylib . OSX
+file 2 $PANDA/built/lib/liblerp.so . OSX
+file 2 $PANDA/built/lib/liblerp.dylib . OSX
+file 2 $PANDA/built/lib/liblinmath.so . OSX
+file 2 $PANDA/built/lib/liblinmath.dylib . OSX
+file 2 $PANDA/built/lib/libmathutil.so . OSX
+file 2 $PANDA/built/lib/libmathutil.dylib . OSX
+file 2 $PANDA/built/lib/libmiles_audio.so . OSX
+file 2 $PANDA/built/lib/libmiles_audio.dylib . OSX
+file 2 $PANDA/built/lib/libpandafx.so . OSX
+file 2 $PANDA/built/lib/libpandafx.dylib . OSX
+file 2 $PANDA/built/lib/libpandagl.so . OSX
+file 2 $PANDA/built/lib/libpandagl.dylib . OSX
+file 2 $PANDA/built/lib/libtinydisplay.so . OSX
+file 2 $PANDA/built/lib/libtinydisplay.dylib . OSX
+file 2 $PANDA/built/lib/libpandaode.so . OSX
+file 2 $PANDA/built/lib/libpandaode.dylib . OSX
+file 2 $PANDA/built/lib/libpandaphysics.so . OSX
+file 2 $PANDA/built/lib/libpandaphysics.dylib . OSX
+file 2 $PANDA/built/lib/libpanda.so . OSX
+file 2 $PANDA/built/lib/libpanda.dylib . OSX
+file 2 $PANDA/built/lib/libparametrics.so . OSX
+file 2 $PANDA/built/lib/libparametrics.dylib . OSX
+file 2 $PANDA/built/lib/libparticlesystem.so . OSX
+file 2 $PANDA/built/lib/libparticlesystem.dylib . OSX
+file 2 $PANDA/built/lib/libpgraph.so . OSX
+file 2 $PANDA/built/lib/libpgraph.dylib . OSX
+file 2 $PANDA/built/lib/libpgraphnodes.so . OSX
+file 2 $PANDA/built/lib/libpgraphnodes.dylib . OSX
+file 2 $PANDA/built/lib/libpgui.so . OSX
+file 2 $PANDA/built/lib/libpgui.dylib . OSX
+file 2 $PANDA/built/lib/libphysics.so . OSX
+file 2 $PANDA/built/lib/libphysics.dylib . OSX
+file 2 $PANDA/built/lib/libpipeline.so . OSX
+file 2 $PANDA/built/lib/libpipeline.dylib . OSX
+file 2 $PANDA/built/lib/libpode.so . OSX
+file 2 $PANDA/built/lib/libpode.dylib . OSX
+file 2 $PANDA/built/lib/libmovies.so . OSX
+file 2 $PANDA/built/lib/libmovies.dylib . OSX
+file 2 $PANDA/built/lib/libpnmimage.so . OSX
+file 2 $PANDA/built/lib/libpnmimage.dylib . OSX
+file 2 $PANDA/built/lib/libpnmimagetypes.so . OSX
+file 2 $PANDA/built/lib/libpnmimagetypes.dylib . OSX
+file 2 $PANDA/built/lib/libpnmtext.so . OSX
+file 2 $PANDA/built/lib/libpnmtext.dylib . OSX
+file 2 $PANDA/built/lib/libpstatclient.so . OSX
+file 2 $PANDA/built/lib/libpstatclient.dylib . OSX
+file 2 $PANDA/built/lib/libputil.so . OSX
+file 2 $PANDA/built/lib/libputil.dylib . OSX
+file 2 $PANDA/built/lib/librecorder.so . OSX
+file 2 $PANDA/built/lib/librecorder.dylib . OSX
+file 2 $PANDA/built/lib/libtext.so . OSX
+file 2 $PANDA/built/lib/libtext.dylib . OSX
+file 2 $PANDA/built/lib/libtform.so . OSX
+file 2 $PANDA/built/lib/libtform.dylib . OSX
+file 2 $PANDA/built/lib/libpanda.dll . WIN32
+file 2 $PANDA/built/lib/libpandaphysics.dll . WIN32
+file 2 $PANDA/built/lib/libwindisplay.dll . WIN32
+file 2 $PANDA/built/lib/libpandadx9.dll . WIN32
+file 2 $PANDA/built/lib/libpandadx8.dll . WIN32
+file 2 $PANDA/built/lib/libpandafx.dll . WIN32
+file 2 $PANDA/built/lib/libpandagl.dll . WIN32
+file 2 $PANDA/built/lib/libtinydisplay.dll . WIN32
+file 2 $PANDA/built/lib/libtinydisplay.so . OSX
+file 2 $PANDA/built/lib/libtinydisplay.dylib . OSX 
+file 2 $PANDA/built/lib/libmiles_audio.dll . WIN32
+
+file 2 $OTP/built/lib/libmovement.so . OSX
+file 2 $OTP/built/lib/libmovement.dylib . OSX
+file 2 $OTP/built/lib/libnametag.so . OSX
+file 2 $OTP/built/lib/libnametag.dylib . OSX
+file 2 $OTP/built/lib/libotpbase.so . OSX
+file 2 $OTP/built/lib/libotpbase.dylib . OSX
+file 2 $OTP/built/lib/libotp.so . OSX
+file 2 $OTP/built/lib/libotp.dylib . OSX
+file 2 $OTP/built/lib/libnavigation.so . OSX
+file 2 $OTP/built/lib/libnavigation.dylib . OSX
+file 2 $OTP/built/lib/libsecure.so . OSX
+file 2 $OTP/built/lib/libsecure.dylib . OSX
+file 2 $OTP/built/lib/libsettings.so . OSX
+file 2 $OTP/built/lib/libsettings.dylib . OSX
+file 2 $OTP/built/lib/libotp.dll . WIN32
+
+
+# Awesomium - which may never become a requirement
+#file 2 $WINTOOLS/built/lib/Awesomium.dll . WIN32
+#file 2 $WINTOOLS/built/lib/dbghelp.dll . WIN32
+#file 2 $WINTOOLS/built/lib/icudt38.dll . WIN32
+#file 2 $TOONTOWN/src/shtiker/error.html . WIN32,OSX
+
+# ODE - Open Dynamics Engine, for MiniGolf Ice Slide
+file 2 $WINTOOLS/built/lib/ode_single.dll . WIN32
+
+# Miles
+file 2 $OSXTOOLS/built/lib/libMilesMachO.dylib . OSX
+file 2 $OSXTOOLS/built/lib/libMilesMachOx86.dylib . OSX
+file 2 $OSXTOOLS/built/lib/mssmp3.asi . OSX
+file 2 $OSXTOOLS/built/lib/mssmixer.mix . OSX
+file 2 $OSXTOOLS/built/lib/Miles_MP3_Decoder.asi . OSX
+file 2 $WINTOOLS/sdk/rad/MilesWin/redist/mss32.dll . WIN32
+file 2 $WINTOOLS/sdk/rad/MilesWin/redist/mssmp3.asi . WIN32
+
+file 2 $DIRECT/built/lib/libdcparser.so . OSX
+file 2 $DIRECT/built/lib/libdcparser.dylib . OSX
+file 2 $DIRECT/built/lib/libdeadrec.so . OSX
+file 2 $DIRECT/built/lib/libdeadrec.dylib . OSX
+file 2 $DIRECT/built/lib/libdirectbase.so . OSX
+file 2 $DIRECT/built/lib/libdirectbase.dylib . OSX
+file 2 $DIRECT/built/lib/libdirect.so . OSX
+file 2 $DIRECT/built/lib/libdirect.dylib . OSX
+file 2 $DIRECT/built/lib/libdistributed.so . OSX
+file 2 $DIRECT/built/lib/libdistributed.dylib . OSX
+file 2 $DIRECT/built/lib/libinterval.so . OSX
+file 2 $DIRECT/built/lib/libinterval.dylib . OSX
+file 2 $DIRECT/built/lib/libmotiontrail.so . OSX
+file 2 $DIRECT/built/lib/libmotiontrail.dylib . OSX
+file 2 $DIRECT/built/lib/libshowbase.so . OSX
+file 2 $DIRECT/built/lib/libshowbase.dylib . OSX
+file 2 $DIRECT/built/lib/libdirect.dll . WIN32
+
+file 2 $TOONTOWN/built/lib/libdnaLoader.so . OSX
+file 2 $TOONTOWN/built/lib/libdnaLoader.dylib . OSX
+file 2 $TOONTOWN/built/lib/libpets.so . OSX
+file 2 $TOONTOWN/built/lib/libpets.dylib . OSX
+file 2 $TOONTOWN/built/lib/libsuit.so . OSX
+file 2 $TOONTOWN/built/lib/libsuit.dylib . OSX
+file 2 $TOONTOWN/built/lib/libtoontownbase.so . OSX
+file 2 $TOONTOWN/built/lib/libtoontownbase.dylib . OSX
+file 2 $TOONTOWN/built/lib/libtoontown.so . OSX
+file 2 $TOONTOWN/built/lib/libtoontown.dylib . OSX
+file 2 $TOONTOWN/built/lib/libtoontown.dll . WIN32
+
+# fake file to test patcher it is a 1+.6+.6+.7 meg file
+#file 2 $WINTOOLS/built/lib/python20_d.dll . WIN32
+#file 2 $WINTOOLS/built/lib/python20.dll . WIN32
+#file 2 $WINTOOLS/built/lib/msvcp70d.dll . WIN32
+#file 2 $WINTOOLS/built/lib/tcl83.dll . WIN32
+
+# Etc files
+file 0 $TOONTOWN/src/configfiles/toon.dc phase_3/etc WIN32,OSX
+file 0 $OTP/src/configfiles/otp.dc phase_3/etc WIN32,OSX
+
+file 0 $OTP/src/configfiles/certificates.txt phase_3/etc WIN32,OSX
+file 0 $OTP/src/configfiles/gameserver.txt phase_3/etc WIN32,OSX
+
+# Show code.
+
+# Now it's time to import PandaModules.
+module pandac.PandaModules
+
+# These modules are dynamically loaded by the mint/factory code.
+module toontown.coghq.BossbotCountryClubEntrance_Action00
+module toontown.coghq.BossbotCountryClubTeeOffRoom_Action00
+module toontown.coghq.BossbotCountryClubFairwayRoom_Battle00
+module toontown.coghq.BossbotCountryClubMazeRoom_Battle00
+module toontown.coghq.BossbotCountryClubMazeRoom_Battle01
+module toontown.coghq.BossbotCountryClubMazeRoom_Battle02
+module toontown.coghq.BossbotCountryClubGreenRoom_Action00
+module toontown.coghq.BossbotCountryClubKartRoom_Battle00
+module toontown.coghq.BossbotCountryClubPresidentRoom_Battle00
+module toontown.coghq.BossbotCountryClubTeeOffRoom_Action01
+module toontown.coghq.BossbotCountryClubTeeOffRoom_Action02
+module toontown.coghq.BossbotCountryClubGreenRoom_Action01
+module toontown.coghq.BossbotCountryClubGreenRoom_Action02
+module toontown.coghq.CashbotMintBoilerRoom_Action00
+module toontown.coghq.CashbotMintBoilerRoom_Battle00
+module toontown.coghq.CashbotMintBoilerRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintBoilerRoom_Battle01
+module toontown.coghq.CashbotMintBoilerRoom_Battle01_Cogs
+module toontown.coghq.CashbotMintControlRoom_Battle00
+module toontown.coghq.CashbotMintControlRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintDuctRoom_Action00
+module toontown.coghq.CashbotMintDuctRoom_Battle00
+module toontown.coghq.CashbotMintDuctRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintDuctRoom_Battle01
+module toontown.coghq.CashbotMintDuctRoom_Battle01_Cogs
+module toontown.coghq.CashbotMintEntrance_Action00
+module toontown.coghq.CashbotMintGearRoom_Action00
+module toontown.coghq.CashbotMintGearRoom_Battle00
+module toontown.coghq.CashbotMintGearRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintGearRoom_Battle01
+module toontown.coghq.CashbotMintGearRoom_Battle01_Cogs
+module toontown.coghq.CashbotMintLavaRoomFoyer_Action00
+module toontown.coghq.CashbotMintLavaRoomFoyer_Action01
+module toontown.coghq.CashbotMintLavaRoomFoyer_Battle00
+module toontown.coghq.CashbotMintLavaRoomFoyer_Battle00_Cogs
+module toontown.coghq.CashbotMintLavaRoomFoyer_Battle01
+module toontown.coghq.CashbotMintLavaRoomFoyer_Battle01_Cogs
+module toontown.coghq.CashbotMintLavaRoom_Action00
+module toontown.coghq.CashbotMintLobby_Action00
+module toontown.coghq.CashbotMintLobby_Battle00
+module toontown.coghq.CashbotMintLobby_Battle00_Cogs
+module toontown.coghq.CashbotMintLobby_Battle01
+module toontown.coghq.CashbotMintLobby_Battle01_Cogs
+module toontown.coghq.CashbotMintOilRoom_Battle00
+module toontown.coghq.CashbotMintOilRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintPaintMixerReward_Battle00
+module toontown.coghq.CashbotMintPaintMixerReward_Battle00_Cogs
+module toontown.coghq.CashbotMintPaintMixer_Action00
+module toontown.coghq.CashbotMintPipeRoom_Action00
+module toontown.coghq.CashbotMintPipeRoom_Battle00
+module toontown.coghq.CashbotMintPipeRoom_Battle00_Cogs
+module toontown.coghq.CashbotMintPipeRoom_Battle01
+module toontown.coghq.CashbotMintPipeRoom_Battle01_Cogs
+module toontown.coghq.CashbotMintStomperAlley_Action00
+module toontown.coghq.LawbotOfficeBoilerRoom_Action01
+module toontown.coghq.LawbotOfficeBoilerRoom_Battle00
+module toontown.coghq.LawbotOfficeBoilerRoom_Battle00_Cogs
+module toontown.coghq.LawbotOfficeBoilerRoom_Trap00
+module toontown.coghq.LawbotOfficeBoilerRoom_Security00
+module toontown.coghq.LawbotOfficeBoilerRoom_Trap00_Cogs
+module toontown.coghq.LawbotOfficeEntrance_Action00
+module toontown.coghq.LawbotOfficeDiamondRoom_Battle00
+module toontown.coghq.LawbotOfficeDiamondRoom_Battle00_Cogs
+module toontown.coghq.LawbotOfficeDiamondRoom_Trap00
+module toontown.coghq.LawbotOfficeDiamondRoom_Trap00_Cogs
+module toontown.coghq.LawbotOfficeDiamondRoom_Security00
+module toontown.coghq.LawbotOfficeDiamondRoom_Action00
+module toontown.coghq.LawbotOfficeDiamondRoom_Action01
+module toontown.coghq.LawbotOfficeGearRoom_Action00
+module toontown.coghq.LawbotOfficeGearRoom_Battle00
+module toontown.coghq.LawbotOfficeGearRoom_Battle00_Cogs
+module toontown.coghq.LawbotOfficeGearRoom_Platform00
+module toontown.coghq.LawbotOfficeGearRoom_Security00
+module toontown.coghq.LawbotOfficeLobby_Action00
+module toontown.coghq.LawbotOfficeLobby_Action01
+module toontown.coghq.LawbotOfficeLobby_Lights00
+module toontown.coghq.LawbotOfficeLobby_Trap00
+module toontown.coghq.LawbotOfficeLobby_Trap00_Cogs
+module toontown.coghq.LawbotOfficeOilRoom_Battle00
+module toontown.coghq.LawbotOfficeOilRoom_Battle00_Cogs
+module toontown.coghq.LawbotOfficeOilRoom_Battle01
+module toontown.coghq.LawbotOfficeOilRoom_Battle01_Cogs
+
+# These modules are dynamically loaded by the neighborhoods.
+module toontown.hood.FishAnimatedProp
+module toontown.hood.GenericAnimatedBuilding
+module toontown.hood.HQPeriscopeAnimatedProp
+module toontown.hood.HQTelescopeAnimatedProp
+module toontown.hood.HydrantOneAnimatedProp
+module toontown.hood.HydrantTwoAnimatedProp
+module toontown.hood.HydrantZeroAnimatedProp
+module toontown.hood.InteractiveAnimatedProp
+module toontown.hood.MailboxOneAnimatedProp
+module toontown.hood.MailboxTwoAnimatedProp
+module toontown.hood.MailboxZeroAnimatedProp
+module toontown.hood.PetShopFishAnimatedProp
+module toontown.hood.SleepingHydrantAnimatedProp
+module toontown.hood.TrashcanOneAnimatedProp
+module toontown.hood.TrashcanTwoAnimatedProp
+module toontown.hood.TrashcanZeroAnimatedProp
+module toontown.hood.ZeroAnimatedProp
+module toontown.hood.HydrantInteractiveProp
+module toontown.hood.TrashcanInteractiveProp
+module toontown.hood.MailboxInteractiveProp
+
+
+# we need some kind of dbm so we can import anydbm, even if we never
+# use it.
+module dumbdbm
+
+# this is used by pytz to establish clientside timezone
+module pytz.zoneinfo.US.Pacific
+
+# NOTE: This should be conditional per language
+file 0 $TOONTOWN/src/configfiles/NameMasterEnglish.txt phase_3/etc WIN32,OSX
+file 0 $TOONTOWN/src/configfiles/PetNameMasterEnglish.txt phase_3/etc WIN32,OSX
+
+file 0 $TOONTOWN/src/quest/QuestScripts.txt phase_3/etc WIN32,OSX
+
+# SpeedChatPlus (WhiteList) client side file
+file 0 $TOONTOWN/src/chat/twhitelist.dat . WIN32,OSX
+
+freeze_dll 2 Phase3 .
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_3 phase_3
+
+# The Win32 resources need to be loaded from an actual disk file; they
+# can't be loaded from a multifile.  Eventually, these should be bound
+# into resources within the executable anyway; for now, we'll just
+# extract them from the multifiles after download.
+file 1 $TTMODELS/built/phase_3/models/gui/toonmono.cur . WIN32,OSX
+# Wise downloads this now
+# file 1 $TTMODELS/built/phase_3/models/gui/toontown.ico .
+
+
+##################################################
+# PHASE 3.5
+##################################################
+multifile  phase_3.5.mf.pz 3.5
+
+file 0 $TOONTOWN/src/battle/gearExplosionBig.ptf phase_3.5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/gearExplosionSmall.ptf phase_3.5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/gearExplosion.ptf phase_3.5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/poundkey.ptf phase_3.5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/shred.ptf phase_3.5/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_3.5 phase_3.5
+
+
+
+##################################################
+# PHASE 4
+##################################################
+multifile  phase_4.mf.pz 4
+
+# These particle effects might appear in any safezone, or anywhere we
+# can see other toons.
+file 0 $TOONTOWN/src/battle/splashlines.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/safezone/resistanceEffectBean.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/safezone/resistanceEffectSparkle.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/safezone/resistanceEffectSprite.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/icetnt.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/effects/smokeTest4.ptf phase_3.5/etc WIN32,OSX
+file 0 $TOONTOWN/src/effects/tt_p_efx_rocketLaunchFire.ptf phase_4/etc WIN32,OSX
+file 0 $TOONTOWN/src/effects/tt_p_efx_rocketLaunchSmoke.ptf phase_4/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_4 phase_4
+
+
+##################################################
+# PHASE 5
+##################################################
+multifile phase_5.mf.pz 5
+
+# ETC files
+file 0 $TOONTOWN/src/battle/brainStorm.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/buzzWord.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/calculate.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/confetti.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/demotionFreeze.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/demotionSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/demotionUnFreeze.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/doubleTalkLeft.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/doubleTalkRight.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/downsizeCloud.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/downsizeSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/filibusterSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/fillWithLeadSmother.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/fillWithLeadSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/fingerwag.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/fingerwag2.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/firedBaseFlame.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/firedFlame.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/freezeAssets.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/gearExplosionWide.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/guiltTrip.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/headShrinkCloud.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/headShrinkDrop.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/headShrinkSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/hotAirSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/jargonSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/legaleseSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/liquidate.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/mumboJumboSmother.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/mumboJumboSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/numberSpill.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/numberSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/penSpill.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/pixieDrop.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/pixieExplode.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/pixiePoof.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/pixieSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/pixieWall.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/powertrip.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/powertrip2.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/reorgCloud.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/reorgSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/restrainingOrderCloud.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/rollodexStream.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/rollodexVortex.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/rollodexWaterfall.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/schmoozeLowerSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/schmoozeUpperSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/shiftSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/smile.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/soundBreak.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/soundWave.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/spinEffect.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/spinSpray.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/spriteFiredFlecks.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/synergy.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/synergyWaterfall.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/tnt.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/trickleLiquidate.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/waterfall.ptf phase_5/etc WIN32,OSX
+file 0 $TOONTOWN/src/battle/withdrawal.ptf phase_5/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_5 phase_5
+
+
+##################################################
+# PHASE 5.5
+##################################################
+multifile  phase_5.5.mf.pz 5.5
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_5.5 phase_5.5
+
+##################################################
+# PHASE 6
+##################################################
+multifile phase_6.mf.pz 6
+
+file 0 $TOONTOWN/src/effects/drift.ptf phase_6/etc WIN32,OSX
+file 0 $TOONTOWN/src/effects/sparks.ptf phase_6/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_6 phase_6
+
+##################################################
+# PHASE 7
+##################################################
+multifile phase_7.mf.pz 7
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_7 phase_7
+
+##################################################
+# PHASE 8
+##################################################
+multifile phase_8.mf.pz 8
+
+file 0 $TOONTOWN/src/safezone/snowdisk.ptf phase_8/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_8 phase_8
+
+##################################################
+# PHASE 9
+##################################################
+multifile phase_9.mf.pz 9
+
+file 0 $TOONTOWN/src/battle/bossCogFrontAttack.ptf phase_9/etc WIN32,OSX
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_9 phase_9
+
+
+##################################################
+# PHASE 10
+##################################################
+multifile phase_10.mf.pz 10
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_10 phase_10
+
+
+##################################################
+# PHASE 11
+##################################################
+multifile phase_11.mf.pz 11
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_11 phase_11
+
+##################################################
+# PHASE 12
+##################################################
+multifile phase_12.mf.pz 12
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_12 phase_12
+
+##################################################
+# PHASE 13
+##################################################
+multifile phase_13.mf.pz 13
+
+# Models, textures, audio
+dir 0 $TTMODELS/built/phase_13 phase_13

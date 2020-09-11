@@ -1,0 +1,10 @@
+[version]
+signature="$CHICAGO$"
+AdvancedINF=2.0
+[Add.Code]
+TTINST_FILENAME=TTINST_FILENAME
+[TTINST_FILENAME]
+file-win32-x86=thiscab
+clsid={INSTALLERCTRL_GUID}
+FileVersion=VERNUM_COMMA_SEPARATORS
+RegisterServer=yes

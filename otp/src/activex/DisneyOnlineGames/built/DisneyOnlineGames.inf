@@ -1,0 +1,12 @@
+[Add.Code]
+DisneyOnlineGames.ocx=DisneyOnlineGames.ocx
+DisneyOnlineGames.inf=DisneyOnlineGames.inf
+
+[DisneyOnlineGames.ocx]
+file=thiscab
+clsid={3DCEC959-378A-4922-AD7E-FD5C925D927F}
+RegisterServer=yes
+FileVersion=7,6,6,1549
+
+[DisneyOnlineGames.inf]
+file=thiscab

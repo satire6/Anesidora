@@ -1,0 +1,153 @@
+#! /bin/sh
+
+debug_state=$1
+
+if [ "$debug_state" = '-d' ]
+then
+	windows_debug="d"
+	unix_debug="_d"
+else
+	windows_debug=""
+	unix_debug=""
+fi
+
+# Configrc for running the show
+# This uses the executable system now, not the configrc
+# I do not think we even use this
+# echo $TOONTOWN/bin/Configrc.exe
+
+
+# Python files
+echo $WINTOOLS/bin/python${unix_debug}.exe
+echo $WINTOOLS/built/python24${unix_debug}.dll
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_sre${unix_debug}.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_tkinter${unix_debug}.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/_socket${unix_debug}.pyd
+echo $WINTOOLS/sdk/python/Python-2.4.1/PCbuild/zlib${unix_debug}.pyd
+
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/linecache.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/traceback.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/__future__.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/whrandom.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/copy_reg.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/copy.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/fnmatch.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/re.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_parse.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_constants.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/sre_compile.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/types.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/string.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/os.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/site.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/stat.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/UserDict.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/ntpath.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/random.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/getopt.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/fpformat.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/bisect.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/warnings.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/inspect.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/dis.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/tokenize.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/token.py
+echo $WINTOOLS/sdk/python/Python-2.4.1/Lib/ihooks.py
+
+# Windows system dlls
+echo $WINTOOLS/lib/msvcr71${windows_debug}.dll
+echo $WINTOOLS/lib/msvcp71${windows_debug}.dll
+
+# Libraries
+echo $WINTOOLS/lib/built/nspr4${unix_debug}.dll
+echo $DTOOL/lib/libdtool${unix_debug}.dll
+echo $DTOOL/lib/libdtoolconfig${unix_debug}.dll
+echo $PANDA/lib/libpandaexpress${unix_debug}.dll
+
+# Generated code for libpandaexpress
+AIprintlib $DIRECT/lib/pandac libpandaexpress
+
+# DIRECT stuff
+AIprintdir $DIRECT/src/directnotify .py
+AIprintdir $DIRECT/src/directtools .py
+AIprintdir $DIRECT/src/directutil .py
+AIprintdir $DIRECT/src/distributed .py
+AIprintdir $DIRECT/src/ffi .py
+AIprintdir $DIRECT/src/fsm .py
+AIprintdir $DIRECT/src/gui .py
+AIprintdir $DIRECT/src/interval .py
+AIprintdir $DIRECT/src/particles .py
+AIprintdir $DIRECT/src/showbase .py
+AIprintdir $DIRECT/src/showutil .py
+AIprintdir $DIRECT/src/task .py
+
+# Libraries
+echo $PANDA/lib/libpanda${unix_debug}.dll
+echo $PANDA/lib/libpandaphysics${unix_debug}.dll
+echo $DIRECT/lib/libdirect${unix_debug}.dll
+echo $TOONTOWN/lib/libtoontown${unix_debug}.dll
+
+# Etc files
+echo $TOONTOWN/src/configfiles/toon.dc
+echo $OTP/src/configfiles/otp.dc
+echo $TOONTOWN/src/configfiles/download.par
+
+# Generated code for libpanda
+AIprintlib $DIRECT/lib/pandac libpanda
+AIprintlib $DIRECT/lib/pandac libpandaphysics
+echo $DIRECT/lib/pandac/PandaModules.py
+
+# Generated code for libdirect
+AIprintlib $DIRECT/lib/pandac libdirect
+
+# Generated code for libotp
+AIprintlib $DIRECT/lib/pandac libotp
+
+# Generated code for libtoontown
+AIprintlib $DIRECT/lib/pandac libtoontown
+
+# AI code
+
+AIprintdir $OTP/src/ai .py
+AIprintdir $OTP/src/avatar .py
+AIprintdir $OTP/src/chat .py
+AIprintdir $OTP/src/distributed .py
+AIprintdir $OTP/src/friends .py
+AIprintdir $OTP/src/guild .py
+AIprintdir $OTP/src/level .py
+AIprintdir $OTP/src/movement .py
+AIprintdir $OTP/src/otpbase .py
+AIprintdir $OTP/src/otpgui .py
+AIprintdir $OTP/src/speedchat .py
+
+AIprintdir $TOONTOWN/src/ai .py
+AIprintdir $TOONTOWN/src/avatar .py
+AIprintdir $TOONTOWN/src/battle .py
+AIprintdir $TOONTOWN/src/building .py
+AIprintdir $TOONTOWN/src/catalog .py
+AIprintdir $TOONTOWN/src/chat .py
+AIprintdir $TOONTOWN/src/classicchars .py
+AIprintdir $TOONTOWN/src/coghq .py
+AIprintdir $TOONTOWN/src/distributed .py
+AIprintdir $TOONTOWN/src/effects .py
+AIprintdir $TOONTOWN/src/estate .py
+AIprintdir $TOONTOWN/src/fishing .py
+AIprintdir $TOONTOWN/src/friends .py
+AIprintdir $TOONTOWN/src/hood .py
+AIprintdir $TOONTOWN/src/minigame .py
+AIprintdir $TOONTOWN/src/pets .py
+AIprintdir $TOONTOWN/src/quest .py
+AIprintdir $TOONTOWN/src/racing .py
+AIprintdir $TOONTOWN/src/safezone .py
+AIprintdir $TOONTOWN/src/scavengerhunt .py
+AIprintdir $TOONTOWN/src/shtiker .py
+AIprintdir $TOONTOWN/src/suit .py
+AIprintdir $TOONTOWN/src/toon .py
+AIprintdir $TOONTOWN/src/toonbase .py
+AIprintdir $TOONTOWN/src/toontowngui .py
+AIprintdir $TOONTOWN/src/tutorial .py
+
+# DNA files
+echo $TTMODELS/phase_*/dna/*.dna
+

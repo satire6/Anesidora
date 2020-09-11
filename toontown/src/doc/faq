@@ -1,0 +1,367 @@
+
+                        Toontown Development FAQ
+                        
+        This FAQ contains information of value to Toontown developers.
+                It does not contain end user information.
+
+-----------------------------------------------------------------------------
+
+[Section 1: The FAQ]
+
+-----------------------------------------------------------------------------
+
+Q:  What is the goal of Toontown Development FAQ?
+
+A:  To collect tips and trivia in a central place.
+    
+-----------------------------------------------------------------------------
+
+Q:  Are these really "Frequently Asked Questions"?
+
+A:  No, these are a collection of tips that are arranged in the form of 
+    questions and answers.  This is done this way for the bogus reason
+    that lots of other people collect rather unrelated information in 
+    similar formats, and it seemed like a reasonable thing to imitate.
+
+-----------------------------------------------------------------------------
+
+Q:  If I have some semi-useful piece of information that I want to make
+    available to other Toontown developers, what should I do?
+    
+A:  Add it to the FAQ.
+    
+-----------------------------------------------------------------------------
+
+Q:  What if I'm not the expert on a topic?  Shouldn't the experts be writing
+    the FAQ?
+    
+A:  The experts are often too busy.  Many of the things I've added to this 
+    FAQ, are things that I saw someone else do, or asked about how to do.
+    Many of these FAQs are simply My Asked Questions (but calling it a MAQ
+    would be weird).
+    
+    Rather than keeping personal notes of cool tricks or important pieces of
+    inforation, let's put them in the FAQ; even if you're simply recording 
+    the wisdom of others.
+    
+-----------------------------------------------------------------------------
+
+[Section 2: Building Toontown]
+
+-----------------------------------------------------------------------------
+
+Q:  What are the major pieces of Toontown?
+    
+A:  DTool, Panda, Direct, Toontown, and your platform tools (e.g. WinTools).
+
+-----------------------------------------------------------------------------
+
+Q:  If I'm building everything from scratch, what order should I build in?
+    
+A:  1. Your platform tools (e.g. WinTools).
+    2. DTool
+    3. Panda
+    4. Direct
+    5. Toontown
+
+-----------------------------------------------------------------------------
+
+[Section 3: Platform Tools]
+
+-----------------------------------------------------------------------------
+
+[Section 4: DTool]
+
+-----------------------------------------------------------------------------
+
+[Section 5: Panda]
+
+-----------------------------------------------------------------------------
+
+Q:  Should I use a decal transition more than once if I'm decaling to a
+    decal?
+
+A:  Always decal when you want a decal, even if you are decaling again on
+    the same branch, unless that arc already has a decal transition.
+
+-----------------------------------------------------------------------------
+
+Q:  Where does the decal transition go?
+
+A:  Decal transitions go above the parent of the decal.  The decal transition
+    is not saying, "the next node is a decal", instead it is saying, 
+    "the next node has decals on it".
+
+-----------------------------------------------------------------------------
+
+[Section 6: Direct]
+
+-----------------------------------------------------------------------------
+
+Q:  How can I get a graphical representation of a Finite State Machine (FSM)?
+
+A:  You can either define the following in your Configrc:
+    
+    want-tk #t
+    
+    or you can type the following at the python prompt:
+    
+    >>> from TkGlobal import *
+    
+    Then, to get the FSM inspector, type (replace the fsm parameter with the
+    fsm instance you wish to view):
+    
+    >>> from FSMInspector import *
+    >>> FSMInspector(fsm)
+    >>> run()
+
+-----------------------------------------------------------------------------
+
+[Section 7: Toontown]
+
+-----------------------------------------------------------------------------
+
+Q:  How do I get the camera to move separately from the avatar?
+
+A:  Toggle the "out of body experience".  At the Python prompt, type:
+    
+    >>> base.oobe()
+
+-----------------------------------------------------------------------------
+
+[Section x: Unfiled Stuff]
+
+-----------------------------------------------------------------------------
+
+Q:  How do I get all the event messages to output to the log?
+
+A:  Toggle verbose on the messenger.  At the Python prompt, type:
+    
+    >>> messenger.toggleVerbose()
+
+-----------------------------------------------------------------------------
+
+Q:  How do I tell if find() on a NodePath worked?
+
+A:  The find() methof of a NodePath will always return another NodePath.  You
+    cannot test it for a null pointer, for example.  Instead, the correct 
+    thing to do is call the is_empty() (or isEmpty(), in Python) on the 
+    NodePath that was returned from the find() call.
+
+-----------------------------------------------------------------------------
+
+Q:  I'm trying to debug a transition that has an iris out.  I want to see
+    what was going on after the iris, but the screen is blacked out.
+
+A:  Turn off the iris.  At the Python prompt, type:
+    
+    >>> base.transitions.noIris()
+
+-----------------------------------------------------------------------------
+
+Q:  I'm using find() or findAllMatches() on a NodePath, and I can't find a 
+    node that I'm sure should be there.
+
+A:  It may be that the node was flattened away.  If so, you may want to make
+    that node a ModelNode, to prevent it from going away.
+    
+    It may be that the node is stashed.  If so, you may find it by adding
+    ";+s" to the end of the find string.
+    
+    For exmaple, change:
+    
+    np.find("**/blah")
+    
+    to
+    
+    np.find("**/blah;+s")
+
+-----------------------------------------------------------------------------
+
+Q:  Do you have an example of printing some debug information from within a
+    function interval?
+
+A:  Yes, try:
+    
+    FunctionInterval(sys.stdout.write, 
+            extraArgs=["finished that tricky part!\n"])
+
+-----------------------------------------------------------------------------
+
+Q:  Is there a way to find bad transforms under render?
+
+A:  Yes, at the Python prompt, type:
+    
+    >>> render.findSingularTransform()
+
+-----------------------------------------------------------------------------
+
+Q:  How can I see a graphical representation of the collision polygons?
+
+A:  At the Python prompt, type:
+    
+    >>> render.showCollisionSolids()
+    Or, for a shorter version:
+    >>> render.showCS()
+    
+    To reverse the situation use:
+    
+    >>> render.hideCollisionSolids()
+    Or:
+    >>> render.hideCS()
+
+-----------------------------------------------------------------------------
+
+Q:  How can I see all the transition on my node path, up to the top of the 
+    tree?
+
+A:  At the Python prompt, type:
+    
+    >>> render.writeTransitions(ostream)
+
+-----------------------------------------------------------------------------
+
+Q:  What happens if I flatten a scene graph that contains stashed nodes?
+
+A:  Possibly bad things.  Firstly, the stashed nodes will not get
+    flattened at all, and they may be left with an incorrect transform
+    after the flatten operation.  Furthermore, if the node they have
+    been attached to is removed, the stashed nodes could be lost.
+
+-----------------------------------------------------------------------------
+
+Q:  I'm getting a singular transformation when doing a hpr change.  What
+    could be causing that?
+
+A:  Look for a scale of zero on one of the node paths.  Scaling to zero is
+    generally bad, and may be at the root of the problem.
+    
+    Try using the HprScale functions instead of the hpr or scale functions.
+    Setting the hpr or scale independently of each other necessitates getting 
+    the other by calling decompose_matrix(), which may fail.  Setting them
+    together avoids this problem.
+    
+    e.g.
+    
+    Instead of: np.setHpr(myHpr)
+           use: np.setHprScale(myHpr, VBase3(1, 1, 1))
+    
+    Instead of: np.setScale(myScale)
+           use: np.setHprScale(VBase3(0, 0, 0), myScale)
+    
+    It doesn't help to call np.setHprScale(myHpr, np.getScale()), because
+    getting the scale will call decompose_matrix(), giving you the same trobule
+    that calling np.setHpr(myHpr) did.
+    
+    Here are the preferred pos, hpr, and scale functions and intervals:
+    
+    setPos(), setHprScale(), setPosHprScale(),
+    PosInterval(), HprScaleInterval(), PosHprScaleInterval(),
+    LerpPosInterval(), LerpHprScaleInterval(), and LerpPosHprScaleInterval().
+    
+    Here are the potentially dangerous pos, hpr, and scale functions and 
+    intervals:
+    
+    setHpr(), setScale(), setPosHpr(),
+    HprInterval(), ScaleInterval(), PosHprInterval(),
+    LerpHprInterval(), LerpScaleInterval(), and LerpPosHprInterval().
+
+-----------------------------------------------------------------------------
+
+Q:  Can I interactively set the notify level?
+
+A:  Yes.  At the Python prompt, type (this will set the notify level of 
+    myClass to debug):
+    
+    >>> myClass.notify.setDebug(1)
+    
+-----------------------------------------------------------------------------
+
+Q:  Can I create a collision sphere from scratch in C++?
+
+A:  Yes.  Here is an example: 
+      
+    PT(CollisionSphere) sphere = new CollisionSphere(0, 0, 0, 5.0);
+    sphere->set_tangible(0);
+    PT(CollisionNode) sphere_node = new CollisionNode();
+    sphere_node->set_name("Sphere_"+id);
+    sphere_node->set_into_collide_mask(1);  // 1 is, by convention, the 
+                                            // normal avatar collide bit.
+    sphere_node->add_solid(sphere);
+    NodePath sphere_node_path = parent.attach_new_node(sphere_node);
+    
+-----------------------------------------------------------------------------
+
+Q:  What's up with all these zone ID things?
+
+A:  In Toontown, there is a hierachy built from the zone ID number.
+    In order from most general to most specific, they are hood, branch, and
+    zone.
+    
+    Here are some example IDs:
+    hood ("h..."; i.e. the thousands position)
+        2000
+        3000
+        7000
+        8000
+    branch ("hb.."; i.e. the thousands, and the hundreds positions)
+        2000
+        2100
+        2100
+        2000
+        3100
+    zone ("hbzz"; i.e. the whole number)
+        2001
+        2132
+        2134
+        2099
+        3177
+    
+    By the way, if the hundreds digit is 5..9, then this is a zone that is 
+    inside of a building.  In this case, the last two digits are the
+    building's block number.  This also means that the hundreds position for
+    branch zones can only be in the range 0..4 for outside zones.
+    
+    The branch ID of an interior is the zone ID minus 500 and then drop the 
+    tens and ones digits.
+
+-----------------------------------------------------------------------------
+
+Q:  I want to be able to teleport to and playground from the book, can I?
+
+A:  Yes, at the Python prompt, type:
+    
+    >>> toonbase.localToon.teleportCheat=1
+    
+    Or, add the following to your Configrc:
+    
+    teleport-all 1
+
+-----------------------------------------------------------------------------
+
+Q:  Can I edit the color of an item in the scene graph?
+
+A:  Yes, at the Python prompt:
+    
+    (Make nodePath be the item you want to edit).
+    >>> nodePath.rgbPanel()
+    >>> run()
+    
+    A tk dialog will come up, with sliders for r,g,b, and alpha.
+
+-----------------------------------------------------------------------------
+
+Q:  How do I start Toontown from a Python prompt?
+
+A:  At the Python prompt, type:
+    
+    >>> from ToontownStart import *
+
+-----------------------------------------------------------------------------
+
+Q:  Where are the source dna files for toontown?
+
+A:  /alpha/DIRECT/LevelEditor/DNAFiles/
+
+-----------------------------------------------------------------------------
+

@@ -1,0 +1,168 @@
+--- src/configrc/Configrc.cxx	11 Sep 2007 00:04:03 -0000	1.85.2.14.2.2.2.29.2.14
++++ src/configrc/Configrc.cxx	29 Jul 2008 23:07:57 -0000
+@@ -10,7 +10,8 @@
+ #include <windows.h>
+ #endif
+ 
+-#include <openssl/ssl.h>
++#include "openssl/ssl.h"
++#include "openssl/md5.h"
+ 
+ // Windows may define this macro inappropriately.
+ #ifdef X509_NAME
+@@ -49,10 +50,12 @@
+     #define TESTSTR _xstr(PRODUCT_NAME)
+     const char *InstallerGuid="31CB2F01-72C2-4cf4-B265-450E8817B039";
+     const char *activex_control_name = "ttinst-portuguese.dll";
++#   include "portuguese/configrc_nls.h"
+   #elif defined(USE_FRENCH)
+     #define TESTSTR _xstr(PRODUCT_NAME)
+     const char *InstallerGuid="63308B48-F435-42fd-AB0A-3564C7BEF9D7";
+     const char *activex_control_name = "ttinst-french.dll";
++#   include "french/configrc_nls.h"
+   #else
+     #define TESTSTR ""
+     const char *activex_control_name = "ttinst.dll";
+@@ -61,7 +64,7 @@
+ #endif
+ 
+ const char *configrc_override_filename = "xrc";
+-const char *ToontownRegKeyName = "SOFTWARE\\Disney\\Disney Online\\Toontown" TESTSTR;  //under HKEY_LOCAL_MACHINE
++const char *ToontownRegKeyName = "SOFTWARE\\Disney\\Disney Online\\Toontown" TESTSTR;  //under HKEY_CURRENT_USER
+ 
+ #ifdef _WIN32
+ void write_opengl_hardware_info(HKEY hKeyToontown);
+@@ -89,7 +92,8 @@
+ typedef vector<string> StrVec;
+ 
+ static void
+-filesearch(string rootpath, string pattern, bool bRecursive, bool bSearchForDirs, bool bPrintFileInfo, StrVec &files) {
++filesearch(string rootpath, string pattern, bool bRecursive, bool bSearchForDirs, bool bPrintFileInfo, StrVec &files)
++{
+     // typical arguments:  filesearch("C:\\temp\\mview","*",true,true,sveclist);
+     WIN32_FIND_DATA current_file;
+ 
+@@ -145,7 +149,8 @@
+     }
+ }
+ 
+-static void UninstallActiveX(const char *control_name,const char *control_GUID) {
++static void UninstallActiveX(const char *control_name,const char *control_GUID)
++{
+     typedef HRESULT (WINAPI *REMOVECONTROLBYNAME)(
+                  LPCTSTR lpszFile,
+                  LPCTSTR lpszCLSID,
+@@ -157,13 +162,13 @@
+     REMOVECONTROLBYNAME       pfnRemoveControl;
+     HKEY hKey;
+     const char *ActiveXCache_RegValName = "ActiveXCache";
+-    const char *InternetSettingsRegKeyStr = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"; //under HKLM
++    const char *InternetSettingsRegKeyStr = "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"; //under HKCR
+     char activeXcontrol_filepath[512];
+     DWORD bufsize = sizeof(activeXcontrol_filepath);
+     string guidstr,searchpattern;
+     StrVec file_list, control_list;
+ 
+-    if (ERROR_SUCCESS != RegOpenKeyEx(HKEY_LOCAL_MACHINE,InternetSettingsRegKeyStr,0,KEY_READ,&hKey)) {
++    if (ERROR_SUCCESS != RegOpenKeyEx(HKEY_CURRENT_USER, InternetSettingsRegKeyStr,0,KEY_READ,&hKey)) {
+         goto error_exit;
+     }
+ 
+@@ -272,19 +277,16 @@
+ //  os << "product-name DisneyOnline-US" << endl;
+ #elif defined(USE_CASTILLIAN)
+   os << "language castillian" << endl;
+-  os << "product-name Terra-DMC" << endl;
++  os << "product-name ES" << endl;
+ #elif defined(USE_JAPANESE)
+   os << "language japanese" << endl;
+   os << "product-name JP" << endl;
+ #elif defined(USE_GERMAN)
+   os << "language german" << endl;
+-  os << "product-name T-Online" << endl;
+-#elif defined(USE_PORTUGUESE)
+-  os << "language portuguese" << endl;
+-  os << "product-name Terra" << endl;
+-#elif defined(USE_FRENCH)
+-  os << "language french" << endl;
+-  os << "product-name FR" << endl;
++  os << "product-name DE" << endl;
++#elif defined(USE_PORTUGUESE) || defined(USE_FRENCH)
++  os << "language "<<CRC_LANGUAGE << endl;
++  os << "product-name "<<CRC_DEPLOYMENT << endl;
+ #else
+ #error Unrecognized language defined
+ #endif // language
+@@ -374,19 +372,15 @@
+   lang = 1;
+   loginType = "blue";
+ #elif defined(USE_JAPANESE)
+-  lang = 2;
++  lang = 2; // sv1.2.x.x
+   build = 11;
+   loginType = "playToken";
+ #elif defined(USE_GERMAN)
+-  lang = 3; // sv1.3.8.24
++  lang = 3; // sv1.3.x.x
+   build = 24;
+   loginType = "playToken";
+-#elif defined(USE_PORTUGUESE)
+-  lang = 4; // sv1.4.8.5
+-  build = 5;
+-  loginType = "playToken";
+-#elif defined(USE_FRENCH)
+-  lang = CRC_LANGNUM;    // sv1.5.22.x
++#elif defined(USE_PORTUGUESE) || defined(USE_FRENCH)
++  lang = CRC_LANGNUM;    // sv1.4.x.x
+   build = CRC_BUILDNUM;
+   loginType = CRC_LOGINTYPE;
+ #endif
+@@ -673,7 +667,7 @@
+           bSaveSettings=true;
+           bForceSWMidi=false;
+           bDoSetForceSWMidi=true;
+-        } else if(cmp_nocase(pArgStr,"stdout")==0) {
++        } else if(cmp_nocase(pArgStr,"stdout")==0) {    // this is usually hidden
+           bWriteStdout=true;
+         } else if(cmp_nocase(pArgStr,"cursor_on")==0) {
+           bSetCursor=true;
+@@ -902,7 +896,7 @@
+   // write regkeys for installer to read and send to stat server
+ 
+   HKEY hKeyToontown;
+-  ULONG regRetVal=RegOpenKeyEx(HKEY_LOCAL_MACHINE, ToontownRegKeyName, 0,
++  ULONG regRetVal=RegOpenKeyEx(HKEY_CURRENT_USER, ToontownRegKeyName, 0,
+                                KEY_WRITE, &hKeyToontown);
+   if(regRetVal!=ERROR_SUCCESS) {
+      return 7;
+--- src/configrc/Sources.pp	1 Feb 2007 01:14:30 -0000	1.3.12.1
++++ src/configrc/Sources.pp	29 Jul 2008 23:10:30 -0000
+@@ -21,9 +21,11 @@
+   // But this is probably a better place to put it, so we can successfully
+   // compile this file in OPT3 for development purposes.
+   #define EXTRA_CDEFS $[EXTRA_CDEFS] USE_$[upcase $[LANGUAGE]]
++  #define INTL_SOURCES $[LANGUAGE]/configrc_nls.h
+ #else
+   #print Defaulting to ENGLISH Configrc.exe build for server
+   #define EXTRA_CDEFS $[EXTRA_CDEFS] USE_ENGLISH
++  #define INTL_SOURCES
+ #endif
+ 
+ // This doesn't compile on Irix.  Apparently the MIPSpro compiler doesn't
+@@ -40,7 +41,7 @@
+ // UPX writes 'UPX' in the exe, but it's better than nothing until I can find a better encrypter
+ // test_pfstream Configrc.exe -stdout works, so should work in publish
+   #define bin_postprocess_cmd upx
+-  #define bin_postprocess_arg1 --force   // upx bombs on vc7.1 .exes w/o this
++  #define bin_postprocess_arg1 --brute // upx bombs on vc7.1 .exes w/o this
+   #define bin_postprocess_arg2 -o
+   #define bin_postprocess_target Configrc
+   #define TARGET Configrc_u
+@@ -44,6 +46,6 @@
+   #define TARGET Configrc
+ #endif
+ 
+-  #define SOURCES Configrc.cxx settingsFile.cxx key_src.cxx
++  #define SOURCES Configrc.cxx settingsFile.cxx key_src.cxx $[INTL_SOURCES]
+ #end bin_target
+ #endif

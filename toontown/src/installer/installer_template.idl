@@ -1,0 +1,48 @@
+// installer.idl : IDL source for installer.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (installer.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+	[
+		object,
+		uuid(INSTALLERCTRL_INTERFACEGUID),
+		dual,
+		helpstring("IWDI_InstallerCtrl Interface"),
+		pointer_default(unique)
+	]
+	interface IWDI_InstallerCtrl : IDispatch
+	{
+		[id(1), helpstring("method RunInstaller")] HRESULT RunInstaller();
+		[id(2), helpstring("method Init")] HRESULT Init();
+#ifndef USE_RPCINSTALLER
+		[id(4), helpstring("method InitForRun")] HRESULT InitForRun([in] BSTR activeXversion_str, [out, retval] int *pInitSucceeded);
+#else
+		[id(3), helpstring("method InitForRun")] HRESULT InitForRun([in]BSTR deployment, [in]BSTR downloadServer, [in]BSTR downloadVersion, [out, retval] int *pInitSucceeded);
+		[id(4), helpstring("method InitForStatus")] HRESULT InitForStatus([out, retval] int *pInitSucceeded);
+#endif
+		[id(42), helpstring("method setValue")] HRESULT setValue([in] BSTR key, [in] BSTR value);
+		[id(43), helpstring("method getValue")] HRESULT getValue([in] BSTR key, [out, retval] BSTR *pVal);
+	};
+
+[
+	uuid(INSTALLERCTRL_TYPELIBGUID),
+	version(1.0),
+	helpstring("WDI Installer 1.0 Type Library")
+]
+library WDI_INSTALLERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(INSTALLERCTRL_GUID),
+		helpstring("INSTALLERCTRL_HELPSTR")
+	]
+	coclass WDI_InstallerCtrl
+	{
+		[default] interface IWDI_InstallerCtrl;
+	};
+};

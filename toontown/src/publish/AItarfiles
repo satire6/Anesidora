@@ -1,0 +1,49 @@
+#! /bin/sh
+#
+# Use this script to generate the file aifiles.tgz, a compressed tar
+# file that includes all the files you need to run the AI on a publish
+# machine.  This is especially intended for a Linux or other
+# Unix-based server.  It contains exactly the same files included in
+# aifiles.zip, just in a different archive format.
+#
+
+scriptdir=`dirname $0`
+PATH=$PATH:$scriptdir
+
+if [ "$1" = "-d" ]
+then
+    #destdir=$2
+    destdir="aifiles"
+    tarfile="aifiles.tgz"
+    debug_state="-d"
+else
+    #destdir=$1
+    destdir="aifiles"
+    tarfile="aifiles.tgz"
+    debug_state=""
+fi
+
+if [ "${destdir}" = "" ]
+then
+    echo "Usage: AItarfiles [-d]"
+    exit 1
+fi
+
+if [ -d ${destdir} ]
+then
+    echo "Removing ${destdir}"
+    rm -rf ${destdir}
+fi
+
+if mkdir ${destdir}
+then
+    if AIcopyfiles ${debug_state} ${destdir}
+    then
+	rm -f ${tarfile}
+	tar cvf - ${destdir} | gzip > ${tarfile}
+	rm -rf ${destdir}
+	echo "Done creating ${tarfile}"
+    fi
+else
+    echo "ERROR: Could not mkdir ${destdir}"
+fi

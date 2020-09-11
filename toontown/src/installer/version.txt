@@ -1,0 +1,6 @@
+1.0.19.1506 english
+1.1.14.805 castillian
+2.2.0.2003 japanese
+1.3.14.1114 german
+2.4.0.1600 portuguese
+2.5.0.2002 french

@@ -1,0 +1,11 @@
+#! /bin/sh
+
+debug_state=$1
+
+if [ "$WINTOOLS" ]; then
+  AIprintfiles-win32 $debug_state
+elif [ "$CTPROJS" ]; then
+  AIprintfiles-unix $debug_state
+else
+  AIprintfiles-unix-installed $debug_state
+fi

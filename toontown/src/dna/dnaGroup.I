@@ -1,0 +1,67 @@
+// Filename: dnaGroup.I
+// Created by:  shochet (24May00)
+//
+////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::at
+//       Access: Public
+//  Description: Return the nth group in the vector
+////////////////////////////////////////////////////////////////////
+INLINE PT(DNAGroup) DNAGroup::at(uint index) {
+  nassertr(index < _group_vector.size(), (PT(DNAGroup))0L);
+  return _group_vector[index];
+}
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::current
+//       Access: Public
+//  Description: return the current group
+////////////////////////////////////////////////////////////////////
+INLINE PT(DNAGroup) DNAGroup::current() {
+  return _group_vector.back();
+}
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::get_num_children
+//       Access: Public
+//  Description: how many groups do we have under us?
+////////////////////////////////////////////////////////////////////
+INLINE int DNAGroup::get_num_children() {
+  return _group_vector.size();
+}
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::get_parent
+//       Access: Public
+//  Description: Return the parent group
+////////////////////////////////////////////////////////////////////
+INLINE PT(DNAGroup) DNAGroup::get_parent() const {
+  return _parent;
+}
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::set_parent
+//       Access: Public
+//  Description: Return the parent group
+////////////////////////////////////////////////////////////////////
+INLINE void DNAGroup::set_parent(PT(DNAGroup) parent_group) {
+  nassertv(parent_group != (DNAGroup *)NULL);
+  _parent = parent_group;
+}
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNAGroup::clear_parent
+//       Access: Public
+//  Description: Clear the parent group. This is separate from set_parent
+//               so that set_parent can check for null parents
+////////////////////////////////////////////////////////////////////
+INLINE void DNAGroup::clear_parent() {
+  _parent = (DNAGroup *)NULL;
+}

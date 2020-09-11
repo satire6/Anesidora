@@ -1,0 +1,181 @@
+#! /bin/sh
+
+# Actually, Unix doesn't care about debug vs. non-debug.
+debug_state=$1
+
+# Python files
+python=`which python`
+pythonDir=`python -c "import os, imp; print os.path.split(imp.find_module('whrandom')[1])[0]"`
+echo $python
+echo $pythonDir/whrandom.py
+echo $pythonDir/copy_reg.py
+echo $pythonDir/copy.py
+echo $pythonDir/fnmatch.py
+echo $pythonDir/re.py
+echo $pythonDir/sre.py
+echo $pythonDir/sre_parse.py
+echo $pythonDir/sre_constants.py
+echo $pythonDir/sre_compile.py
+echo $pythonDir/types.py
+echo $pythonDir/string.py
+echo $pythonDir/os.py
+echo $pythonDir/site.py
+echo $pythonDir/stat.py
+echo $pythonDir/UserDict.py
+echo $pythonDir/ntpath.py
+echo $pythonDir/random.py
+echo $pythonDir/getopt.py
+echo $pythonDir/fpformat.py
+echo $pythonDir/__future__.py 
+echo $pythonDir/posixpath.py 
+echo $pythonDir/lib-dynload/*.so
+
+# Libraries
+echo /usr/lib/libnspr4.so
+
+# DTOOL
+echo $DTOOL/lib/libdtool.so
+echo $DTOOL/lib/libdconfig.so
+echo $DTOOL/lib/libdtoolbase.so
+echo $DTOOL/lib/libdtoolconfig.so
+echo $DTOOL/lib/libdtoolutil.so
+echo $DTOOL/lib/libinterrogatedb.so
+
+# PANDA
+echo $PANDA/lib/libpandaexpress.so
+echo $PANDA/lib/libdownloader.so
+echo $PANDA/lib/libevent.so
+echo $PANDA/lib/libexpress.so
+echo $PANDA/lib/libpandabase.so
+
+# Generated code for libpandaexpress
+AIprintlib $DIRECT/lib/pandac libpandaexpress
+
+# DIRECT stuff
+AIprintdir $DIRECT/src/actor .py
+AIprintdir $DIRECT/src/controls .py
+AIprintdir $DIRECT/src/directnotify .py
+AIprintdir $DIRECT/src/directtools .py
+AIprintdir $DIRECT/src/directutil .py
+AIprintdir $DIRECT/src/distributed .py
+AIprintdir $DIRECT/src/ffi .py
+AIprintdir $DIRECT/src/fsm .py
+AIprintdir $DIRECT/src/gui .py
+AIprintdir $DIRECT/src/interval .py
+AIprintdir $DIRECT/src/particles .py
+AIprintdir $DIRECT/src/showbase .py
+AIprintdir $DIRECT/src/showutil .py
+AIprintdir $DIRECT/src/task .py
+echo $DIRECT/bin/autorestart
+
+# Libraries
+
+echo $TOONTOWN/lib/libtoontown.so
+echo $PANDA/lib/libpanda.so
+echo $PANDA/lib/libaudio.so
+echo $PANDA/lib/libchan.so
+echo $PANDA/lib/libchar.so
+echo $PANDA/lib/libcollide.so
+echo $PANDA/lib/libdevice.so
+echo $PANDA/lib/libdgraph.so
+echo $PANDA/lib/libdisplay.so
+echo $PANDA/lib/libgobj.so
+echo $PANDA/lib/libgrutil.so
+echo $PANDA/lib/libgsgbase.so
+echo $PANDA/lib/libgsgmisc.so
+echo $PANDA/lib/libheapq.so
+echo $PANDA/lib/liblerp.so
+echo $PANDA/lib/liblinmath.so
+echo $PANDA/lib/libmathutil.so
+echo $PANDA/lib/libnet.so
+echo $PANDA/lib/libparametrics.so
+echo $PANDA/lib/libpgraph.so
+echo $PANDA/lib/libpgui.so
+echo $PANDA/lib/libpnmimage.so
+echo $PANDA/lib/libpnmimagetypes.so
+echo $PANDA/lib/libpstatclient.so
+echo $PANDA/lib/libputil.so
+echo $PANDA/lib/libtext.so
+echo $PANDA/lib/libtform.so
+
+echo $PANDA/lib/libpandaphysics.so
+echo $PANDA/lib/libphysics.so
+echo $PANDA/lib/libparticlesystem.so
+
+# We assume ldd exists.  This is a Unix tool (works on Linux, at
+# least) to list the shared libraries that a particular .so or
+# executable depends on.
+ldd $TOONTOWN/lib/libtoontown.so | awk '{print $3}' | egrep -v '(libc\.so|libm\.so|libdl\.so|libpthread\.so)'
+
+echo $DIRECT/lib/libdirect.so
+echo $DIRECT/lib/libdcparser.so
+echo $DIRECT/lib/libdeadrec.so
+echo $DIRECT/lib/libdirectbase.so
+echo $DIRECT/lib/libshowbase.so
+echo $DIRECT/lib/libinterval.so
+
+# Etc files
+echo $TOONTOWN/src/configfiles/toon.dc
+echo $OTP/src/configfiles/otp.dc
+echo $TOONTOWN/src/configfiles/download.par
+echo $TOONTOWN/src/configfiles/PetNameMasterEnglish.txt
+
+# Generated code for libpanda
+AIprintlib $DIRECT/lib/pandac libpanda
+AIprintlib $DIRECT/lib/pandac libpandaphysics
+echo $DIRECT/lib/pandac/PandaModules.py
+
+# Generated code for libdirect
+AIprintlib $DIRECT/lib/pandac libdirect
+
+# Generated code for libotp
+AIprintlib $DIRECT/lib/pandac libotp
+
+# Generated code for libtoontown
+AIprintlib $DIRECT/lib/pandac libtoontown
+
+# AI code
+
+AIprintdir $OTP/src/ai .py
+AIprintdir $OTP/src/avatar .py
+AIprintdir $OTP/src/chat .py
+AIprintdir $OTP/src/distributed .py
+AIprintdir $OTP/src/friends .py
+AIprintdir $OTP/src/guild .py
+AIprintdir $OTP/src/level .py
+AIprintdir $OTP/src/movement .py
+AIprintdir $OTP/src/otpbase .py
+AIprintdir $OTP/src/otpgui .py
+AIprintdir $OTP/src/speedchat .py
+AIprintdir $OTP/src/switchboard .py
+
+AIprintdir $TOONTOWN/src/ai .py
+AIprintdir $TOONTOWN/src/avatar .py
+AIprintdir $TOONTOWN/src/battle .py
+AIprintdir $TOONTOWN/src/building .py
+AIprintdir $TOONTOWN/src/catalog .py
+AIprintdir $TOONTOWN/src/chat .py
+AIprintdir $TOONTOWN/src/classicchars .py
+AIprintdir $TOONTOWN/src/coghq .py
+AIprintdir $TOONTOWN/src/distributed .py
+AIprintdir $TOONTOWN/src/effects .py
+AIprintdir $TOONTOWN/src/estate .py
+AIprintdir $TOONTOWN/src/fishing .py
+AIprintdir $TOONTOWN/src/friends .py
+AIprintdir $TOONTOWN/src/hood .py
+AIprintdir $TOONTOWN/src/minigame .py
+AIprintdir $TOONTOWN/src/pets .py
+AIprintdir $TOONTOWN/src/quest .py
+AIprintdir $TOONTOWN/src/racing .py
+AIprintdir $TOONTOWN/src/safezone .py
+AIprintdir $TOONTOWN/src/scavengerhunt .py
+AIprintdir $TOONTOWN/src/shtiker .py
+AIprintdir $TOONTOWN/src/suit .py
+AIprintdir $TOONTOWN/src/toon .py
+AIprintdir $TOONTOWN/src/toonbase .py
+AIprintdir $TOONTOWN/src/toontowngui .py
+AIprintdir $TOONTOWN/src/tutorial .py
+
+# DNA files
+echo $TTMODELS/phase_*/dna/*.dna
+

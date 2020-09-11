@@ -1,0 +1,98 @@
+
+Installing and running your own servers on Win2K
+------------------------------------------------
+
+Step 1: Download the servers
+
+	mkdir /c/toonsrv
+	cd /c/toonsrv
+	copy the get the most recent dev*.zip file from /p/toontown_server,
+	(e.g. "cp dev_NOTAG_06_17_2002_6_36p.zip")
+
+        (which should be equivalent to the win32 dir 
+         \\dimbo\toontown_server)
+        Note Roger has no access to this location yet, so make sure that
+        locations holds the latest server version.
+
+Step 2: Unzip the servers
+
+	unzip the .zip
+
+
+Step 3:  Make a file called local.par in your toonsrv directory that contains:
+           
+ACTIVITY_TIME_OUT_SEC=12000000
+SHARD_ID=391000001:ToonsOnly1
+
+
+Step 4: Install the servers as services... You must have admin privileges!
+
+        INSTALLALL.BAT
+
+Step 5: Install your toon.dc file.
+
+	There is a toon.dc file that you will see in the c:\toonsrv directory
+	after you install, but if you are writing AI code (or running an
+	old server) you may find you need to copy a new version in from
+	toontown tree:
+	cp $TOONTOWN/src/configfiles/toon.dc /c/toonsrv/toon.dc
+	It is imperative that these two files match, since the toon.dc file
+	defines the network encoding for distributed objects. If they already
+	match, you obviously don't need to copy the file there.
+
+Step 6: Start the servers
+	
+        STARTALL.BAT
+
+Step 7: Use the servers
+
+	set server-ip in your Configrc to localhost
+	set server-port to 6667
+	set msg-director-port to 6665
+	run the show
+
+Step 8: Monitor the servers
+
+	If you would like to see what is up with the servers, point your
+	web browser to http://localhost:7777.
+
+Step 9: Restarting the servers
+	
+	When should you do this? If you are just writing client code, then
+	very seldom. If you are writing AI code, then any time you restart
+	your AI server, you will also need to restart the stateserver (but
+	not the others). Restarting the state server will cause all connected
+	clients to disconnect.
+
+	If you ever change the toon.dc file, or the server version number,
+	You will need to restart the servers... Like this:
+
+	STOPALL.BAT
+	STARTALL.BAT
+
+	In fact, you may find it useful to save out a script called
+	"restartServer" that contains:
+
+	#! /bin/sh
+	cd /c/toonsrv/
+	STOPALL.BAT
+	cp $TTMODELS/phase_*/dna/*.dna .
+	cp $TOONTOWN/src/configfiles/toon.dc .
+	STARTALL.BAT
+
+Step 10: Reinstalling the servers. 
+
+	If you download new server code, all you need to do is stop 
+	the old executables, copy in the new ones, and restart them. 
+
+	If you are running new servers in a new directory, you must:
+
+	In the old directory:
+		uninstallall
+
+	In the new directory:
+		installall
+
+Step 11: Run AI Server (if you want to)
+	ppython (-d for debug)
+	from AIStart import *

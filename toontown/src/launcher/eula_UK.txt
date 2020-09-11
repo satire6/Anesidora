@@ -1,0 +1,39 @@
+END USER LICENCE AGREEMENT
+IMPORTANT NOTICE
+PLEASE READ CAREFULLY BEFORE PROCEEDING
+
+This End User Licence Agreement ("Agreement") relates to Disney's Toontown Online (sm) service and all related or successor services (the "Service"),the installer program and related documentation (the "Software"). The Software shall also include any upgrades,modified versions or updates of the Software.
+
+BEFORE YOU USE OR DOWNLOAD OR INSTALL THE SOFTWARE,CAREFULLY READ THIS AGREEMENT.  AT THE END OF THIS AGREEMENT,YOU WILL BE ASKED TO ACCEPT THE AGREEMENT AND CONTINUE THE INSTALLATION PROCESS.  IF YOU DO NOT WISH TO ACCEPT THE TERMS OF THIS AGREEMENT,YOU WILL NOT BE ABLE TO USE THE SOFTWARE. 
+
+The Software is owned by Walt Disney Internet Group,part of The Walt Disney Company Limited ("Disney") and its licensors and is protected by the copyright and other intellectual property laws. The structure,organisation and code of the Software are valuable trade secrets and confidential information of Disney and its licensors.
+This is a licence agreement and not an agreement for sale or ownership.  Disney grants you,free of charge,a non-exclusive,non-assignable and non-transferable licence to use the Software on your computer. Disney does not transfer ownership in the Software to you.  Disney and its licensors retain ownership to the Software,and all intellectual property rights therein.  You may not redistribute,sell or sub-license the Software.  You may not modify,translate or create derivative works based on the Software or attempt to decompile,reverse engineer,disassemble or otherwise reduce the Software to a human-readable form.  Information necessary to achieve interoperability of the Software with independently created computer programs will be provided on request on payment of Disney's reasonable costs and expenses for procuring and supplying such information.
+The Service,to which you will have access - on the terms contracted with Disney in the Toontown Terms as defined in the Member Agreement,is controlled and operated by Disney.  This Agreement does not entitle you to have access to the Service but merely to use the Software subject to the terms hereof. 
+
+You hereby undertake to comply with the House Rules when accessing and using the Service.
+
+The Software must not be shipped,transferred,exported,downloaded or installed into any country or used in any manner prohibited by international import or export laws,restrictions or regulations.
+We will compensate you for any loss or damage you may suffer if we fail to carry out our obligations under this Agreement to a reasonable standard or breach any duties imposed on us by law (including if we cause death or personal injury by our negligence) unless that failure is attributed to: (a) your own fault; (b) a third party unconnected with our provision of the Software under this Agreement; or (c) events which neither we nor our suppliers could have foreseen or forestalled even if we have taken reasonable care. We shall not be responsible for loss of or damage to your computer hardware or software or other personal property or any other losses which you suffer as a result of installing and operating the Software unless this is due to our neglect or failure to take reasonable precautions and such losses are reasonably foreseeable.  We strongly recommend that you (a) take care to ensure the suitability and compatibility of the Software with your computer system prior to installation; and (b) take reasonable precautions to protect yourself against harmful programs or devices including through installation of anti-virus software.
+
+This Agreement will terminate immediately without notice from Disney or its licensors if you fail to comply with any term herein or in any of the other Toontown Terms (as defined in the Member Agreement).  You may also terminate the Agreement without notice at any time. Upon termination,you must erase the Software from all computer memories and storage devices within your possession or control.
+These terms and conditions constitute the entire agreement between Disney and you and supersede any other communications or advertising with respect to the Software. This Agreement is governed by the laws of the relevant territory within the UK in which you live and the courts of that territory shall have exclusive jurisdiction.  For future reference you should print out a copy of this Agreement,which in any event will be automatically stored in the hard drive of your computer as the Software is being installed.  We may need to amend these terms from time to time for operational reasons. Changes will be displayed on the Service. Permanent changes will only be made after not less than one month's notice. If any material changes to this Agreement are unacceptable to you,or cause you to no longer be in compliance with this Agreement,you may terminate this Agreement. Your continued use of the Service following notice of changes to this Agreement (or any of the Toontown Terms) will be deemed to mean you accept those changes. 
+
+Please note that our rights under these terms remain in force at all times. If we do not enforce any or all of these rights for any period it does not mean that we have decided to give them up.
+Copyright 1991-1995 by Stichting Mathemastisch Centrum,Amsterdam,The Netherlands.
+
+MPEG Layer-3 playback supplied with the Miles Sound System from RAD Game Tools,Inc. MPEG Layer-3 audio compression technology licensed by Fraunhofer IIS and THOMSON multimedia. 
+
+© Wise Solutions,Inc.
+
+© Microsoft Corporation,Inc.  All rights reserved.
+
+This product contains Macromedia Shockwave™  Player and Macromedia Flash™  Player software by Macromedia,Inc.  Copyright © 1995-2000 Macromedia,Inc.  All rights reserved.  Macromedia,Shockwave,and Flash are trademarks of Macromedia,Inc. 
+
+Copyright © 2000 The Apache Software Foundation.  All rights reserved.
+
+Copyright © 1989,1991 Free Software Foundation,Inc.
+
+Copyright © 2003 Red Hat,Inc.  All rights reserved.
+
+Compilation Copyright © 1995-2003 by Wei Dai
+              

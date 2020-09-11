@@ -1,0 +1,540 @@
+
+Guilds version 0.0.4
+
+
+Guild Member:
+	name (of avatar)
+	dna (of avatar)
+	location (in game world)
+	donations (lit)
+	rank (in this guild)
+	is online (computed)
+	date joined
+	referred by (reference)
+	referrals (list)
+	nominationApprovedBy (reference)
+	commander/captain (reference)
+	tax level
+	tax history (list)
+	vote history (list)
+	salary
+	reputations at this gulid
+	may vote (bool)
+	
+
+Guild Gear:
+	item (reference)
+	donatedBy
+	rentedTo
+	bidPrice
+	auctionEndDate
+	buyNowPrice
+	<bid history?>
+	
+
+
+Guilds version 0.0.4
+
+(1)
+	GuildLevel1:
+		Requirements:
+			Go to the office of guild managment,
+			choose a name,
+			and pay the fee (e.g. 50 gp)
+
+		Data Attributes:
+			guildName (RO string)
+			dateCreated (RO date)
+			owner (reference)
+
+		Computed Attributes:
+			guildStatusLevel (computed)
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			disband (ownerPerm)
+			invite second member (ownerPerm)
+			
+			note: guild names may not be edited
+
+		Important Events to Watch For:
+			another players accepting invitation to join
+				- immediately upgrades the guild to level 2.
+    
+    
+(2)
+	GuildLevel2:
+		Requirements:
+			Level (1)
+			Two or more members in the guild
+
+		Data Attributes:
+			members (list)
+			chatLog (RO list)
+			guildFlag (DNA)
+			autoApplicationHandling (off, accept, or reject)
+			reputationTotals (list)
+			reputationHighest (list)
+			offices (list)
+			office: <unnamed> (Membership/application Management) (gets hrPerm)
+			applicants (list)
+			invitations (list)
+
+		Computed Attributes:
+			onlineMemberCount (computed integer)
+			highestMemberCount (computed integer)
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			invite (invitePerm)
+			view members
+				info (avatarInfoPerm)
+				bootOut (hrPerm)
+				promote (hrPerm)
+				demote (hrPerm)
+				whisper to (whisperPerm)
+			report/accuse (list)
+			view applicants
+				accept join request (hrPerm)
+				decline join request (hrPerm)
+			view guild flag
+				edit guild flag (ownerPerm)
+				choose guild flag (ownerPerm)
+			guild chat (chatPerm)
+			message all in guild (broadcastPerm)
+			
+			note: the flag is not visible to other players yet (no flown)
+			note: reputationAverage is not shown as it may discurrage inviting
+			    new players.
+			note: no ignore list
+			note: no ban list
+
+		Important Events to Watch For:
+			Purchase guild flag
+				- immediately upgrades the guild to level 3.
+    
+
+(3)
+	GuildLevel3:
+		Requirements:
+			Level (2)
+			Go to the office of guild management
+			choose a flag
+			buy the flag (nominal fee)
+
+		Data Attributes:
+			Quest History (RO list)
+			office: foriegn affairs
+			currentQuests (list)
+
+		Computed Attributes:
+			completedQuestCount (integer)
+
+		New Actions Available:
+			quests (quests that increase guild reputation)
+			view guild reputations
+			fly guild flag
+
+		Removed Actions (no longer able to):
+			choose guild flag (ownerPerm)
+
+
+(4)
+	GuildLevel4:
+		Requirements:
+			Level (3)
+			Repulation level of N(?)
+
+		Data Attributes:
+			News History (RO list)
+			offices: (News Mgmt)
+			currentNews (list)
+
+		Computed Attributes:
+		    newsItemsCount (integer)
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			create news item (newsPerm)
+			view current news (memberPerm)
+				edit current news (newsPerm)
+			view news history (viewHistoryPerm)
+			appoint (News Mgmt) (ownerPerm)
+
+
+(5)
+	GuildLevel5:
+		Requirements:
+			Level (4)
+			Repulation level of N(?)
+			<get a (tiny) guild island>
+			    - something that you can sail to,
+			      but not place buildings on or
+			      build/create new ships.
+
+		Data Attributes:
+			Tax History (RO list)
+			Inventory (list)
+				bank? (or is this part of gear?)
+				islands (hide out)
+				gear
+				burried treasure?
+				treasure maps? (or are these quests?)
+			guildTaxLevel
+			office: Tax Collector (Tax Mgmt)
+			office: Treasurer (Inventory Mgmt)
+			office: (Salary Mgmt)
+
+		Computed Attributes:
+			gearItemsCount (integer)
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			donate
+				money
+				items
+			sellGearToGuild
+			sellShipToGuild
+			view inventory
+				info
+				rent
+				borrow
+				sell
+				throwAway
+			banking
+				info
+				loan
+				give
+			view taxes
+				changeGuildTaxLevel
+			? view tax history
+			salary
+			
+
+(6)
+	GuildLevel6:
+		Requirements:
+			Level (5)
+
+		Data Attributes:
+			Poll History (RO list)
+			office: (Poll Mgmt)
+			currentPoll
+			
+			note: no pollTax
+
+		Computed Attributes:
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			create poll
+			view current poll
+				vote (votePerm)
+				edit poll (pollPerm)
+				cancel poll (pollPerm)
+				end poll (pollPerm)
+
+(7)
+	GuildLevel7:
+		Requirements:
+			Level (6)
+
+		Data Attributes:
+			inventory: ships (list)
+			office: Admiral (Ship Mgmt)
+
+		Computed Attributes:
+			shipCount (integer)
+			requirements for next guildStatusLevel
+			
+		New Actions Available:
+			purchase guild ship (admiralPerm)
+			view ships
+				info (captainPerm)
+				rename (admiralPerm)
+				reconfigure (shipwrightPerm)
+				assign (admiralPerm)
+				repair (shipwrightPerm)
+				sell (admiralPerm)
+				auction (admiralPerm)
+				scuttle (admiralPerm)
+		
+		Important Events to Watch For:
+			Watch for purchase of guild ship
+				- go to level (8)
+				
+
+(8)
+	GuildLevel8:
+		Requirements:
+			Level (7)
+			Guild Ship
+
+		Data Attributes:
+			inventory: buildings (list)
+			inventory: locations that are buildable? (list)
+			inventory: NPCs (do NPCs pay taxes?)
+			inventory: auctions (to members (and non-members?))
+			office: Auctionier (Auction Mgmt)
+			office: Governor (Island/building Mgmt)
+			office: (NPC Mgmt)
+			office: (Officer/promotion Mgmt)
+			leaderboard (between guilds and inside guild, who contributed money or completed quests).
+			community tools
+				meetings ? (events?) calender
+				message board
+
+		Computed Attributes:
+		    buildingCount (integer)
+		    npcCount (integer)
+			requirements for next guildStatusLevel
+
+		New Actions Available:
+			develop land? (create locations for buildings?)
+    
+
+? Relations (list -- allies, enimies, (neutral implicet) -- guilds, avatars, NPCs)
+
+What if someone leaves a guild?  What happens to the guild reputation?
+
+There are many types of reputation (one for each skill).
+    - Also track reputation per guild per player.
+    - as well as each player individually
+    - reputation influences renting valuable equipment.
+
+
+
+Guilds version 0.0.4
+
+Combat Guild Types:
+	Boxer
+	Cannonier/Grenadier
+	Fencer
+	Guardsman
+	Magic
+	Muskettier
+	Raw/Wild
+	Roughian/Sailer
+	Swordsman
+
+	Initial Release Abilities:
+		brawling/bare fisted/martial/wrestling/makeshift weapons
+		cannon/gunnery/artilery
+		club/sap/blackjack/mace/shovel
+		cutlass/sword
+		dagger
+		magic type 1
+		magic type 2
+		musket
+		pistol
+		spear/trident
+	
+	Later Release Abilities:
+		blowgun
+		bolo/rope/net (entanglement)
+		bow/archery
+		chain/morningstar/ball and chain
+		crossbow
+		grenade (not hand grenade)/powder keg
+		harpoon (spear with a cord)
+		magic type 3
+		pike/halberd/pole arms
+		rake/hoe/scythe (farmering tools)
+		rapier/fencing
+		torch/lantern (fire)
+		whip
+		
+
+Craft Guild Types:
+	Adventurer
+	Blacksmith/Tinker
+	Botonist/Naturalist
+	Captain
+	Carpenter/Shipwright
+	Cook
+	Explorer/Tracker/Hunter
+	Farmer
+	Fisher
+	Navigator
+	Mariner
+	Merchant
+	Native crafts
+	Tailer
+
+	Craft Abilities:
+		bandaging/first aid
+		blacksmithing/create/repair metal
+		brewing
+		carpentry
+		cartography
+		climbing
+		cooking
+		deplomacy
+		farming
+		fishing
+		foraging
+		flag making
+		haggling
+		identify plant
+		leadership (may manage/form crew)
+		magic 'stuff' creation
+		make cannon
+		make power
+		make shot
+		navigtion
+		rowing/rigging
+		sewing/tailoring
+		swabbing the deck/ship maintenance
+		swimming
+		tinkering
+		tracking
+		wilderness survival
+
+
+Land Owner Guild Types:
+	Beuracrat
+	Govener
+	Native
+
+	Land Owner Abilities:
+		buy big ships
+		designate officers
+		group bank
+		group inventory
+		make laws
+		own navy
+		place building construction
+
+
+Scribbling:
+
+Guild Types:
+	Adventurer
+	Beuracrat
+	Black Smith/Tinker
+	Botonist/Naturalist
+	Boxer
+	Cannonier/Grenadier
+	Captain
+	Carpenter/Shipwright
+	Cook
+	Explorer/Tracker/Hunter
+	Farmer
+	Fisher
+	Fencer/Gentelman
+	Guardsman
+	Navigator
+	Magic
+	Mariner
+	Merchant
+	Muskettier
+	Native
+	Roughian/Sailer
+	Swordsman
+	Tailer
+	
+
+Sword Fighting Guilds:
+	Swordsman
+		dagger
+		cutlass
+	
+	Muskettier
+		musket
+		pistol
+
+		rapier
+	
+	Fisher
+		spear/trident
+		rope/net
+
+		harpoon
+		
+		fishing
+		swimming
+		rowing
+	
+	Farmer
+		rake/hoe(farmer's tools)
+		scythe
+
+	Hunter
+		crossbow
+
+		bow
+		bolo
+	
+	Cannonier
+		cannon/gunnery/artilery
+
+	Sailer
+		club/sap/blackjack/mace/shovel
+		climbing
+		
+	Mariner
+		Fisher
+		Sailer
+	
+	Navigator
+		navigtion
+		cartography
+		
+	Captain
+		leadership (may manage/form crew)
+		
+	Beuracrat
+		leadership (may manage/form crew)
+	
+	Gentelman
+		rapier
+		
+	Tinker
+	
+	Shipwright
+	
+	Carpenter
+	
+	Black Smith
+		repair metal
+		make shot
+		make cannon
+	
+	Boxer
+		brawling/bare fisted/martial/wrestling
+		
+	Adventurer
+		whip
+
+	Explorer
+	
+	Tracker
+	
+	Botonist/Naturalist
+		identify plant
+		
+	Magic
+	
+	Merchant
+	
+	Cook
+		cooking
+		foraging
+		bandaging
+	
+	Native
+		bow
+		
+	Grenadier
+		grenade (not hand grenade)/powder keg
+	
+	Tailer
+		sewing
+	
+	Guardsman
+		pike/halberd/pole arms
+	
+	
+	
+		blowgun
+		chain/morningstar

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd /sbpub/otp/switchboard
+./sb_start
+cd xd
+./xd_start
+cd ../tt
+./tt_start
+cd ..
+

@@ -1,0 +1,51 @@
+
+
+Puppeteer: A DistributedObject that takes control of the LocalAvatar
+and presents a control scheme. Examples include: the battle system, fishing
+spots, the trolley, elevator, etc.
+
+Control Scheme: A mapping of input from the player into actions of the
+Avatar in game. Examples include: walk controls, swimming controls, fishing
+GUI, battle interface, etc.
+
+
+
+Notes:
+
+A DistributedObject that wants to be a puppeteer should inherit from
+DistributedPuppeteer[AI].py to pick up a common API.
+
+Only one puppeteer may be active at any given point in time.
+
+Puppeteers may offer several different controls schemes - but only one at a
+time. For instance the DistributedToon puppeteer may offer a walk, swim,
+and wait control scheme.
+
+When a puppeteer has registered as the active puppeteer, it can spawn
+tasks, accept events, run FSM's, and generally use whatever tools it cares
+to in order to get it's job done. Being a puppeteer does not imply any
+particular coding architecture.
+
+Potential puppeteers register as the active puppeteer by sending the
+setPuppeteer message on the LocalAvatar, passing in their own doId. This
+message gets called from the AI as a p2p message to the LocalAvatar. When
+the LocalAvatar gets this message, the old puppeteer is cleaned up and the
+new one is started.
+
+Not all DistributedObjects are puppeteers. Butterflies and ice cream cones
+are not puppeteers, for instance.
+
+It is still ok for other objects, tasks, and events to change avatar
+properties and not be a puppeteer. For instance, the emote menu may cause
+my avatar to play an animation. The emote system is not a puppeteer though
+because it is not my primary activity controlling my avatar. It is just a
+layer that the primary puppeteer has allowed to interject some
+control. Care must be taken to ensure that other systems like emotes are
+not stomping on puppeteer interactions.
+
+setAnimState as we know it will go away. If your puppeteer wants to play a
+complex animation (like swimming) on the avatar, it should just do it
+itself. If the puppeteer wants to do something common that other puppeteers
+will use also (like walking, swimming, sitting) then the code should be
+shared.
+

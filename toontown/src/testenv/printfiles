@@ -1,0 +1,162 @@
+#! /bin/sh
+
+# Python files
+echo $WINTOOLS/bin/python.exe
+echo $WINTOOLS/sdk/python/Python-2.2.2/PCbuild/python22.dll
+echo $WINTOOLS/sdk/python/Python-2.2.2/PCbuild/_sre.pyd
+echo $WINTOOLS/sdk/python/Python-2.2.2/PCbuild/_tkinter.pyd
+echo $WINTOOLS/sdk/python/Python-2.2.2/PCbuild/_socket.pyd
+echo $WINTOOLS/sdk/python/Python-2.2.2/PCbuild/zlib.pyd
+
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/linecache.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/traceback.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/__future__.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/whrandom.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/copy_reg.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/copy.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/fnmatch.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/re.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/sre.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/sre_parse.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/sre_constants.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/sre_compile.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/types.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/string.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/os.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/site.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/stat.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/UserDict.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/ntpath.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/random.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/getopt.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/fpformat.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/bisect.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/warnings.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/inspect.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/dis.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/tokenize.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/token.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/ihooks.py
+echo $WINTOOLS/sdk/python/Python-2.2.2/Lib/calendar.py
+
+# Libraries
+echo $WINTOOLS/lib
+echo $WINTOOLS/sdk/rad/Miles6/redist/win32/Mss32.dll
+echo $WINTOOLS/sdk/rad/Miles6/redist/win32/Mp3dec.asi
+echo $WINTOOLS/lib/nspr4.dll
+echo $DTOOL/lib/libdtool.dll
+echo $DTOOL/lib/libdtoolconfig.dll
+echo $PANDA/lib/libpandaexpress.dll
+echo $PANDA/lib/libpanda.dll
+echo $PANDA/lib/libpandaphysics.dll
+echo $PANDA/lib/libwindisplay.dll
+echo $PANDA/lib/libpandadx7.dll
+echo $PANDA/lib/libpandadx8.dll
+echo $PANDA/lib/libpandagl.dll
+echo $PANDA/lib/libmiles_audio.dll
+echo $DIRECT/lib/libdirect.dll
+echo $TOONTOWN/lib/libtoontown.dll
+
+# Generated code for libpandaexpress
+printlib $DIRECT/lib/py libpandaexpress
+
+# DIRECT stuff
+
+printdir $DIRECT/src/actor .py
+printdir $DIRECT/src/cluster .py
+printdir $DIRECT/src/directbase .py
+printdir $DIRECT/src/directdevices .py
+printdir $DIRECT/src/directnotify .py
+printdir $DIRECT/src/directscripts .py
+printdir $DIRECT/src/directtools .py
+printdir $DIRECT/src/directutil .py
+printdir $DIRECT/src/distributed .py
+printdir $DIRECT/src/ffi/ .py
+printdir $DIRECT/src/fsm .py
+printdir $DIRECT/src/gui .py
+printdir $DIRECT/src/interval .py
+printdir $DIRECT/src/level .py
+printdir $DIRECT/src/leveleditor .py
+printdir $DIRECT/src/particles .py
+printdir $DIRECT/src/showbase .py
+printdir $DIRECT/src/showutil .py
+printdir $DIRECT/src/task .py
+printdir $DIRECT/src/showbase .py
+printdir $DIRECT/src/tkpanels .py
+printdir $DIRECT/src/tkwidgets .py
+
+# Batch file for running AI and Client with proper paths
+echo $TOONTOWN/src/testenv/runAI.bat
+echo $TOONTOWN/src/testenv/runClient.bat
+
+# Configrc built special for this test env
+echo $TOONTOWN/src/testenv/Configrc
+
+# Etc files
+echo $TOONTOWN/src/configfiles/toon.dc
+echo $TOONTOWN/src/configfiles/download.par
+
+# Generated code for libpanda
+printlib $DIRECT/lib/py libpanda
+printlib $DIRECT/lib/py libpandaphysics
+echo $DIRECT/lib/py/PandaModules.py
+
+# Generated code for libdirect
+printlib $DIRECT/lib/py libdirect
+
+# Generated code for libtoontown
+printlib $DIRECT/lib/py libtoontown
+
+# code
+printdir $TOONTOWN/src/ai .py
+printdir $TOONTOWN/src/avatar .py
+printdir $TOONTOWN/src/battle .py
+printdir $TOONTOWN/src/building .py
+printdir $TOONTOWN/src/catalog .py
+printdir $TOONTOWN/src/char .py
+printdir $TOONTOWN/src/chat .py
+printdir $TOONTOWN/src/classicchars .py
+printdir $TOONTOWN/src/coghq .py
+printdir $TOONTOWN/src/distributed .py
+printdir $TOONTOWN/src/effects .py
+printdir $TOONTOWN/src/estate .py
+printdir $TOONTOWN/src/fishing .py
+printdir $TOONTOWN/src/friends .py
+printdir $TOONTOWN/src/hood .py
+printdir $TOONTOWN/src/launcher .py
+printdir $TOONTOWN/src/level .py
+printdir $TOONTOWN/src/login .py
+printdir $TOONTOWN/src/makeatoon .py
+printdir $TOONTOWN/src/minigame .py
+printdir $TOONTOWN/src/quest .py
+printdir $TOONTOWN/src/safezone .py
+printdir $TOONTOWN/src/shtiker .py
+printdir $TOONTOWN/src/speedchat .py
+printdir $TOONTOWN/src/suit .py
+printdir $TOONTOWN/src/toon .py
+printdir $TOONTOWN/src/toonbase .py
+printdir $TOONTOWN/src/toontowngui .py
+printdir $TOONTOWN/src/town .py
+printdir $TOONTOWN/src/trolley .py
+printdir $TOONTOWN/src/tutorial .py
+
+printdir $TOONTOWN/src/battle .ptf
+printdir $TOONTOWN/src/safezone .ptf
+
+# Etc files
+echo $PANDA/etc/layout_db
+echo $PANDA/etc/setup_db
+echo $PANDA/etc/window_db
+echo $TOONTOWN/src/configfiles/certificates.txt
+echo $TOONTOWN/src/configfiles/gameserver.txt
+echo $TOONTOWN/src/configfiles/ttown2.txt
+echo $TOONTOWN/src/configfiles/NameMasterCastillian.txt
+echo $TOONTOWN/src/configfiles/NameMasterEnglish.txt
+echo $TOONTOWN/src/quest/QuestScripts.txt
+
+# DNA files
+echo $TTMODELS/phase_*/dna/*.dna
+
+echo $TTMODELS/phase_*
+echo $DMODELS/models/
+echo $DMODELS/maps/

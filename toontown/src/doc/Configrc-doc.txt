@@ -1,0 +1,399 @@
+
+                        Configrc Documentation
+
+-----------------------------------------------------------------------------
+Documentation for the Configrc (and other *rc) files.
+
+During development, the Configrc file you'll be editing most often
+is the one in your home directory (~/Configrc).
+
+The Configrc text file is a collection of key-value pairs.
+
+The order of the items in the Configrc file should not be important,
+as long as each line has a unique key.
+
+Comment lines start with a #.
+
+The rest of this document describes Configrc keys and some possible values.
+
+Data type specifiers used in this document:
+
+        <boolean> is one of: 0 | 1 | #t | #f | true | false
+            "0", "#f", and "false" mean false.
+            "1", "#t", and "true" mean true.
+
+        <float> is any floating point value.
+
+        <integer> is any integer value.
+
+        <ip address> is dotted four octect internet address, or the string
+            "localhost".
+
+        <zero to one float> is a floating point value in the range 0.0
+            to 1.0.
+
+[NOTE: This document is a work in progress.  I didn't spend too 
+    much time getting the first version of it refined.  I wanted 
+    to get something started, in hopes that it would catch on, 
+    and others would add documentation as they created new options.]
+
+-----------------------------------------------------------------------------
+require-green <boolean>
+    examples:
+        require-green 0
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+force-tutorial <boolean>
+    examples:
+        force-tutorial #t
+    default:
+        force-tutorial #t
+    description:
+        Runs tutorial as part of new character generation process.
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+want-magic-words <boolean>
+    examples:
+        want-magic-words #t
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+want-doors <boolean>
+    examples:
+        want-doors 1
+    default:
+        want-doors 0
+    description:
+        Turn on/off doors that move the avatar from zone to zone (toon
+        doors).
+    used by:
+        AI Server.
+-----------------------------------------------------------------------------
+exec-chat <boolean>
+    examples:
+        exec-chat 0
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+server-type dev | prod
+    examples:
+        server-type dev
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+server-ip <ip address>
+    examples:
+        server-ip localhost
+        server-ip 206.16.11.19
+    default:
+        ???
+    description:
+        ???
+    used by:
+        Client
+-----------------------------------------------------------------------------
+server-port 6667
+    examples:
+        server-port 6667
+    default:
+        ???
+    description:
+        ???
+    used by:
+        Client
+-----------------------------------------------------------------------------
+gl-decal-type mask
+    examples:
+        gl-decal-type mask
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+want-sound <boolean>
+    examples:
+        want-sound #f
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+audio-music-active <boolean>
+    examples:
+        audio-music-active #f
+    default:
+        ???
+    description:
+        Turn of the playing of music audio files.
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+audio-sfx-active <boolean>
+    examples:
+        audio-sfx-active #f
+    default:
+        ???
+    description:
+        Turn of the playing of sound effect audio files.
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+load-display pandagl | pandadx
+    examples:
+        load-display pandagl | pandadx
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+egg-path /usr/local/egg:.
+    examples:
+        egg-path /usr/local/egg:.
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+chan-config-sanity-check <boolean>
+    examples:
+        chan-config-sanity-check #f
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+multipass-viz none
+    examples:
+        multipass-viz none
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+win-origin-x <integer>
+win-origin-y <integer>
+win-width    <integer>
+win-height   <integer>
+    examples:
+        win-origin-x 100
+        win-origin-y 0
+        win-width 800
+        win-height 600
+    default:
+        ???
+    description:
+        ???
+    used by:
+        Client ??and Level Editor??
+-----------------------------------------------------------------------------
+egg-ignore-mipmaps <boolean>
+    examples:
+        egg-ignore-mipmaps #t
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+want-suits-everywhere <boolean>
+    examples:
+        want-suits-everywhere #f
+    default:
+        want-suits-everywhere #t
+    description:
+        Setting this to false will restrict the number of zones that have 
+        suits.  This will make your server use less resources.
+    used by:
+        AI Server
+-----------------------------------------------------------------------------
+auto-login <your login name>
+    examples:
+        auto-login bob_smith
+    default:
+        ???
+    description:
+        ???
+    used by:
+        Client
+-----------------------------------------------------------------------------
+notify-level-<notify catagory> debug | fatal
+    examples:
+        notify-level-FSM debug
+    default:
+        ???
+    description:
+        ???
+    used by:
+        All
+-----------------------------------------------------------------------------
+audio-library-name  <file name>
+audio-dls-file      <file path>
+audio-software-midi <boolean>
+    examples:
+        audio-library-name
+        audio-dls-file
+        audio-software-midi #t
+    default:
+        ???
+    description:
+        ???
+    used by:
+        Client
+-----------------------------------------------------------------------------
+want-directtools  <boolean>
+want-tk           <boolean>
+    examples:
+        want-directtools  #t
+        want-tk           #t
+    default:
+        ???
+    description:
+        The LevelEditor needs these to be true
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+style-path-prefix  /i
+    examples:
+        style-path-prefix  /i
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+model-path <colon separated list of paths>
+    examples:
+        model-path $TTMODELS
+        model-path /c/ttmodels
+    default:
+        ???
+    description:
+        A in-order list of paths to search when looking for model data.
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+sound-path <colon separated list of paths>
+    examples:
+        sound-path $TTMODELS
+        sound-path /c/ttmodels
+    default:
+        ???
+    description:
+        A in-order list of paths to search when looking for 
+        sound data.
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+preload-avatars <boolean>
+    examples:
+        preload-avatars #f
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+load-file-type pandaegg
+    examples:
+        load-file-type pandaegg
+    default:
+        ???
+    description:
+        ???
+    used by:
+        ??? Client? AI Server? Level Editor? Debugging Tools?
+-----------------------------------------------------------------------------
+loader-bar-width  <float>
+loader-bar-height <float>
+    examples:
+        loader-bar-width 1.
+        loader-bar-height 0.09
+    default:
+        ???
+    description:
+        Control the size of the progress bar that is displayed while loading.
+    used by:
+        Client
+-----------------------------------------------------------------------------
+loader-bar-done-red   <zero to one float>
+loader-bar-done-green <zero to one float>
+loader-bar-done-blue  <zero to one float>
+loader-bar-done-alpha <zero to one float>
+    examples:
+        loader-bar-done-red 0
+        loader-bar-done-green 0
+        loader-bar-done-blue 1
+        loader-bar-done-alpha .5
+    default:
+        ???
+    description:
+        Control the color of the progress bar that is displayed while loading.
+    used by:
+        Client
+-----------------------------------------------------------------------------
+loader-bar-undone-red   <zero to one float>
+loader-bar-undone-green <zero to one float>
+loader-bar-undone-blue  <zero to one float>
+loader-bar-undone-alpha <zero to one float>
+    examples:
+        loader-bar-undone-red .5
+        loader-bar-undone-green .5
+        loader-bar-undone-blue .5
+        loader-bar-undone-alpha .5
+    default:
+        ???
+    description:
+        Control the color of the progress bar that is displayed while loading.
+    used by:
+        Client
+-----------------------------------------------------------------------------
+allow-pig <boolean>
+    examples:
+        allow-pig 1
+    default:
+        allow-pig 0
+    description:
+        Setting this to true will let you make a pig toon.
+	There's been talk of letting you make a pig only in certain days
+	of the year, but there's no code in for that yet.
+    used by:
+        Client
+-----------------------------------------------------------------------------
+# Obsolete:
+# audio-loader mp3
+# audio-loader wav
+# audio-loader midi
+

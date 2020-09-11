@@ -1,0 +1,368 @@
+Some handy magic words you can type at the Toontown chat prompt:
+
+~allstuff : Gives you all the inventory you can carry
+~nostuff : Reduces inventory to zero
+~restock : Invokes ~nostuff followed by ~allstuff; stocks the inventory
+           with a few of each prop, up to what you can carry
+~autoRestock [<enable>]: automatically ~restocks at the beginning of every
+           battle round. Use with no arguments to toggle.
+~uberDrop : gives you 100 Barnacle Bessie (piano) SOS cards
+
+~jelly [<count>]
+    Sets your jellybean count to the indicated value,
+    or to the maximum if <count> is omitted.
+
+~rich : Gives you full jellybeans
+
+~toonup : A full heal
+~ouch : Sets your hp to a meager 1
+~dead : Sets your hp to -1
+~waydead : Sets hp to -100
+
+~immortal : toggles invincibility
+~battles : toggles mode where cogs do not start battles with you
+~battle : reports information about the current battle on the AI
+~battle abort : aborts the current battle on the AI
+
+~exp <track> [<increment>] :
+    Adds the indicated amount of experience to the given track.
+    The <track> is normally the name of the track, e.g. "throw",
+    "drop", or "toon-up", or "all" to indicate all accessible
+    tracks.  The <increment> may be negative.  If <increment> is
+    omitted, the amount necessary to reach the next level is
+    added.
+
+~trophy [<score>] :
+    Artificially sets the toon's trophy score to the indicated value,
+    or if the score is omitted, restores it to its correct value.
+
+~amateur : Sets experience for all tracks to 0
+~amateur+ : Sets experience for all tracks to 9
+~professional-- : Sets experience for all tracks to one less than final gag exp
+~professional : Sets experience for all tracks to Max
+~maxexp--: Sets experience for all tracks to 9998
+
+~chat : Gives you "common chat" permission, i.e. permission to
+        chat with all others also sharing common chat.
+
+~superchat
+    Gives you permission to chat with everyone.  Normally disabled.
+
+~listen : Gives you listen-only permission.
+~nochat : Removes special chat permissions.
+
+~rename <newname>
+    renames your avatar.  With ~for, renames some other avatar.  This
+    word is disabled by default; it may be enabled by an AI Configrc var.
+
+~badname : renames your avatar to "toon999", where 999 is from your doId.
+~badname <avatar> : renames the indicated avatar as above, used like ~for.
+
+~effect <effectName> [<timeLimit>]
+    Applies a cheesy rendering effect to your toon.  The effects are
+    named in ToontownGlobals.CE* (omit the CE part of the name here).
+    If timeLimit is specified, it indicates the length of time for
+    which the effect should persist, in minutes.
+
+~cogTakeOver [x|<track>] [x|<level>] [all|this|<block>] [all|<zone>] [now] [slow]
+    : cog take over building.
+    <track> is a cog track, one of c, s, m, l; or x to pick at random.
+    <level> is the level of the cog: 1..9, or x to pick at random based on
+      the neighborhood.
+    <block> is a building block number (defaults to "this", the door you're
+      standing in front of) or "all"  e.g. 1
+    <zone> is the branch ID (defaults to your current zone)  e.g. 2200
+
+    If the keyword "now" is included, the building is taken over
+    immediately without a cog's intervention; otherwise, the normal
+    behavior is to drop a cog onto the street right in front of the
+    building to do the job.  However, this might fail if the
+    building's front door isn't hooked up properly, or if there are so
+    many cogs in the street already that there's no place to drop a
+    new one.
+
+    If the keyword "slow" is included, the cog is dropped elsewhere in
+    the neighborhood, and will have to walk all the way to the
+    building.
+
+~toonTakeOver [all|this|<block>] [all|<zone>]
+    : toon take over building.  (see cogTakeOver, above).
+
+~startInvasion cogType numCogs
+    : start a cog invasion of numCog (50, 100, etc) cogs of type cogType ("pp", "ds", etc) 
+
+~stopInvasion : end the current cog invasion
+
+~finishQuests : Completes all quests (except delivery quests)
+~clearQuests : Resets all quest fields as if this were a new toon
+~setQuestTier [<tier>] [<index>]
+    Sets the reward tier and optionally index too
+
+~getQuestTier : reports the current quest tier and index
+~visitHQ : modifies all your visit and deliver quests to report to
+    ToonHQ instead of whomever it used to be.
+
+~nextQuest [<questId>] : forces NPCs to offer you a particular quest
+
+~fix : repair avatar's quest history, maxHp, inventory, etc.
+
+~buildings [all|where|<zone>]
+    Reports the number of cog buildings vs. total buildings, and
+    the target number of cog buildings, in the indicated zone (or
+    overall).  If <zone> is omitted, the default is your current zone.
+    "where" is a special keyword to list the distribution of buildings
+    across the various zones.
+
+~buildingPercent [<new-value>]
+    Reports the overall percentage of cog buildings the leaf-blower
+    system is aiming for.  If a value is specified, changes that
+    percentage.
+
+~call [<type>] [<level>]
+    Calls in a cog from the sky.  If type is specified, it should be a
+    one- or two-letter string describing the type of cog, e.g. pp for
+    a Penny Pincher or f for a Flunky.  Level is the numeric level of
+    the cog, 1 - 9.
+
+~cogs [all|<zone>] [sync] [fly] [count=<number>]
+    Reports the current number of cogs vs. the target number, in the
+    indicated zone (or overall).  If <zone> is omitted, the default is
+    your current zone.
+
+    If the keyword "sync" is included, the cogs are resynchronized
+    from the server.  This may be necessary if you have paused your
+    client or the AI temporarily, and thus gotten out of sync, and you
+    are therefore seeing some cogs in the wrong place.  (The cogs will
+    eventually get themselves back into sync one at a time by
+    themselves, but this process could take several minutes).
+
+    The keyword "fly" commands all cogs (except those currently
+    involved in battle) to fly away immediately.
+
+    The keyword "count" forces the target number of cogs in the
+    indicated zone (or all zones) to the given number.  Specify 'x',
+    e.g. "count=x", to reset it to its default dynamic
+    behavior.
+
+~save : saves the current AI state.  Presently, this is only the set
+    of cog buildings.
+
+~oobe : toggles "OOBE" (i.e. trackball) mode.  Same as executing base.oobe().
+~tex : toggles texturing.  Same as base.toggleTexture().
+~wire : toggles wireframe.  Same as base.toggleWireframe().
+
+~fps : toggles frame rate display
+~fps <frame-rate> : forces a particular frame rate
+~fps <percent>% : simulates the indicated performance; ~fps 50%
+    degrades performance by a factor of 2.
+~fps normal : restores normal unrestricted frame rate
+~fps forced <frame-rate> : same as ~fps <frame-rate>
+~fps degrade <factor> : same as ~fps <100/factor>%
+
+~showcs [wall|floor|cam]
+    show collision solids.
+
+~hidecs [wall|floor|cam]
+	hide collision solids.
+
+~rogues : displays the famous "Rogues Gallery" of cogs.
+~rogues [cogname]: displays just the named cog.
+                   cog names are 'mm' for Micro-Manager, etc (see Suit.py)
+
+~cogPageFull : show all the cog panels on the cog page
+
+~for <avatar> <~magic-word>
+    Executes the indicated magic word on behalf of the indicated
+    avatar, as if the other player had typed the magic word.  You may
+    specify an avatar by doId, or if they are nearby you, by name.
+
+~doId <name>
+    Reports the doId of the nearby distributed object or objects
+    with the indicated name.
+
+~who
+    Reports only the avatars in your current visibility zone with
+    accountName and avatarName.
+
+~who all
+    Reports everyone online.  Listed with accountName and avatarName.
+    It would be cool to get the zoneId, but the AI does not know it.
+
+~minigame [<name|id> [keep] [difficulty] [safezone]]
+    Requests the indicated minigame for the current avatar.  The
+    indicated minigame will be the next one chosen by the trolley
+    for the next game that involves this avatar.
+    difficulty (float) and safezone (string:tt,dd,dg,mm,br,dl) are
+    optional difficulty setting overrides.
+    'keep' will cause settings to 'stick' on the AI, for current
+    avatar, until they are cancelled.
+    With no arguments, will cancel any outstanding minigame request.
+    1: Race
+    2: Cannon
+    3: Tag
+    4: Minnie Dance game (simon)
+    5: Ring game
+    6: Maze game
+    7: Tug-o-war
+    8: Catching game
+
+~treasures
+    Reports the number of treasures in the playground.
+~treasures all
+    Fills up the playground with all available treasures at once.
+
+~dna
+    Reports the avatar's current DNA
+~dna torso='ss', legs='s', shirt=('bss1', 0), bottom=('bbs1', 0)
+    Permanently change an avatar's DNA.  Legal parameters are any
+    keyword parameters accepted to AvatarDNA.updateToonProperties.
+
+~hideAttack
+~showAttack
+    Hide or show the attack panel, so you can see past it to see
+    what's going on around the battle.  Particularly useful in oobe
+    mode.
+
+~magic : enables magic words; useful with ~for.
+~exec : enables exec-chat.
+
+~run : toggle avatar-runs-fast mode
+
+~axis
+   Show a 10 foot and 100 foot axis at the spot of the avatar
+   axis aligned to render
+   
+~clearAxis or ~clearAxes
+   Remove any axes created by ~axis calls
+
+~fedit
+    starts up the factory editor for the factory that you are in
+~factory <id>
+    selects the HQ factory that you want to go to
+~fshow
+    toggles stashing of factory zones that are not visible
+
+~bossBattle [elevator | start | one | preTwo | two | preThree | three | victory ]
+    Takes the toon to a common bossBattle arena, or sets the
+    bossBattle state to one of the indicated tokens.
+
+~disguisePage [flag]
+    Turns on or off the disguise page flag.  The default is on (1).
+
+~allParts [depts]
+    Gives the toon all cog suit parts in the indicated depts.  [depts]
+    may be one or more of the letters c, l, m, or s, with no spaces or
+    punctuation between, or the string "all" to indicate all depts.
+    If omitted, the default is "all".
+
+~noParts [depts]
+    Removes all cog suit parts for the indicated depts.  [depts] as
+    above.
+
+~part [depts] [factoryType]
+    Gives one cog suit part as if from the indicated factory type.
+    [depts] as above.  factoryType may be one of leg, arm, torso, or
+    fullSuit; the default is fullSuit.
+
+~merits [depts] numMerits
+    Sets the toon's cog merits for the indicated depts to the given
+    integer value.  [depts] as above.
+
+~promote [depts]
+    Promotes the toon in the indicated dept(s).  The promotion occurs
+    regardless of whether the toon has earned sufficient merits.
+
+~cogSuit cogType [level]
+    Sets the toon to the indicated cog type (e.g. 'gh' for Glad
+    Hander) and level for the appropriate dept.
+
+~cogSuit clear
+    Resets cog suits in all depts to the initial level. 
+
+~sleep seconds
+    Specifies seconds to sleep between each frame. Useful if client is
+    starving other processes.
+
+~pet
+    Summons your pet. If you don't have a pet, will create one.
+~dismiss [petId]
+    Make a summoned pet go away (un-instantiate). Defaults to your own pet.
+~deletePet [petId]
+    Permanently delete a pet.
+~petName [petId]
+    Assign a new name to a pet.
+~feed [petId]
+    Feed a pet.
+~attend [petId]
+    Reduce a pet's boredom.
+~callPet [petId]
+    Call a pet to you.
+~stay [petId]
+    Tell a pet to stay.
+~shoo [petId]
+    Tell a pet to go away (physically, not distObj-wise).
+~maxMood [petId]
+    Maximize all of a pet's mood components
+~minMood [petId]
+    Minimize all of a pet's mood components
+~petMood component value
+    Set a component of your pet's mood to a particular value
+~moodTimescale timescale
+    Adjust how fast pets' moods drift; 2 == twice as fast
+~typicalTraits [szId]
+    Reset your pet's traits to typical values for safezone szId
+~medianTraits [szId]
+    Reset your pet's traits to median (avg of extremes) values for
+    safezone szId
+~leash [petId]
+    Make a pet follow you around
+~lockPet [petId]
+    Prevent a pet from moving
+~unlockPet [petId]
+    Undo a ~lockPet
+~petStress [numPets]
+    Stresses the pets system by creating numPets pets. Defaults to 56.
+~petCam
+    Shows your pet's point of view
+~petTricks trickId <trickId *>
+    Sets the tricks that you can tell a pet to do based on provided list
+    of one or more indices
+~trickAptitude aptitude
+    Sets your pet's skill for all tricks to value in [0..1]
+
+~airender [zone]
+    Opens a window on the AI, showing any geometry loaded in 'zone'. zone
+    defaults to the initiating client's zone.
+~aics [zone]
+    Toggles viewing of collision solids in an airender window.
+
+~mintId id
+    Forces mint elevator to take you to a particular mint
+~mintFloor num
+    Forces mint elevator to take you to a particular mint floor
+~mintRoom <name|id>
+    Forces mint elevator to take you to a floor that contains a particular room.
+    Overrides ~mintFloor.
+    name is one of the room names in MintRoomSpecs, id is roomId from pressing
+    F2.
+    You will be taken directly to the specified room upon entering the mint.
+~mintWarp roomId
+    Takes you to the room 'roomId', if it exists in the mint floor you're in
+~mintRaider
+    Makes your Toon the appropriate level to go into the Cashbot mints
+~mintLayouts
+    Logs the layout of all mints
+
+~catalog [next | week # | season ##/## | clear | deliver | reload] <after #>
+    next - generate the next weeks catalog
+    week # - generate the catalog for week number #
+    season ##/## - present the seasonal catalog items for day ## / month ##
+    clear - reset to initial week
+    deliver - cause all pending deliveries to be sent to mailbox
+    reload - refresh catalog gui display
+    after - optional parameter to delay specified action by # minutes
+        
+Want to add some yourself? Go to
+$TOONTOWN/src/ai/MagicWordManagerAI.py, and stick them in the
+switch. If you need client side ones, they go in
+$TOONTOWN/src/ai/MagicWordManager.py

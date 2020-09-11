@@ -1,0 +1,74 @@
+// Filename: dnaSuitPath.cxx
+// Created by:  shochet (28Jan01)
+//
+////////////////////////////////////////////////////////////////////
+
+#include "dnaSuitPath.h"
+
+
+////////////////////////////////////////////////////////////////////
+// Static variables
+////////////////////////////////////////////////////////////////////
+TypeHandle DNASuitPath::_type_handle;
+
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNASuitPath::Constructor
+//       Access: Public
+//  Description:
+////////////////////////////////////////////////////////////////////
+DNASuitPath::DNASuitPath() {
+}
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNASuitPath::Constructor
+//       Access: Public
+//  Description: Accepts an integer which indicates the expected
+//               length of the path.
+////////////////////////////////////////////////////////////////////
+DNASuitPath::
+DNASuitPath(int reserve_length) {
+  _path.reserve(reserve_length);  
+}
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNASuitPath::Copy Constructor
+//       Access: Public
+//  Description:
+////////////////////////////////////////////////////////////////////
+DNASuitPath::DNASuitPath(const DNASuitPath &other) {
+  copy(other);
+}
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNASuitPath::copy
+//       Access: Public
+//  Description:
+////////////////////////////////////////////////////////////////////
+void DNASuitPath::copy(const DNASuitPath &other) {
+  // Are you trying to copy yourself? If so just return
+  if (this == &other) {
+    return;
+  }
+  // Clear out any old path
+  _path.clear();
+  // Copy the points in the path into our path
+  for(int i = 0; i < other.get_num_points(); ++i) {
+    _path.push_back(other.get_point_index(i));
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+//     Function: DNASuitPath::output
+//       Access: Public
+//  Description: Output the path to the ostream
+////////////////////////////////////////////////////////////////////
+void DNASuitPath::output(ostream &out) const {
+  out << "Path: [ ";
+  pvector<int>::const_iterator i;
+  for (i = _path.begin(); i != _path.end(); ++i) {
+    out << (*i) << " ";
+  }
+  out << "]";
+}
+

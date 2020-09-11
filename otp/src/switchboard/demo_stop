@@ -1,0 +1,4 @@
+python sbdebug.py -n dummy -s
+python sbdebug.py -n pirates -s
+sleep 5
+nsc deletegroup :sb

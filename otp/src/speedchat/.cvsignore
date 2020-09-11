@@ -1,0 +1,5 @@
+.cvsignore
+Makefile
+*.pyc
+pp.dep
+sc.zip

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ns -p 6053 -b 6053 -d Pyro_NS_database &
+sleep 5
+python sbMonitor.py >> monitor.log 2>&1 &

@@ -1,0 +1,93 @@
+
+buildings/locations version 0.0.1
+
+[brothel]
+apothecary
+auction house (auctions)
+bank (coins)
+barracks
+blacksmith (repairs, horseshoes, ships, gear)
+carpenter
+courthouse
+farm house
+fort
+general supplies
+glass blower
+grain mill
+guild hall (quests, news, leader board)
+house
+hut
+inn (NPCs)
+jail
+library
+lumber mill
+magic shop
+mansion (governor's)
+market
+mason/masonry worker
+Practice/training hall
+rope maker
+sail maker
+shipyard (ships)
+stables
+store house (gear)
+tailor
+tavern (card games)
+tower, stone
+tower, wood
+villa
+warehouse
+
+battlements
+bridge, wood
+bridge, stone
+buried treasure
+cannon
+corral/ranch (horses/cows)
+courtyard
+dock, boat
+dock, fishing
+dock, loading (with crane)
+farm land
+fence
+fire, bonfire
+fire, camp
+fire, torch/lantern
+flag pole
+gallows/guillotine/stocks
+gun emplacement
+mine
+park/garden
+portcullis
+quarry
+road, causeway
+road, cobblestone
+road, dirt
+stair
+trees
+trench/ditch
+walking path
+wall, high
+wall, low
+water well
+
+breakwater
+cave
+cavern
+cliff
+granet
+harbor
+hill
+jungle
+lake
+lava flow
+marsh
+mountain
+pond
+reefs
+river
+sand
+soil
+swamp
+volcano
+waterfall

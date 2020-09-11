@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Starting Switchboard..."
+python startNode.py -n pirates &
+python startNode.py -n dummy &
+python startDummy.py &
+sleep 10
+python sbdebug.py -n dummy -p 1 -e
+python sbdebug.py -n pirates -p 2 -e
+
+

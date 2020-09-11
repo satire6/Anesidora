@@ -1,0 +1,45 @@
+#! /bin/sh
+
+if [ "$1" = "-d" ]
+then
+    #destdir=$2
+    destdir="robotToonManager"
+    zipfile="robotToonManager.zip"
+    debug_state="-d"
+else
+    #destdir=$1
+    destdir="robotToonManager"
+    zipfile="robotToonManager.zip"
+    debug_state=""
+fi
+
+if [ "${destdir}" = "" ]
+then
+    echo "Usage: rtmZipfiles [-d]"
+    exit 1
+fi
+
+if [ -d ${destdir} ]
+then
+    echo "Removing ${destdir}"
+    rm -rf ${destdir}
+fi
+
+if mkdir ${destdir}
+then
+    cp Configrc.prc Configrc
+    cp Configrc.rtm Configrc.prc
+    if copyfiles ${debug_state} ${destdir} rtmPrintfiles
+    then
+	if [ -f ${zipfile} ]
+	then
+	    rm ${zipfile}
+	fi
+	zip -r ${zipfile} ${destdir}
+	rm -rf ${destdir}
+	echo "Done creating ${zipfile}"
+        cp Configrc Configrc.prc
+    fi
+else
+    echo "ERROR: Could not mkdir ${destdir}"
+fi

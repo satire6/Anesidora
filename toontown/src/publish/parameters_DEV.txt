@@ -1,0 +1,2 @@
+PATCHER_BASE_URL=http://ttown2.online.disney.com:1620/english/currentVersionWIN/dev/content/
+OPEN_CONSOLE=TRUE

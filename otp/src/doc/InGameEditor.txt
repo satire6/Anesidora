@@ -1,0 +1,97 @@
+In-Game Editor
+==============
+
+::OVERVIEW
+==========
+
+The In-Game Editor allows level designers to populate a level with
+'entities', such as moving platforms and crates. It also allows level
+designers to change, add, or remove entities in real-time, in the game
+engine, providing instant feedback on changes in a multiplayer setting.
+
+::SETUP
+=======
+
+Before starting the editor, you must set 'level-edit-username' in your
+Config.prc, e.g.
+
+level-edit-username darren
+
+Your username must be listed in the 'username2entIdBase' dictionary in
+$OTP/src/level/EditorGlobals.py. If you add a new username, be sure to
+follow the conventions documented in that file.
+
+You will need magic words, and you need to be running in the dev
+environment (want-dev 1, normally on by default in
+$TOONTOWN/src/configfiles/Configrc).
+
+::RUNNING THE EDITOR
+====================
+
+Currently the IGE is used for editing the Toontown Sellbot Factory and the
+Toontown Cashbot Mint. To start the editor, enter one of these areas and
+run the ~edit magic word. (Note that in the Mint, you must be actually
+standing in the room that you want to edit before running ~edit, since each
+room is edited independently.)
+
+After a brief delay, you should see a 'Direct Session Panel' window and an
+'In-Game Level Editor' window. We are only concerned with the latter
+window; for more information on DIRECT, consult the documents in
+$DIRECT/src/doc.
+
+The editor window is divided vertically into two panes. The left-hand pane
+displays a tree view of the entities that exist within the level, and the
+right-hand pane displays the attributes/properties of whatever entity is
+selected in the tree view.
+
+TIP: When you select an entity in the tree view, its physical
+representation in the game flashes momentarily.
+
+To insert a new entity, first decide which entity you would like to be the
+'parent' of the new object, and select that parent in the tree view. Then
+open the 'Entity' menu, and select the name of the type of entity you want
+to insert. The Entity menu also allows you to duplicate and delete the
+currently-selected entity.
+
+Once you have selected an entity in the tree view, you may modify its
+attributes using the controls that appear in the right-hand pane. A typical
+entity that has a visible representation will have the standard Panda
+pos/hpr/scale scenegraph attributes. You may edit components of the vectors
+directly, or you may call up a DIRECT Placer Panel by clicking on the word
+('pos', for instance) and selecting 'Place...'
+
+NOTE: When editing text-entry attributes, be sure to press
+<ENTER>. Otherwise the new value will not stick.
+
+Other attributes present various interfaces to allow editing, such as text
+entries, radio button sets, filenames, entity references, etc.
+
+::SAVING YOUR WORK
+==================
+
+To save your work at any time, select 'File->Save on AI'. If you have any
+unsaved changes when you try to close the editor, you will be prompted to
+save at that time.
+
+NOTE: The level spec will be saved in your source tree; you must now check the
+changes in to revision control. See 'SPECS' below for more information
+about level specs.
+
+::SPECS
+=======
+
+The output of the editor is called a 'spec', which is nothing more than a
+Python source file that contains a dictionary that maps entity IDs to sets
+of attribute values. Each entity ID represents a unique entity in the
+level.
+
+$OTP/src/level/SpecUtil.py contains utility functions to create specs, and
+to update those specs when their associated level model changes. See the
+instructions in SpecUtil.py for more information.
+
+::MISCELLANEOUS
+===============
+
+The 'Model' entity is very useful--use it to load any model and place it in
+the level. Enable the entity's 'collisionsOnly' attribute to hide the
+visible geometry but leave the collisions.
